@@ -5,3 +5,7 @@ next-env.d.ts
 *.tsbuildinfo
 .DS_Store
 .env*
+
+# Third-party agent skills, installed with `npx skills add`
+.agents/
+.claude/skills/

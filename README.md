@@ -4,7 +4,8 @@ Personal site and portfolio. Next.js 15 (App Router, TypeScript strict), Tailwin
 statically exported to flat files and served from Cloudflare Pages.
 
 No server, no API routes, no SSR. No runtime dependencies beyond React and Next.
-No analytics, no external fonts, no tracking scripts.
+No analytics, no tracking scripts. One typeface (Geist), self-hosted at build time by
+`next/font` — the browser never contacts Google.
 
 - English: `/`
 - Spanish: `/es/`
@@ -27,10 +28,38 @@ npm run build      # → out/
 does (directory indexes, Brotli/gzip, immutable caching for `/_next/static`). Use it for
 honest Lighthouse numbers — a plain uncompressed static server understates performance.
 
-## Files you have to supply yourself
+## CVs
 
-- **`public/Oscar-Navarro-CV.pdf`** — not in the repository. The header button and the hero
-  button both link to `/Oscar-Navarro-CV.pdf`; until the file exists those links 404.
+Two files, one per locale, both in `public/`:
+
+| Locale | File |
+|---|---|
+| `/` | `Oscar-Navarro-CV.pdf` |
+| `/es/` | `Oscar-Navarro-CV-ES.pdf` |
+
+The paths live in `site.cv` in `content/site.ts`; each locale picks its own through `cvHref`.
+
+## Project screenshots
+
+`view/` holds the raw screenshots. `npm run shots` crops each one to 16:10 from the top and
+writes two WebP widths per project into `public/projects/` — the cards crop to 16:10, so the
+crop happens at build-prep time rather than being thrown away by CSS in the browser. The
+output is committed; the Cloudflare build never processes an image.
+
+Projects without a screenshot (Kepler, Mi Peso) render as full-width text cards instead, so a
+missing image never leaves a hole or misaligns a row.
+
+## Response headers
+
+`public/_headers` is copied verbatim into the deploy. It sets year-long immutable caching for
+the content-hashed assets under `/_next/static` (Cloudflare Pages otherwise defaults to four
+hours) plus HSTS, `X-Frame-Options`, and a referrer policy.
+
+Two Cloudflare features must stay **off** for this site:
+
+- **Web Analytics** (Pages project → Settings) injects a third-party tracking beacon.
+- **Email Address Obfuscation** (zone → Scrape Shield) rewrites the footer `mailto:` into
+  `[email protected]` and a decoder script, so the contact address is unreadable without JS.
 
 ## Editing content
 

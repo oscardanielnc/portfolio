@@ -1,5 +1,5 @@
 import type { Content } from './types';
-import { projectRefs, techStack } from './site';
+import { projectRefs, site, techStack } from './site';
 
 export const en: Content = {
   locale: 'en',
@@ -7,6 +7,7 @@ export const en: Content = {
   altPath: '/es/',
   altLabel: 'ES',
   altLangName: 'Español',
+  cvHref: site.cv.en,
 
   meta: {
     title: 'Oscar Daniel Navarro Cieza — Frontend & AI-Augmented Full-Stack Developer',
@@ -20,6 +21,8 @@ export const en: Content = {
     cv: 'Download CV',
     skipToContent: 'Skip to content',
     languageSwitch: 'Ver en español',
+    languageLabel: 'Language',
+    currentLanguage: 'English, current language',
   },
 
   hero: {
@@ -46,6 +49,8 @@ export const en: Content = {
     code: 'Code',
     archived: 'Archived',
     stack: 'Stack',
+    screenshot: 'Screenshot of',
+    noDemo: 'No public demo',
   },
 
   projects: [

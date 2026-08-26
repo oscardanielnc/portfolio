@@ -6,7 +6,7 @@ export const site = {
   email: 'oscar.navarro@pucp.edu.pe',
   github: 'https://github.com/oscardanielnc',
   linkedin: 'https://www.linkedin.com/in/oscardnavarro/',
-  cv: '/Oscar-Navarro-CV.pdf',
+  cv: { en: '/Oscar-Navarro-CV.pdf', es: '/Oscar-Navarro-CV-ES.pdf' },
 } as const;
 
 export const techStack = [
@@ -38,16 +38,19 @@ export const projectRefs = {
     demo: 'https://tickerlens.oscarnavarro.dev',
     repo: 'https://github.com/oscardanielnc/tickerlens',
     tech: ['Next.js', 'TypeScript', 'Tailwind', 'FastAPI', 'Python', 'PostgreSQL + pgvector', 'Docker', 'nginx'],
+    image: { src: '/projects/tickerlens.webp', width: 1200, height: 750 },
   },
   estudia: {
     demo: 'https://study.oscarnavarro.dev',
     repo: 'https://github.com/oscardanielnc/study-ai',
     tech: ['Python', 'FastAPI', 'SQLite', 'PWA', 'Android (TWA)', 'Docker'],
+    image: { src: '/projects/estudia.webp', width: 720, height: 450 },
   },
   tvindicators: {
     demo: 'https://tvbot.oscarnavarro.dev',
     repo: 'https://github.com/oscardanielnc/tvindicators',
     tech: ['Python', 'ccxt', 'SQLite', 'FastAPI', 'systemd'],
+    image: { src: '/projects/tvindicators.webp', width: 1000, height: 625 },
   },
   kepler: {
     demo: null,
@@ -58,6 +61,7 @@ export const projectRefs = {
     demo: 'https://exposure.oscarnavarro.dev',
     repo: 'https://github.com/oscardanielnc/exposure-dashboard',
     tech: ['Python', 'FastAPI', 'Next.js', 'SQLite', 'Playwright', 'Docker'],
+    image: { src: '/projects/exposure.webp', width: 1000, height: 625 },
   },
   mipeso: {
     demo: 'https://weightlog.oscarnavarro.dev',
