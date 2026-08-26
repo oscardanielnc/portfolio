@@ -152,6 +152,8 @@ function Plate({
         alt={alt}
         loading="lazy"
         decoding="async"
+        // Below the fold and never the LCP element: keep them off the critical path.
+        fetchPriority="low"
         className="h-full w-full object-cover object-top"
       />
     </div>
