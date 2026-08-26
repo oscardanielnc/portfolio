@@ -1,0 +1,92 @@
+@import 'tailwindcss';
+
+/* Dark is the default. Light is opt-in through the OS setting only. */
+:root {
+  --bg: #0b0b0d;
+  --surface: #131317;
+  --surface-hover: #191920;
+  --border: #2a2a31;
+  --border-strong: #3d3d47;
+  --text: #ececf1;
+  --muted: #a1a1ad;
+  --accent: #ffb454;
+  --on-accent: #0b0b0d;
+  --selection: #ffb45433;
+  /* Header backdrop. Kept as an explicit rgba() so the exact colour is auditable. */
+  --bg-translucent: rgba(11, 11, 13, 0.85);
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #fcfcfb;
+    --surface: #ffffff;
+    --surface-hover: #f6f6f4;
+    --border: #e3e3e0;
+    --border-strong: #cfcfca;
+    --text: #16161a;
+    --muted: #55555f;
+    --accent: #9a4a06;
+    --on-accent: #ffffff;
+    --selection: #9a4a0622;
+    --bg-translucent: rgba(252, 252, 251, 0.85);
+    color-scheme: light;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-translucent: var(--bg-translucent);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-ink: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+}
+
+* {
+  min-width: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* Fixed header offset for in-page anchors. */
+  scroll-padding-top: 5.5rem;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--selection);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
