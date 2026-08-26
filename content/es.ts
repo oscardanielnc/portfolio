@@ -4,7 +4,7 @@
 // traducción literal de ese texto: no se añadió, quitó ni redondeó ningún dato, cifra,
 // fecha ni nombre propio. Revísalo y ajústalo a tu voz antes de publicar.
 import type { Content } from './types';
-import { projectRefs, techStack } from './site';
+import { projectRefs, site, techStack } from './site';
 
 export const es: Content = {
   locale: 'es',
@@ -12,6 +12,7 @@ export const es: Content = {
   altPath: '/',
   altLabel: 'EN',
   altLangName: 'English',
+  cvHref: site.cv.es,
 
   meta: {
     title: 'Oscar Daniel Navarro Cieza — Desarrollador Full-Stack con especialidad en Frontend',
@@ -25,6 +26,8 @@ export const es: Content = {
     cv: 'Descargar CV',
     skipToContent: 'Ir al contenido',
     languageSwitch: 'View in English',
+    languageLabel: 'Idioma',
+    currentLanguage: 'Español, idioma actual',
   },
 
   hero: {
@@ -51,6 +54,8 @@ export const es: Content = {
     code: 'Código',
     archived: 'Archivado',
     stack: 'Stack',
+    screenshot: 'Captura de',
+    noDemo: 'Sin demo pública',
   },
 
   projects: [

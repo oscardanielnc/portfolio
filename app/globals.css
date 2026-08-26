@@ -9,11 +9,13 @@
   --border-strong: #3d3d47;
   --text: #ececf1;
   --muted: #a1a1ad;
-  --accent: #ffb454;
+  --accent: #e8ad5f;
   --on-accent: #0b0b0d;
-  --selection: #ffb45433;
+  --selection: #e8ad5f30;
   /* Header backdrop. Kept as an explicit rgba() so the exact colour is auditable. */
-  --bg-translucent: rgba(11, 11, 13, 0.85);
+  --bg-translucent: rgba(11, 11, 13, 0.82);
+  /* Single faint accent wash behind the hero. CSS only, no image request. */
+  --hero-wash: radial-gradient(70rem 32rem at 12% -12%, rgba(232, 173, 95, 0.09), transparent 62%);
   color-scheme: dark;
 }
 
@@ -26,10 +28,11 @@
     --border-strong: #cfcfca;
     --text: #16161a;
     --muted: #55555f;
-    --accent: #9a4a06;
+    --accent: #8f5117;
     --on-accent: #ffffff;
-    --selection: #9a4a0622;
-    --bg-translucent: rgba(252, 252, 251, 0.85);
+    --selection: #8f511718;
+    --bg-translucent: rgba(252, 252, 251, 0.82);
+    --hero-wash: radial-gradient(70rem 32rem at 12% -12%, rgba(143, 81, 23, 0.07), transparent 62%);
     color-scheme: light;
   }
 }
@@ -46,9 +49,16 @@
   --color-accent: var(--accent);
   --color-on-accent: var(--on-accent);
 
-  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono',
+    monospace;
+
+  /* Radius scale. One rule, applied everywhere:
+     containers 14px, interactive 8px, tags 6px, the language switch is a pill. */
+  --radius-card: 14px;
+  --radius-control: 8px;
+  --radius-tag: 6px;
 }
 
 * {
@@ -67,6 +77,10 @@ body {
   color: var(--text);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+}
+
+.hero-wash {
+  background-image: var(--hero-wash);
 }
 
 ::selection {

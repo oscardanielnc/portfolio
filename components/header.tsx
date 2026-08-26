@@ -1,6 +1,7 @@
 import { site } from '@/content/site';
 import type { Content } from '@/content/types';
 import { DownloadIcon, GitHubIcon, LinkedInIcon } from './icons';
+import { LanguageSwitch } from './language-switch';
 
 const iconLink =
   'flex h-9 w-9 items-center justify-center rounded-md text-muted transition-colors duration-200 hover:bg-surface-hover hover:text-ink';
@@ -36,20 +37,10 @@ export function Header({ content }: { content: Content }) {
             <LinkedInIcon className="h-[18px] w-[18px]" />
           </a>
 
-          {/* Plain anchor: the two locales are separate root layouts, so a client-side
-              navigation would reload anyway — and it avoids prefetching the other page. */}
-          <a
-            href={content.altPath}
-            hrefLang={content.locale === 'en' ? 'es' : 'en'}
-            lang={content.locale === 'en' ? 'es' : 'en'}
-            aria-label={content.nav.languageSwitch}
-            className="ml-0.5 rounded-md border border-line px-2 py-1.5 text-xs font-medium tracking-wide text-muted transition-colors duration-200 hover:border-line-strong hover:text-ink"
-          >
-            {content.altLabel}
-          </a>
+          <LanguageSwitch content={content} />
 
           <a
-            href={site.cv}
+            href={content.cvHref}
             download
             aria-label={content.nav.cv}
             className="ml-1 inline-flex items-center gap-1.5 rounded-md bg-accent px-2.5 py-1.5 text-xs font-semibold text-on-accent transition-opacity duration-200 hover:opacity-85 sm:px-3"

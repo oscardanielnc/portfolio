@@ -1,5 +1,12 @@
 export type Locale = 'en' | 'es';
 
+export interface ProjectImage {
+  src: string;
+  /** Intrinsic size of the file. Every plate is pre-cropped to 16:10. */
+  width: number;
+  height: number;
+}
+
 export interface Project {
   /** Display name, identical in both locales. */
   name: string;
@@ -17,6 +24,8 @@ export interface Project {
   repo: string | null;
   /** Shown in place of the demo button when demo is null. */
   archived?: boolean;
+  /** Real screenshot of the running app. Cards without one lay out differently. */
+  image?: ProjectImage;
 }
 
 export interface Role {
@@ -33,6 +42,8 @@ export interface Content {
   altPath: string;
   altLabel: string;
   altLangName: string;
+  /** Locale-specific CV, resolved from site.cv. */
+  cvHref: string;
 
   meta: {
     title: string;
@@ -45,6 +56,10 @@ export interface Content {
     cv: string;
     skipToContent: string;
     languageSwitch: string;
+    /** Accessible name for the language control as a whole. */
+    languageLabel: string;
+    /** Marks the currently active language inside the switch. */
+    currentLanguage: string;
   };
 
   hero: {
@@ -67,6 +82,10 @@ export interface Content {
     code: string;
     archived: string;
     stack: string;
+    /** Prefix for screenshot alt text, e.g. "Screenshot of". */
+    screenshot: string;
+    /** Shown on cards that have no screenshot. */
+    noDemo: string;
   };
 
   projects: readonly Project[];

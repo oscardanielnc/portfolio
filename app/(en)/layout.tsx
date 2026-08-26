@@ -1,7 +1,10 @@
 import type { Metadata, Viewport } from 'next';
+import { Geist } from 'next/font/google';
 import { en } from '@/content/en';
 import { buildMetadata, PersonJsonLd } from '@/lib/seo';
 import '../globals.css';
+
+const geist = Geist({ subsets: ['latin'], display: 'swap', variable: '--font-geist' });
 
 export const metadata: Metadata = buildMetadata(en);
 
@@ -14,7 +17,7 @@ export const viewport: Viewport = {
 
 export default function EnglishRootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={geist.variable}>
       <body className="font-sans antialiased">
         {children}
         <PersonJsonLd content={en} />
