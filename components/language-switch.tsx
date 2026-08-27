@@ -1,9 +1,9 @@
 import type { Content } from '@/content/types';
 
 /**
- * Segmented EN / ES control. Two static links inside one track: the active side is a
+ * Segmented EN / ES control. Two static sides inside one track: the active side is a
  * non-interactive span so it cannot be tabbed to or clicked, the other side navigates.
- * Plain anchors on purpose — the locales are separate root layouts, so a client-side
+ * Plain anchor on purpose — the locales are separate root layouts, so a client-side
  * navigation would reload anyway and prefetching the other page would be wasted bytes.
  */
 export function LanguageSwitch({ content }: { content: Content }) {
@@ -14,12 +14,12 @@ export function LanguageSwitch({ content }: { content: Content }) {
     <div
       role="group"
       aria-label={content.nav.languageLabel}
-      className="flex items-center rounded-full border border-line p-0.5 text-[0.6875rem] font-semibold tracking-wide"
+      className="ml-1 flex items-center rounded-full border border-line bg-tag p-0.5 text-[0.6875rem] font-semibold tracking-wide"
     >
       <span
         aria-current="true"
         aria-label={content.nav.currentLanguage}
-        className="rounded-full bg-ink px-2 py-1 text-bg"
+        className="rounded-full bg-ink px-2 py-1 text-bg shadow-[0_1px_2px_rgba(0,0,0,0.25)]"
       >
         {current}
       </span>

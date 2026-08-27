@@ -13,10 +13,11 @@ import sharp from 'sharp';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const publicDir = join(root, 'public');
 
-const BG = '#0b0b0d';
-const INK = '#ececf1';
-const MUTED = '#a1a1ad';
-const ACCENT = '#ffb454';
+const BG = '#08080c';
+const INK = '#f4f4f8';
+const MUTED = '#9b9bad';
+const ACCENT = '#ff6b4a';
+const ACCENT_2 = '#a78bfa';
 
 const FONT = "'Segoe UI', 'Inter', 'Helvetica Neue', Arial, sans-serif";
 const MONO = "'Consolas', 'DejaVu Sans Mono', monospace";
@@ -28,21 +29,29 @@ const DOMAIN = 'oscarnavarro.dev';
 
 const og = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <defs>
-    <radialGradient id="glow" cx="0.12" cy="0.16" r="0.85">
-      <stop offset="0%" stop-color="#ffb454" stop-opacity="0.14"/>
-      <stop offset="60%" stop-color="#ffb454" stop-opacity="0.02"/>
-      <stop offset="100%" stop-color="#ffb454" stop-opacity="0"/>
+    <radialGradient id="glowA" cx="0.1" cy="0.05" r="0.75">
+      <stop offset="0%" stop-color="${ACCENT}" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="${ACCENT}" stop-opacity="0"/>
     </radialGradient>
+    <radialGradient id="glowB" cx="0.88" cy="0.12" r="0.7">
+      <stop offset="0%" stop-color="${ACCENT_2}" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="${ACCENT_2}" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="name" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="30%" stop-color="${INK}"/>
+      <stop offset="100%" stop-color="#9a9aa2"/>
+    </linearGradient>
   </defs>
 
   <rect width="1200" height="630" fill="${BG}"/>
-  <rect width="1200" height="630" fill="url(#glow)"/>
-  <rect x="0" y="0" width="1200" height="6" fill="${ACCENT}"/>
+  <rect width="1200" height="630" fill="url(#glowA)"/>
+  <rect width="1200" height="630" fill="url(#glowB)"/>
+  <rect x="0" y="0" width="1200" height="5" fill="${ACCENT}"/>
 
-  <rect x="96" y="196" width="5" height="150" rx="2.5" fill="${ACCENT}"/>
+  <circle cx="104" cy="240" r="9" fill="${ACCENT}"/>
 
-  <text x="140" y="248" font-family="${FONT}" font-size="64" font-weight="600"
-        letter-spacing="-1.6" fill="${INK}">${NAME}</text>
+  <text x="140" y="252" font-family="${FONT}" font-size="66" font-weight="600"
+        letter-spacing="-2.4" fill="url(#name)">${NAME}</text>
 
   <text x="140" y="308" font-family="${FONT}" font-size="34" font-weight="500"
         fill="${ACCENT}">${HEADLINE}</text>
@@ -50,7 +59,7 @@ const og = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" vi
   <text x="140" y="350" font-family="${FONT}" font-size="24" font-weight="400"
         fill="${MUTED}">${LOCATION}</text>
 
-  <line x1="96" y1="470" x2="1104" y2="470" stroke="#2a2a31" stroke-width="1"/>
+  <line x1="96" y1="470" x2="1104" y2="470" stroke="#23232e" stroke-width="1"/>
 
   <text x="96" y="522" font-family="${MONO}" font-size="24" fill="${MUTED}">${DOMAIN}</text>
   <text x="1104" y="522" text-anchor="end" font-family="${FONT}" font-size="22" fill="${MUTED}"
@@ -74,5 +83,22 @@ const iconPng = await sharp(Buffer.from(icon), { density: 300 })
   .toBuffer();
 await writeFile(join(root, 'app', 'apple-icon.png'), iconPng);
 
+// Grain tile. Rasterised here so the browser decodes a small PNG instead of running an
+// feTurbulence filter on every paint, which cost ~0.9s of LCP under mobile throttling.
+const noise = await sharp({
+  create: {
+    width: 128,
+    height: 128,
+    channels: 3,
+    background: { r: 128, g: 128, b: 128 },
+    noise: { type: 'gaussian', mean: 128, sigma: 42 },
+  },
+})
+  .greyscale()
+  .png({ compressionLevel: 9, colours: 32 })
+  .toBuffer();
+await writeFile(join(publicDir, 'noise.png'), noise);
+
+console.log(`public/noise.png     ${(noise.length / 1024).toFixed(1)} kB`);
 console.log(`public/og.png        ${(ogPng.length / 1024).toFixed(1)} kB`);
 console.log(`app/apple-icon.png   ${(iconPng.length / 1024).toFixed(1)} kB`);

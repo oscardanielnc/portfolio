@@ -27,30 +27,28 @@ export function ProjectCard({ project, labels, variant }: Props) {
   return (
     <article
       className={[
-        'flex flex-col overflow-hidden rounded-card border border-line bg-surface',
-        'transition-colors duration-200 hover:border-line-strong',
+        'panel panel-interactive reveal flex flex-col overflow-hidden rounded-card',
         variant !== 'standard' ? 'md:col-span-2' : '',
         variant === 'featured' ? 'md:flex-row' : '',
         variant === 'featured-reverse' ? 'md:flex-row-reverse' : '',
       ].join(' ')}
     >
-      {variant === 'standard' && plate}
-      {isFeatured && plate}
+      {plate}
 
       <div
         className={[
-          'flex flex-1 flex-col p-5 sm:p-6',
+          'flex flex-1 flex-col p-5 sm:p-7',
           isFeatured ? 'md:w-[46%] md:shrink-0' : '',
           variant === 'text' ? 'md:flex-row md:items-start md:gap-10' : '',
         ].join(' ')}
       >
         <div className={variant === 'text' ? 'md:flex-1' : ''}>
-          <h3 className="text-lg font-semibold tracking-tight sm:text-xl">
-            {project.name}
-            <span className="ml-2 align-middle text-sm font-normal text-muted">{project.kind}</span>
-          </h3>
+          <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+            <h3 className="text-lg font-semibold tracking-tight sm:text-xl">{project.name}</h3>
+            <span className="text-sm text-muted">{project.kind}</span>
+          </div>
 
-          <p className="mt-2 max-w-[68ch] text-[0.9375rem] leading-relaxed text-ink">
+          <p className="mt-2.5 max-w-[68ch] text-[0.9375rem] leading-relaxed text-ink">
             {project.summary}
           </p>
 
@@ -66,11 +64,11 @@ export function ProjectCard({ project, labels, variant }: Props) {
           ].join(' ')}
         >
           <h4 className="sr-only">{`${labels.stack} — ${project.name}`}</h4>
-          <ul className={`flex flex-wrap gap-1.5 ${variant === 'text' ? '' : 'mt-5'}`}>
+          <ul className={`flex flex-wrap gap-1.5 ${variant === 'text' ? '' : 'mt-6'}`}>
             {project.tech.map((tech) => (
               <li
                 key={tech}
-                className="rounded-tag border border-line px-1.5 py-0.5 font-mono text-[0.6875rem] leading-5 text-muted"
+                className="rounded-tag border border-line bg-tag px-2 py-0.5 font-mono text-[0.6875rem] leading-5 text-muted"
               >
                 {tech}
               </li>
@@ -78,7 +76,7 @@ export function ProjectCard({ project, labels, variant }: Props) {
           </ul>
 
           <div
-            className={`flex flex-wrap items-center gap-x-5 gap-y-3 pt-6 ${
+            className={`flex flex-wrap items-center gap-x-5 gap-y-3 pt-7 ${
               variant === 'text' ? '' : 'mt-auto'
             }`}
           >
@@ -87,14 +85,15 @@ export function ProjectCard({ project, labels, variant }: Props) {
                 href={project.demo}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-control bg-accent px-4 py-2.5 text-sm font-semibold text-on-accent transition-opacity duration-200 hover:opacity-85 active:translate-y-px"
+                className="btn btn-primary px-4 py-2.5 text-sm"
               >
                 {labels.live}
                 <ExternalIcon className="h-3.5 w-3.5" />
                 <span className="sr-only">{`— ${project.name}`}</span>
               </a>
             ) : (
-              <span className="inline-flex items-center rounded-control border border-dashed border-line-strong px-4 py-2.5 text-sm font-medium text-muted">
+              <span className="inline-flex items-center gap-2 rounded-control border border-dashed border-line-strong px-4 py-2.5 text-sm font-medium text-muted">
+                <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-line-strong" />
                 {labels.archived}
               </span>
             )}
@@ -117,16 +116,11 @@ export function ProjectCard({ project, labels, variant }: Props) {
   );
 }
 
-/** Fixed 16:10 plate, cropped from the top so the app chrome stays readable. */
-function Plate({
-  project,
-  alt,
-  variant,
-}: {
-  project: Project;
-  alt: string;
-  variant: Variant;
-}) {
+/**
+ * Fixed 16:10 plate, cropped from the top so the app chrome stays readable, inset
+ * slightly so the screenshot reads as a framed window rather than a bleeding edge.
+ */
+function Plate({ project, alt, variant }: { project: Project; alt: string; variant: Variant }) {
   const image = project.image;
   if (!image) return null;
 
@@ -135,27 +129,25 @@ function Plate({
   return (
     <div
       className={[
-        'aspect-[16/10] shrink-0 overflow-hidden bg-surface-hover',
-        isFeatured
-          ? 'border-b border-line md:aspect-auto md:flex-1 md:border-b-0'
-          : 'border-b border-line',
-        variant === 'featured' ? 'md:border-l' : '',
-        variant === 'featured-reverse' ? 'md:border-r' : '',
+        'relative shrink-0 p-3 sm:p-4',
+        isFeatured ? 'md:flex-1 md:p-5' : '',
       ].join(' ')}
     >
-      <img
-        src={image.src}
-        srcSet={`${image.src.replace('.webp', '@sm.webp')} ${Math.round(image.width / 2)}w, ${image.src} ${image.width}w`}
-        sizes={isFeatured ? '(min-width: 768px) 34rem, 100vw' : '(min-width: 768px) 32rem, 100vw'}
-        width={image.width}
-        height={image.height}
-        alt={alt}
-        loading="lazy"
-        decoding="async"
-        // Below the fold and never the LCP element: keep them off the critical path.
-        fetchPriority="low"
-        className="h-full w-full object-cover object-top"
-      />
+      <div className="h-full overflow-hidden rounded-[10px] border border-line bg-bg shadow-[0_10px_30px_-18px_rgba(0,0,0,0.9)]">
+        <img
+          src={image.src}
+          srcSet={`${image.src.replace('.webp', '@sm.webp')} ${Math.round(image.width / 2)}w, ${image.src} ${image.width}w`}
+          sizes={isFeatured ? '(min-width: 768px) 34rem, 100vw' : '(min-width: 768px) 32rem, 100vw'}
+          width={image.width}
+          height={image.height}
+          alt={alt}
+          loading="lazy"
+          decoding="async"
+          // Below the fold and never the LCP element: keep them off the critical path.
+          fetchPriority="low"
+          className="aspect-[16/10] h-full w-full object-cover object-top"
+        />
+      </div>
     </div>
   );
 }

@@ -4,7 +4,8 @@ import { Header } from './header';
 import { ProjectCard, type Variant } from './project-card';
 import { ArrowIcon, DownloadIcon, GitHubIcon, LinkedInIcon } from './icons';
 
-const heading = 'text-2xl font-semibold tracking-tight sm:text-3xl';
+const shell = 'mx-auto max-w-5xl px-4 sm:px-6';
+const heading = 'text-3xl font-semibold tracking-[-0.03em] sm:text-4xl';
 
 /** Card composition per project, in the fixed order the projects are listed in.
     The two projects without a screenshot get the full-width text variant. */
@@ -31,52 +32,42 @@ export function SitePage({ content }: { content: Content }) {
 
       <Header content={content} />
 
-      <main id="main" className="pt-14">
-        {/* Hero. Asymmetric 7/5 split so the second half carries real copy
-            instead of empty space, and so the CTAs stay above the fold. */}
-        <section className="hero-wash border-b border-line">
-          <div className="mx-auto grid max-w-5xl gap-x-12 gap-y-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-12 lg:py-24">
+      <main id="main">
+        {/* Hero */}
+        <section className="ambient overflow-hidden pt-28 sm:pt-36">
+          <div className={`${shell} grid gap-x-12 gap-y-12 pb-20 lg:grid-cols-12 lg:pb-28`}>
             <div className="lg:col-span-7">
-              <p className="font-mono text-xs tracking-wide text-accent">{content.hero.location}</p>
+              <p className="eyebrow enter enter-1">{content.hero.location}</p>
 
-              <h1 className="mt-5 text-[2rem] font-semibold leading-[1.05] tracking-[-0.02em] text-balance sm:text-5xl">
-                {site.name}
-              </h1>
+              <h1 className="display enter-soft enter-2 mt-6">{site.name}</h1>
 
-              <p className="mt-4 text-lg font-medium text-muted sm:text-xl">
+              <p className="enter-soft enter-2 mt-4 text-xl font-medium text-muted sm:text-2xl">
                 {content.hero.headline}
               </p>
 
               {lead && (
-                <p className="mt-7 max-w-[58ch] text-[0.9375rem] leading-[1.75] text-muted sm:text-base">
+                <p className="enter-soft enter-3 mt-8 max-w-[58ch] text-[0.9375rem] leading-[1.8] text-muted sm:text-base">
                   {lead}
                 </p>
               )}
 
-              <div className="mt-9 flex flex-wrap items-center gap-3">
-                <a
-                  href="#projects"
-                  className="inline-flex items-center gap-2 rounded-control bg-accent px-5 py-3 text-sm font-semibold text-on-accent transition-opacity duration-200 hover:opacity-85 active:translate-y-px"
-                >
+              <div className="enter enter-4 mt-10 flex flex-wrap items-center gap-3">
+                <a href="#projects" className="btn btn-primary px-5 py-3 text-sm">
                   {content.hero.primaryCta}
                   <ArrowIcon className="h-4 w-4" />
                 </a>
-                <a
-                  href={content.cvHref}
-                  download
-                  className="inline-flex items-center gap-2 rounded-control border border-line-strong px-5 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:bg-surface-hover active:translate-y-px"
-                >
+                <a href={content.cvHref} download className="btn btn-secondary px-5 py-3 text-sm">
                   <DownloadIcon className="h-4 w-4" />
                   {content.hero.secondaryCta}
                 </a>
               </div>
             </div>
 
-            <div className="flex flex-col justify-end space-y-5 border-t border-line pt-8 lg:col-span-5 lg:border-l lg:border-t-0 lg:pb-1 lg:pl-12 lg:pt-1">
+            <div className="enter enter-4 flex flex-col justify-end gap-5 lg:col-span-5 lg:pb-1">
               {rest.map((paragraph) => (
                 <p
                   key={paragraph.slice(0, 24)}
-                  className="max-w-[52ch] text-[0.875rem] leading-[1.8] text-muted"
+                  className="max-w-[52ch] text-[0.875rem] leading-[1.85] text-muted"
                 >
                   {paragraph}
                 </p>
@@ -85,111 +76,113 @@ export function SitePage({ content }: { content: Content }) {
           </div>
         </section>
 
+        <hr className="rule" />
+
         {/* Projects */}
-        <section id="projects" className="border-b border-line">
-          <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-20">
-            <h2 className={heading}>{content.sections.projects}</h2>
+        <section id="projects" className={`${shell} py-20 sm:py-28`}>
+          <h2 className={`${heading} reveal`}>{content.sections.projects}</h2>
 
-            <div className="mt-10 grid gap-4 md:grid-cols-2">
-              {content.projects.map((project, index) => (
-                <ProjectCard
-                  key={project.name}
-                  project={project}
-                  labels={content.projectLabels}
-                  variant={variants[index] ?? 'standard'}
-                />
-              ))}
-            </div>
-
-            <p className="mt-8 max-w-[75ch] text-sm leading-[1.75] text-muted">
-              {content.alsoBuilt}
-            </p>
+          <div className="mt-10 grid gap-5 md:grid-cols-2">
+            {content.projects.map((project, index) => (
+              <ProjectCard
+                key={project.name}
+                project={project}
+                labels={content.projectLabels}
+                variant={variants[index] ?? 'standard'}
+              />
+            ))}
           </div>
+
+          <p className="reveal mt-10 max-w-[75ch] text-sm leading-[1.8] text-muted">
+            {content.alsoBuilt}
+          </p>
         </section>
+
+        <hr className="rule" />
 
         {/* Experience */}
-        <section id="experience" className="border-b border-line">
-          <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-20">
-            <h2 className={heading}>{content.sections.experience}</h2>
+        <section id="experience" className={`${shell} py-20 sm:py-28`}>
+          <h2 className={`${heading} reveal`}>{content.sections.experience}</h2>
 
-            <ol className="mt-10 border-l border-line">
-              {content.experience.map((role) => (
-                <li key={`${role.company}-${role.dates}`} className="relative py-5 pl-6 first:pt-0">
-                  <span
-                    aria-hidden="true"
-                    className="absolute -left-px top-[1.85rem] h-px w-4 bg-line-strong first:top-2"
-                  />
-                  <div className="flex flex-col gap-x-4 gap-y-1 sm:flex-row sm:items-baseline sm:justify-between">
-                    <h3 className="text-base font-semibold tracking-tight">
-                      {role.title}
-                      <span className="font-normal text-muted"> · {role.company}</span>
-                    </h3>
-                    <p className="shrink-0 font-mono text-xs text-muted">{role.dates}</p>
-                  </div>
-                  <p className="mt-2 max-w-[75ch] text-[0.9375rem] leading-[1.7] text-muted">
-                    {role.line}
-                  </p>
-                </li>
-              ))}
-            </ol>
-          </div>
+          <ol className="mt-10 grid gap-4">
+            {content.experience.map((role) => (
+              <li
+                key={`${role.company}-${role.dates}`}
+                className="panel panel-interactive reveal rounded-card p-5 sm:p-6"
+              >
+                <div className="flex flex-col gap-x-4 gap-y-1.5 sm:flex-row sm:items-baseline sm:justify-between">
+                  <h3 className="text-base font-semibold tracking-tight">
+                    {role.title}
+                    <span className="font-normal text-muted"> · {role.company}</span>
+                  </h3>
+                  <p className="shrink-0 font-mono text-xs text-muted">{role.dates}</p>
+                </div>
+                <p className="mt-2.5 max-w-[78ch] text-[0.9375rem] leading-[1.75] text-muted">
+                  {role.line}
+                </p>
+              </li>
+            ))}
+          </ol>
         </section>
 
-        {/* Technologies */}
-        <section id="tech" className="border-b border-line">
-          <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-20">
-            <h2 className={heading}>{content.sections.tech}</h2>
+        <hr className="rule" />
 
-            <ul className="mt-10 flex flex-wrap gap-2">
-              {content.tech.map((tech) => (
-                <li
-                  key={tech}
-                  className="rounded-tag border border-line bg-surface px-3 py-1.5 text-[0.8125rem] text-ink transition-colors duration-200 hover:border-line-strong"
-                >
-                  {tech}
-                </li>
-              ))}
-            </ul>
-          </div>
+        {/* Technologies */}
+        <section id="tech" className={`${shell} py-20 sm:py-28`}>
+          <h2 className={`${heading} reveal`}>{content.sections.tech}</h2>
+
+          <ul className="reveal mt-10 flex flex-wrap gap-2">
+            {content.tech.map((tech) => (
+              <li
+                key={tech}
+                className="panel rounded-tag px-3 py-1.5 text-[0.8125rem] text-ink transition-colors duration-200 hover:border-line-strong hover:text-accent"
+              >
+                {tech}
+              </li>
+            ))}
+          </ul>
         </section>
       </main>
 
-      {/* Contact */}
-      <footer id="contact" className="mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-20">
-        <h2 className={heading}>{content.sections.contact}</h2>
+      <hr className="rule" />
 
-        <ul className="mt-8 space-y-4">
-          <li>
-            <a
-              href={`mailto:${site.email}`}
-              className="inline-flex items-center gap-2.5 text-lg text-ink underline decoration-line-strong underline-offset-[6px] transition-colors duration-200 hover:text-accent hover:decoration-accent sm:text-xl"
-            >
-              {site.email}
-            </a>
-          </li>
-          <li>
-            <a
-              href={site.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2.5 text-base text-muted transition-colors duration-200 hover:text-accent"
-            >
-              <GitHubIcon className="h-4 w-4" />
-              {content.nav.github}
-            </a>
-          </li>
-          <li>
-            <a
-              href={site.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2.5 text-base text-muted transition-colors duration-200 hover:text-accent"
-            >
-              <LinkedInIcon className="h-4 w-4" />
-              {content.nav.linkedin}
-            </a>
-          </li>
-        </ul>
+      {/* Contact */}
+      <footer id="contact" className="ambient overflow-hidden">
+        <div className={`${shell} py-20 sm:py-28`}>
+          <h2 className={`${heading} reveal`}>{content.sections.contact}</h2>
+
+          <a
+            href={`mailto:${site.email}`}
+            className="display-link reveal mt-8 inline-block text-2xl font-semibold tracking-[-0.02em] transition-opacity duration-200 hover:opacity-80 sm:text-3xl"
+          >
+            {site.email}
+          </a>
+
+          <ul className="reveal mt-8 flex flex-wrap gap-3">
+            <li>
+              <a
+                href={site.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-secondary px-4 py-2.5 text-sm"
+              >
+                <GitHubIcon className="h-4 w-4" />
+                {content.nav.github}
+              </a>
+            </li>
+            <li>
+              <a
+                href={site.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-secondary px-4 py-2.5 text-sm"
+              >
+                <LinkedInIcon className="h-4 w-4" />
+                {content.nav.linkedin}
+              </a>
+            </li>
+          </ul>
+        </div>
       </footer>
     </>
   );
