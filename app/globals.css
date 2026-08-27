@@ -1,52 +1,80 @@
 @import 'tailwindcss';
 
-/* Dark is the default. Light is opt-in through the OS setting only. */
+/* ---------------------------------------------------------------------------
+   Design tokens.
+
+   Dark is the default; light is opt-in through the OS setting only.
+   One accent (coral). The violet only ever appears inside ambient glows,
+   never as a text or border colour, so there is still exactly one colour a
+   reader has to learn.
+   --------------------------------------------------------------------------- */
 :root {
-  --bg: #0b0b0d;
-  --surface: #131317;
-  --surface-hover: #191920;
-  --border: #2a2a31;
-  --border-strong: #3d3d47;
-  --text: #ececf1;
-  --muted: #a1a1ad;
-  --accent: #e8ad5f;
-  --on-accent: #0b0b0d;
-  --selection: #e8ad5f30;
-  /* Header backdrop. Kept as an explicit rgba() so the exact colour is auditable. */
-  --bg-translucent: rgba(11, 11, 13, 0.82);
-  /* Single faint accent wash behind the hero. CSS only, no image request. */
-  --hero-wash: radial-gradient(70rem 32rem at 12% -12%, rgba(232, 173, 95, 0.09), transparent 62%);
+  --bg: #08080c;
+  --bg-raised: #0d0d14;
+  --surface-top: #14141d;
+  --surface-bottom: #0f0f16;
+  --surface-hover: #191922;
+  --border: #23232e;
+  --border-strong: #38384c;
+  --highlight: rgba(255, 255, 255, 0.06);
+  --text: #f4f4f8;
+  --muted: #9b9bad;
+  --accent: #ff6b4a;
+  --accent-soft: rgba(255, 107, 74, 0.16);
+  --glow-a: rgba(255, 107, 74, 0.28);
+  --glow-b: rgba(167, 139, 250, 0.2);
+  --on-accent: #0a0a0f;
+  --selection: rgba(255, 107, 74, 0.26);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -12px rgba(0, 0, 0, 0.7);
+  --shadow-lift: 0 1px 2px rgba(0, 0, 0, 0.4), 0 18px 40px -16px rgba(0, 0, 0, 0.85);
+  --bg-translucent: rgba(13, 13, 20, 0.6);
+  --tag-bg: rgba(8, 8, 12, 0.55);
+  /* Explicit end stop for gradient text so its contrast is auditable, not derived. */
+  --display-end: #9a9aa2;
+  --noise-opacity: 0.035;
   color-scheme: dark;
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    --bg: #fcfcfb;
-    --surface: #ffffff;
-    --surface-hover: #f6f6f4;
-    --border: #e3e3e0;
-    --border-strong: #cfcfca;
-    --text: #16161a;
-    --muted: #55555f;
-    --accent: #8f5117;
+    --bg: #fbfbfc;
+    --bg-raised: #ffffff;
+    --surface-top: #ffffff;
+    --surface-bottom: #f8f8fa;
+    --surface-hover: #f2f2f5;
+    --border: #e6e6ec;
+    --border-strong: #cdcdd8;
+    --highlight: rgba(255, 255, 255, 0.9);
+    --text: #131318;
+    --muted: #56566a;
+    --accent: #bf3a16;
+    --accent-soft: rgba(191, 58, 22, 0.1);
+    --glow-a: rgba(191, 58, 22, 0.12);
+    --glow-b: rgba(124, 92, 226, 0.1);
     --on-accent: #ffffff;
-    --selection: #8f511718;
-    --bg-translucent: rgba(252, 252, 251, 0.82);
-    --hero-wash: radial-gradient(70rem 32rem at 12% -12%, rgba(143, 81, 23, 0.07), transparent 62%);
+    --selection: rgba(191, 58, 22, 0.16);
+    --shadow-card: 0 1px 2px rgba(19, 19, 24, 0.05), 0 8px 24px -14px rgba(19, 19, 24, 0.2);
+    --shadow-lift: 0 1px 2px rgba(19, 19, 24, 0.06), 0 20px 44px -18px rgba(19, 19, 24, 0.28);
+    --bg-translucent: rgba(255, 255, 255, 0.62);
+    --tag-bg: rgba(246, 246, 249, 0.9);
+    --display-end: #6e6e75;
+    --noise-opacity: 0.03;
     color-scheme: light;
   }
 }
 
 @theme inline {
   --color-bg: var(--bg);
+  --color-bg-raised: var(--bg-raised);
   --color-bg-translucent: var(--bg-translucent);
-  --color-surface: var(--surface);
   --color-surface-hover: var(--surface-hover);
   --color-line: var(--border);
   --color-line-strong: var(--border-strong);
   --color-ink: var(--text);
   --color-muted: var(--muted);
   --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-tag: var(--tag-bg);
   --color-on-accent: var(--on-accent);
 
   --font-sans: var(--font-geist), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
@@ -54,10 +82,9 @@
   --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono',
     monospace;
 
-  /* Radius scale. One rule, applied everywhere:
-     containers 14px, interactive 8px, tags 6px, the language switch is a pill. */
-  --radius-card: 14px;
-  --radius-control: 8px;
+  /* One radius scale: containers 16px, controls 10px, tags 6px, nav is a pill. */
+  --radius-card: 16px;
+  --radius-control: 10px;
   --radius-tag: 6px;
 }
 
@@ -67,8 +94,7 @@
 
 html {
   scroll-behavior: smooth;
-  /* Fixed header offset for in-page anchors. */
-  scroll-padding-top: 5.5rem;
+  scroll-padding-top: 6.5rem;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -79,10 +105,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-.hero-wash {
-  background-image: var(--hero-wash);
-}
-
 ::selection {
   background: var(--selection);
 }
@@ -90,13 +112,273 @@ body {
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
-  border-radius: 3px;
+  border-radius: 4px;
+}
+
+/* ---------------------------------------------------------------------------
+   Ambient background: two soft colour fields plus a fine grain, painted with
+   CSS only. No image request, no extra bytes over the wire.
+   --------------------------------------------------------------------------- */
+.ambient {
+  position: relative;
+  isolation: isolate;
+}
+
+.ambient::before,
+.ambient::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.ambient::before {
+  background:
+    radial-gradient(52rem 30rem at 10% -6%, var(--glow-a), transparent 62%),
+    radial-gradient(46rem 28rem at 86% 8%, var(--glow-b), transparent 64%);
+}
+
+.ambient::after {
+  opacity: var(--noise-opacity);
+  /* Pre-rendered tile, not a live SVG filter: feTurbulence is rasterised on every
+     paint and cost about 0.9s of LCP under mobile CPU throttling. */
+  background-image: url('/noise.png');
+  background-size: 128px 128px;
+}
+
+/* Hairline that fades out at both ends, used as the section separator. */
+.rule {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(90deg, transparent, var(--border) 12%, var(--border) 88%, transparent);
+}
+
+/* ---------------------------------------------------------------------------
+   Surfaces. The top-edge inset highlight is what makes a panel read as raised
+   rather than as a rectangle with a border drawn round it.
+   --------------------------------------------------------------------------- */
+.panel {
+  background-image: linear-gradient(180deg, var(--surface-top), var(--surface-bottom));
+  border: 1px solid var(--border);
+  box-shadow:
+    inset 0 1px 0 var(--highlight),
+    var(--shadow-card);
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 220ms ease;
+}
+
+.panel-interactive:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-strong);
+  box-shadow:
+    inset 0 1px 0 var(--highlight),
+    var(--shadow-lift);
+}
+
+/* ---------------------------------------------------------------------------
+   Controls.
+   --------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: var(--radius-control);
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    transform 160ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease,
+    filter 160ms ease;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--accent);
+  color: var(--on-accent);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 6px 18px -8px var(--glow-a);
+}
+
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 55%);
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.06);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 10px 26px -8px var(--glow-a);
+}
+
+.btn-primary:hover::after {
+  opacity: 1;
+}
+
+.btn-secondary {
+  background-image: linear-gradient(180deg, var(--surface-top), var(--surface-bottom));
+  border: 1px solid var(--border);
+  color: var(--text);
+  box-shadow: inset 0 1px 0 var(--highlight);
+}
+
+.btn-secondary:hover {
+  border-color: var(--border-strong);
+  background-color: var(--surface-hover);
+}
+
+/* ---------------------------------------------------------------------------
+   Type.
+   --------------------------------------------------------------------------- */
+.display {
+  font-size: clamp(2.5rem, 8.5vw, 4.75rem);
+  line-height: 0.98;
+  letter-spacing: -0.038em;
+  font-weight: 600;
+  background-image: linear-gradient(170deg, var(--text) 32%, var(--display-end));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  /* The gradient fill clips descenders without a little breathing room. */
+  padding-bottom: 0.06em;
+}
+
+/* Same treatment for the contact address. */
+.display-link {
+  background-image: linear-gradient(100deg, var(--text) 28%, var(--display-end));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.08em;
+}
+
+@supports not (background-clip: text) {
+  .display,
+  .display-link {
+    color: var(--text);
+  }
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.01em;
+  color: var(--accent);
+}
+
+/* ---------------------------------------------------------------------------
+   Motion.
+
+   Entrances on load are plain keyframes. Section reveals use a scroll timeline
+   where supported; where it is not, content is simply visible from the start.
+   No JavaScript is involved either way, so nothing can leave content hidden.
+   --------------------------------------------------------------------------- */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes slide {
+  from {
+    transform: translateY(12px);
+  }
+  to {
+    transform: none;
+  }
+}
+
+.enter {
+  animation: rise 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/*
+ * The hero headline and lead are the largest paint on the page. Fading them in from
+ * opacity 0 means the browser does not count them as painted until the animation ends,
+ * which pushes LCP out by the whole duration. They move but never fade, so they are
+ * painted on the first frame and the entrance still reads as a stagger.
+ */
+.enter-soft {
+  animation: slide 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.enter-1 {
+  animation-delay: 40ms;
+}
+
+.enter-2 {
+  animation-delay: 90ms;
+}
+
+.enter-3 {
+  animation-delay: 140ms;
+}
+
+.enter-4 {
+  animation-delay: 190ms;
+}
+
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: rise linear both;
+    animation-timeline: view();
+    /* Completes almost as soon as the element enters. A wide range looks nicer but
+       leaves content faded for longer, and anything that stops the timeline from
+       advancing would leave it hidden — so the range is kept deliberately short. */
+    animation-range: entry 0% entry 55%;
+  }
+}
+
+/* A scroll timeline never advances when there is no scrolling: printing, reader
+   views and some preview renderers would otherwise capture blank sections. */
+@media print {
+  .reveal,
+  .enter,
+  .enter-soft {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
+
+  .enter,
+  .enter-soft,
+  .reveal {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
+
+  .panel-interactive:hover,
+  .btn:active {
+    transform: none;
+  }
+
   *,
   *::before,
   *::after {
