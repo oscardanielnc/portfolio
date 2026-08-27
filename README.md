@@ -14,8 +14,18 @@ No analytics, no tracking scripts. One typeface (Geist), self-hosted at build ti
 
 ```bash
 npm ci
-npm run build      # → out/
+npm run build      # next build, then scripts/strip-hydration.mjs → out/
 ```
+
+`npm run build` ends by removing React's hydration payload from the exported HTML.
+Nothing on this site is interactive in JavaScript — every control is a native anchor or a
+CSS state — so the ~90 kB (brotli) of runtime Next ships would boot, hydrate a tree nobody
+touches, and change nothing. Dropping it is worth about a second of LCP on mobile.
+
+`scripts/strip-hydration.mjs` **fails the build** if it finds a `'use client'` directive
+anywhere in `app/`, `components/`, `lib/` or `content/`, so a page whose JavaScript
+silently does not run can never ship. If you add real interactivity, remove the
+`&& node scripts/strip-hydration.mjs` from the `build` script — do not weaken the guard.
 
 | | |
 |---|---|
