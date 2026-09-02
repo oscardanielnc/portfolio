@@ -50,6 +50,7 @@ export const en: Content = {
     archived: 'Archived',
     stack: 'Stack',
     screenshot: 'Screenshot of',
+    recording: 'Recording of',
     noDemo: 'No public demo',
   },
 
@@ -74,9 +75,9 @@ export const en: Content = {
       name: 'tvindicators',
       kind: 'strategy validation engine',
       summary:
-        'Trading strategies reimplemented in Python and run continuously in paper trading to build a live track record.',
+        'Trading strategies reimplemented in Python and put through continuous paper trading to find out which ones survive contact with the live market.',
       detail:
-        'Over 40 validated strategies run against Binance perpetual futures, with a REST API exposing equity curves and live-versus-backtest evaluation. A pre-push hook blocks any commit where the live signal path stops reproducing the backtest. Paper trading only — it has never traded real money, and its own documentation warns against reading the backtest Sharpe as a live expectation.',
+        'The system exists to rule strategies out, not to make money: it measures each one’s live expectancy against its backtest and flags the ones that stop reproducing what they promised. Most failing is the expected result — a strategy that holds up outside its own backtest is the exception, and finding one means measuring the rest honestly. Over 40 strategies run against Binance perpetual futures, with a REST API exposing equity curves and the live-versus-backtest evaluation. A pre-push hook blocks any commit where the live signal path stops reproducing the backtest. Paper trading only — it has never traded real money, and its own documentation warns against reading the backtest Sharpe as a live expectation.',
       ...projectRefs.tvindicators,
     },
     {

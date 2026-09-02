@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en" data-resolution="custom">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1600, height=1000" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /*
+        Kepler is the only project on the site with no plate at all: it is archived, so
+        there is nothing left to record. This is a diagram, not a screen recording, and it
+        is deliberately built so nobody could mistake it for one.
+
+        Every number here is one Kepler actually published — 7 sleeves, 3.4% against a 10%
+        budget, 18 days. There is no invented equity curve, because an animated line that
+        looks like real performance and is not would be the one dishonest thing a portfolio
+        cannot afford.
+
+        Canvas is 1600x1000 (16:10) to match the card plate exactly, and type is sized for
+        a plate rendered around 544px wide — roughly a third of this — so nothing smaller
+        than ~44px is used for anything that has to be read.
+      */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg: #08080c;
+        --raised: #0d0d14;
+        --border: #23232e;
+        --border-strong: #38384c;
+        --text: #f4f4f8;
+        --muted: #9b9bad;
+        --accent: #ff6b4a;
+        --accent-soft: rgba(255, 107, 74, 0.16);
+      }
+
+      html,
+      body {
+        width: 1600px;
+        height: 1000px;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Geist, ui-sans-serif, system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* The same coral ambient wash the site uses behind its hero. */
+      body::before {
+        content: '';
+        position: absolute;
+        inset: -20%;
+        background:
+          radial-gradient(48% 40% at 22% 14%, rgba(255, 107, 74, 0.16), transparent 70%),
+          radial-gradient(42% 38% at 82% 84%, rgba(167, 139, 250, 0.11), transparent 70%);
+        pointer-events: none;
+      }
+
+      .clip {
+        position: absolute;
+        inset: 0;
+      }
+
+      /*
+        The framework owns .clip visibility, so a fade-out has to live on something else or
+        the two fight on a non-linear seek. Every scene therefore animates this inner
+        wrapper and hard-kills it at the boundary.
+      */
+      .scene {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 130px;
+      }
+
+      .eyebrow {
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 30px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+
+      .caption {
+        font-size: 46px;
+        line-height: 1.35;
+        color: var(--muted);
+        max-width: 20ch;
+      }
+
+      .caption strong {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      /* ---------------------------------------------------------- scene A */
+      .wordmark {
+        font-size: 200px;
+        font-weight: 700;
+        letter-spacing: -0.05em;
+        line-height: 0.95;
+      }
+
+      .dot {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 12px var(--accent-soft);
+      }
+
+      .sub {
+        font-size: 48px;
+        color: var(--muted);
+        margin-top: 26px;
+      }
+
+      /* ---------------------------------------------------------- scene B */
+      .sleeves {
+        display: flex;
+        gap: 26px;
+        margin-top: 54px;
+      }
+
+      .sleeve {
+        width: 132px;
+        height: 220px;
+        border-radius: 16px;
+        border: 2px solid var(--border);
+        background: var(--raised);
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Seven different shapes, because the point is that they are uncorrelated. */
+      .sleeve span {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(180deg, rgba(255, 107, 74, 0.55), rgba(255, 107, 74, 0.12));
+        transform-origin: bottom;
+      }
+
+      .sleeve i {
+        position: absolute;
+        top: 16px;
+        left: 18px;
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 26px;
+        font-style: normal;
+        color: var(--muted);
+      }
+
+      /* ---------------------------------------------------------- scene C */
+      .gauge {
+        margin-top: 58px;
+        width: 1100px;
+        height: 74px;
+        border-radius: 999px;
+        border: 2px solid var(--border-strong);
+        background: var(--raised);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .gauge-fill {
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 34%; /* 3.4 of the 10% budget */
+        background: linear-gradient(90deg, rgba(255, 107, 74, 0.85), var(--accent));
+        transform-origin: left;
+      }
+
+      .gauge-row {
+        display: flex;
+        justify-content: space-between;
+        width: 1100px;
+        margin-top: 26px;
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 34px;
+        color: var(--muted);
+      }
+
+      .big {
+        font-size: 150px;
+        font-weight: 700;
+        letter-spacing: -0.04em;
+        color: var(--accent);
+        line-height: 1;
+      }
+
+      .big small {
+        font-size: 56px;
+        font-weight: 500;
+        color: var(--muted);
+        letter-spacing: 0;
+      }
+
+      /* ---------------------------------------------------------- scene D */
+      .closing {
+        font-size: 68px;
+        font-weight: 600;
+        line-height: 1.25;
+        max-width: 22ch;
+        letter-spacing: -0.02em;
+      }
+
+      .note {
+        margin-top: 32px;
+        font-size: 40px;
+        color: var(--muted);
+        max-width: 30ch;
+        line-height: 1.45;
+      }
+
+      /* A quiet, permanent label so this can never be read as captured footage. */
+      .schematic {
+        position: absolute;
+        left: 130px;
+        bottom: 66px;
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 26px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #5c5c6b;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="15"
+      data-width="1600"
+      data-height="1000"
+    >
+      <!-- A — identity -->
+      <div class="clip" id="sA" data-start="0" data-duration="3.6" data-track-index="1">
+        <div class="scene" id="sA-in">
+        <div class="dot" id="sA-dot"></div>
+        <div class="wordmark" id="sA-word" style="margin-top: 40px">Kepler</div>
+        <div class="sub" id="sA-sub">Market-neutral crypto system</div>
+        </div>
+      </div>
+
+      <!-- B — seven uncorrelated sleeves -->
+      <div class="clip" id="sB" data-start="3.6" data-duration="4.0" data-track-index="1">
+        <div class="scene" id="sB-in">
+        <div class="eyebrow" id="sB-eyebrow">Seven alpha sleeves</div>
+        <div class="caption" id="sB-cap" style="margin-top: 22px">
+          Uncorrelated by construction, <strong>not by hope</strong>
+        </div>
+        <div class="sleeves" id="sB-sleeves">
+          <div class="sleeve"><i>1</i><span style="height: 62%"></span></div>
+          <div class="sleeve"><i>2</i><span style="height: 34%"></span></div>
+          <div class="sleeve"><i>3</i><span style="height: 78%"></span></div>
+          <div class="sleeve"><i>4</i><span style="height: 21%"></span></div>
+          <div class="sleeve"><i>5</i><span style="height: 55%"></span></div>
+          <div class="sleeve"><i>6</i><span style="height: 44%"></span></div>
+          <div class="sleeve"><i>7</i><span style="height: 69%"></span></div>
+        </div>
+        </div>
+      </div>
+
+      <!-- C — the drawdown budget, the one number that matters -->
+      <div class="clip" id="sC" data-start="7.6" data-duration="4.0" data-track-index="1">
+        <div class="scene" id="sC-in">
+        <div class="eyebrow" id="sC-eyebrow">Max drawdown, live</div>
+        <div class="big" id="sC-big" style="margin-top: 20px">
+          3.4<small>% against a 10% budget</small>
+        </div>
+        <div class="gauge" id="sC-gauge"><div class="gauge-fill" id="sC-fill"></div></div>
+        <div class="gauge-row" id="sC-row"><span>0%</span><span>budget 10%</span></div>
+        </div>
+      </div>
+
+      <!-- D — the honest ending -->
+      <div class="clip" id="sD" data-start="11.6" data-duration="3.4" data-track-index="1">
+        <div class="scene" id="sD-in">
+        <div class="eyebrow" id="sD-eyebrow">18 days live on real capital</div>
+        <div class="closing" id="sD-title" style="margin-top: 24px">Archived for business reasons, not engineering ones.</div>
+        <div class="note" id="sD-note">
+          Low-drawdown copy-trading at micro-capital produced no visible return without scale.
+        </div>
+        </div>
+      </div>
+
+      <div class="schematic">Schematic · published figures</div>
+    </div>
+
+    <script>
+      /*
+        One paused timeline the renderer scrubs frame by frame. Nothing here reads the
+        clock or randomises, so every render of this file is byte-identical to the last.
+      */
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const ease = 'power3.out';
+
+      // A
+      tl.from('#sA-dot', { scale: 0, opacity: 0, duration: 0.7, ease: 'back.out(2)' }, 0.15)
+        .from('#sA-word', { y: 70, opacity: 0, duration: 1.0, ease }, 0.3)
+        .from('#sA-sub', { y: 30, opacity: 0, duration: 0.9, ease }, 0.6)
+        .to('#sA-in', { opacity: 0, duration: 0.45, ease: 'power2.in' }, 3.15)
+        .set('#sA-in', { opacity: 0 }, 3.6);
+
+      // B — sleeves rise one after another, so "seven" is counted, not asserted
+      tl.from('#sB-eyebrow', { y: 26, opacity: 0, duration: 0.6, ease }, 3.75)
+        .from('#sB-cap', { y: 26, opacity: 0, duration: 0.7, ease }, 3.9)
+        .from(
+          '#sB-sleeves .sleeve',
+          { y: 44, opacity: 0, duration: 0.55, ease, stagger: 0.085 },
+          4.1,
+        )
+        .from(
+          '#sB-sleeves .sleeve span',
+          { scaleY: 0, duration: 0.7, ease, stagger: 0.085 },
+          4.3,
+        )
+        .to('#sB-in', { opacity: 0, duration: 0.45, ease: 'power2.in' }, 7.15)
+        .set('#sB-in', { opacity: 0 }, 7.6);
+
+      // C — the fill runs to 34% of the track, which is 3.4 of the 10% budget
+      tl.from('#sC-eyebrow', { y: 26, opacity: 0, duration: 0.6, ease }, 7.75)
+        .from('#sC-big', { y: 40, opacity: 0, duration: 0.8, ease }, 7.9)
+        .from('#sC-gauge', { opacity: 0, duration: 0.6, ease }, 8.15)
+        .from('#sC-fill', { scaleX: 0, duration: 1.5, ease: 'power2.out' }, 8.35)
+        .from('#sC-row', { opacity: 0, duration: 0.6, ease }, 8.6)
+        .to('#sC-in', { opacity: 0, duration: 0.45, ease: 'power2.in' }, 11.15)
+        .set('#sC-in', { opacity: 0 }, 11.6);
+
+      // D
+      tl.from('#sD-eyebrow', { y: 26, opacity: 0, duration: 0.6, ease }, 11.75)
+        .from('#sD-title', { y: 36, opacity: 0, duration: 0.85, ease }, 11.9)
+        .from('#sD-note', { y: 26, opacity: 0, duration: 0.8, ease }, 12.2);
+
+      window.__timelines['main'] = tl;
+    </script>
+  </body>
+</html>

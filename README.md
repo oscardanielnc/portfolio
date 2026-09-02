@@ -14,8 +14,12 @@ No analytics, no tracking scripts. One typeface (Geist), self-hosted at build ti
 
 ```bash
 npm ci
-npm run build      # next build, then scripts/strip-hydration.mjs → out/
+npm run build      # next build --turbopack, then scripts/strip-hydration.mjs → out/
 ```
+
+The build runs **Turbopack**. Next's webpack builder crashes on Node 22 and newer inside
+its WebAssembly hasher (`WasmHash._updateWithBuffer`), which made `npm run build` fail on
+any current Node while still working on Cloudflare's Node 20. Turbopack builds on both.
 
 `npm run build` ends by removing React's hydration payload from the exported HTML.
 Nothing on this site is interactive in JavaScript — every control is a native anchor or a
@@ -56,8 +60,31 @@ writes two WebP widths per project into `public/projects/` — the cards crop to
 crop happens at build-prep time rather than being thrown away by CSS in the browser. The
 output is committed; the Cloudflare build never processes an image.
 
-Projects without a screenshot (Kepler, Mi Peso) render as full-width text cards instead, so a
-missing image never leaves a hole or misaligns a row.
+Every project now leads with a recording rather than a screenshot, so these stills are the
+fallback path: they stay in `content/site.ts` and still render for any card that has no
+`video`.
+
+## Demo recordings
+
+Each project card plays a short muted clip of the software actually running. Screenshots
+prove a project exists; these show that it works.
+
+```bash
+npm run demos            # record every live demo, then encode
+npm run demos:record     # Playwright drives the live deployments → view/demos/ (gitignored)
+npm run demos:process    # ffmpeg → public/demos/*.mp4 (committed, ~2.8 MB for all six)
+```
+
+Two projects have nothing to record — Exposure Dashboard is behind a login and Kepler is
+archived — so their plates are authored instead, as HyperFrames compositions under
+`explainers/`. `demos:process` encodes recordings and explainers identically.
+
+The player is plain HTML, because `strip-hydration.mjs` still guarantees no JavaScript
+ships: `<video autoplay muted loop playsinline preload="none">` with a poster. Browsers
+pause offscreen autoplaying video themselves, so only the card in view decodes.
+
+Full detail, including the credentials contract and the rules the explainers follow, is in
+[`scripts/README-demos.md`](scripts/README-demos.md).
 
 ## Response headers
 

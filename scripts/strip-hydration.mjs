@@ -13,6 +13,7 @@
  * weaken the guard.
  */
 import { readdir, readFile, writeFile, rm, stat } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { join, dirname, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -75,10 +76,19 @@ for (const path of htmlFiles) {
 // ---------------------------------------------------------------- sweep
 let assetsSaved = 0;
 
+/**
+ * Only the JavaScript. This used to remove the whole chunks directory, which was safe
+ * under webpack because stylesheets were emitted to _next/static/css. Turbopack puts the
+ * stylesheet in chunks/ alongside the scripts, and deleting it shipped an unstyled site
+ * that still built, still passed the guard below, and looked fine in dev. Delete by
+ * extension, never by directory.
+ */
 for (const dir of [join(out, '_next', 'static', 'chunks')]) {
-  const files = await walk(dir, () => true).catch(() => []);
-  for (const f of files) assetsSaved += (await stat(f)).size;
-  await rm(dir, { recursive: true, force: true });
+  const files = await walk(dir, (p) => extname(p) === '.js').catch(() => []);
+  for (const f of files) {
+    assetsSaved += (await stat(f)).size;
+    await rm(f, { force: true });
+  }
 }
 
 // RSC payloads exist only for the client router, which no longer loads.
@@ -94,6 +104,8 @@ console.log(
 );
 
 // ---------------------------------------------------------------- verify
+let styledPages = 0;
+
 for (const path of htmlFiles) {
   const text = await readFile(path, 'utf8');
   if (/<script[^>]*src=/.test(text) || /__next_f/.test(text)) {
@@ -104,4 +116,26 @@ for (const path of htmlFiles) {
     console.error(`strip-hydration: ${path} looks truncated`);
     process.exit(1);
   }
+
+  /**
+   * Every stylesheet a page asks for has to still be on disk. Removing scripts is the job;
+   * taking the CSS with them produces a page that builds clean and renders naked, which is
+   * exactly the class of silent failure the rest of this file exists to prevent.
+   *
+   * Counted rather than required per page: Next's generated 404 links no stylesheet of its
+   * own, so demanding one everywhere fails the build over a page that is already fine.
+   */
+  for (const [, href] of text.matchAll(/<link[^>]*rel="stylesheet"[^>]*href="([^"]+)"/g)) {
+    if (!href.startsWith('/')) continue; // external, not ours to verify
+    if (!existsSync(join(out, href.split('?')[0]))) {
+      console.error(`strip-hydration: ${path} references a missing stylesheet: ${href}`);
+      process.exit(1);
+    }
+    styledPages++;
+  }
+}
+
+if (styledPages === 0) {
+  console.error('strip-hydration: no page references a stylesheet — the CSS was stripped');
+  process.exit(1);
 }

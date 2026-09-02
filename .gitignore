@@ -9,3 +9,9 @@ next-env.d.ts
 # Third-party agent skills, installed with `npx skills add`
 .agents/
 .claude/skills/
+
+# Raw demo recordings: large, regenerable with `npm run demos:record`
+view/demos/
+
+# Explainer renders: regenerable from the composition with `hyperframes render`
+explainers/*/renders/
