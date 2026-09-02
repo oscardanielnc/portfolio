@@ -39,8 +39,9 @@ silently does not run can never ship. If you add real interactivity, remove the
 | **Install command** | `npm ci` |
 
 `npm run preview` serves `out/` locally on <http://localhost:4173> the way Cloudflare Pages
-does (directory indexes, Brotli/gzip, immutable caching for `/_next/static`). Use it for
-honest Lighthouse numbers — a plain uncompressed static server understates performance.
+does — directory indexes, Brotli/gzip, and the same immutable caching `public/_headers`
+sets. Use it for honest Lighthouse numbers; a plain uncompressed static server understates
+performance.
 
 ## CVs
 
@@ -60,9 +61,8 @@ writes two WebP widths per project into `public/projects/` — the cards crop to
 crop happens at build-prep time rather than being thrown away by CSS in the browser. The
 output is committed; the Cloudflare build never processes an image.
 
-Every project now leads with a recording rather than a screenshot, so these stills are the
-fallback path: they stay in `content/site.ts` and still render for any card that has no
-`video`.
+Every card now leads with a recording instead, so these stills are the fallback: they stay
+in `content/site.ts` and render for any project that has no `video`.
 
 ## Demo recordings
 
@@ -72,36 +72,45 @@ prove a project exists; these show that it works.
 ```bash
 npm run demos            # record every live demo, then encode
 npm run demos:record     # Playwright drives the live deployments → view/demos/ (gitignored)
-npm run demos:process    # ffmpeg → public/demos/*.mp4 (committed, ~2.8 MB for all six)
+npm run demos:process    # ffmpeg → public/demos/ (committed, 3.2 MB for all six)
 ```
+
+Playwright drives the real deployments, so the footage is of the software itself and
+regenerates when an app changes rather than being re-recorded by hand. A phone downloads at
+most the `@sm` cut of the one card it is looking at.
 
 Kepler has nothing left to record — it is archived — so its plate is authored instead, as a
 HyperFrames composition under `explainers/`. `demos:process` encodes recordings and
 explainers identically.
 
 Exposure Dashboard searches real people, so its clip searches the address already printed
-in this site's own footer. An address belongs to one person; searching a handle or a name
-returns other people who happen to share it, and publishing them here would not be
-anyone's to consent to. The reasoning is in
-[`scripts/README-demos.md`](scripts/README-demos.md).
+in this site's own footer. An address belongs to one person; a handle or a name matches
+other people who happen to share it, and publishing them here is not anyone's consent to
+give.
 
 Clip filenames carry a content hash and `content/demos.ts` is generated from them, so a
-re-encode publishes a new URL and `/demos/*` can be served immutable. Reusing a stable name
-under Cloudflare's four-hour default left visitors watching a clip that had already been
-replaced.
+re-encode always publishes a new URL and `/demos/*` can be served immutable. Reusing a
+stable name under Cloudflare's four-hour default left visitors watching a clip that had
+already been replaced — which reads as a broken site rather than a cached one.
 
 The player is plain HTML, because `strip-hydration.mjs` still guarantees no JavaScript
-ships: `<video autoplay muted loop playsinline preload="none">` with a poster. Browsers
-pause offscreen autoplaying video themselves, so only the card in view decodes.
+ships: `<video autoplay muted loop playsinline preload="none">` with a poster, and no audio
+track at all. Browsers pause offscreen autoplaying video themselves, so only the card in
+view decodes, and under `prefers-reduced-motion` the poster replaces the clip.
 
-Full detail, including the credentials contract and the rules the explainers follow, is in
-[`scripts/README-demos.md`](scripts/README-demos.md).
+Full detail — the credentials contract, the privacy bound on the Exposure flow, and the
+rules the explainers follow — is in [`scripts/README-demos.md`](scripts/README-demos.md).
 
 ## Response headers
 
-`public/_headers` is copied verbatim into the deploy. It sets year-long immutable caching for
-the content-hashed assets under `/_next/static` (Cloudflare Pages otherwise defaults to four
-hours) plus HSTS, `X-Frame-Options`, and a referrer policy.
+`public/_headers` is copied verbatim into the deploy. It sets year-long immutable caching
+for the two content-hashed trees — `/_next/static` and `/demos` — plus HSTS,
+`X-Frame-Options`, and a referrer policy.
+
+Cloudflare Pages otherwise defaults to `max-age=14400`. Four hours of caching on a stable
+filename is what silently served a replaced demo clip to everyone who had already loaded
+the page, so anything added under a hashed name belongs in that immutable list, and
+anything served under a stable name must stay out of it.
 
 Two Cloudflare features must stay **off** for this site:
 
@@ -151,7 +160,8 @@ Re-run it if the name, headline or accent colour changes.
    - Build output directory: `out`
    - Root directory: `/`
 4. Under **Environment variables**, add `NODE_VERSION` = `20` (Cloudflare's default image is
-   older than what this project needs).
+   older than what this project needs). Turbopack builds fine on it; the webpack builder is
+   the one that breaks, and only on Node 22 and newer.
 5. **Save and Deploy.** The first build publishes to `portfolio.pages.dev`.
 
 Every push to `main` redeploys. Pushes to other branches create preview deployments.

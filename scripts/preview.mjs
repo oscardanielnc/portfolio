@@ -54,9 +54,16 @@ createServer(async (req, res) => {
   const encoding = compressible.has(ext) ? (/\bbr\b/.test(accept) ? 'br' : /\bgzip\b/.test(accept) ? 'gzip' : null) : null;
 
   res.setHeader('Content-Type', types[ext] ?? 'application/octet-stream');
+  /**
+   * Mirrors the immutable rules in public/_headers. Both paths are content-hashed —
+   * Next hashes what it puts under /_next/static, and process-demos.mjs hashes the clips —
+   * so keep this in step with that file, or the preview stops telling the truth about
+   * production, which is the only reason it exists.
+   */
+  const immutable = ['/_next/static', '/demos/'].some((prefix) => req.url?.startsWith(prefix));
   res.setHeader(
     'Cache-Control',
-    req.url?.startsWith('/_next/static') ? 'public, max-age=31536000, immutable' : 'public, max-age=0, must-revalidate',
+    immutable ? 'public, max-age=31536000, immutable' : 'public, max-age=0, must-revalidate',
   );
   if (encoding) res.setHeader('Content-Encoding', encoding);
   res.setHeader('Vary', 'Accept-Encoding');
