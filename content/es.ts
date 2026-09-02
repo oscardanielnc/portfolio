@@ -55,6 +55,7 @@ export const es: Content = {
     archived: 'Archivado',
     stack: 'Stack',
     screenshot: 'Captura de',
+    recording: 'Grabación de',
     noDemo: 'Sin demo pública',
   },
 
@@ -80,9 +81,9 @@ export const es: Content = {
       name: 'tvindicators',
       kind: 'motor de validación de estrategias',
       summary:
-        'Estrategias de trading reimplementadas en Python y ejecutadas de forma continua en paper trading para construir un historial en vivo.',
+        'Estrategias de trading reimplementadas en Python y sometidas a paper trading continuo para averiguar cuáles sobreviven al mercado real.',
       detail:
-        'Más de 40 estrategias validadas corren contra futuros perpetuos de Binance, con una API REST que expone curvas de equity y evaluación de vivo contra backtest. Un hook de pre-push bloquea cualquier commit en el que la ruta de señal en vivo deje de reproducir el backtest. Solo paper trading — nunca ha operado dinero real, y su propia documentación advierte contra leer el Sharpe del backtest como una expectativa en vivo.',
+        'El propósito del sistema es descartar, no ganar: mide la expectancy en vivo de cada estrategia contra su backtest y marca cuáles no reproducen lo que prometieron. Que la mayoría falle es el resultado esperado — una estrategia que se sostiene fuera de su propio backtest es la excepción, y encontrarla exige medir con honestidad las que no. Más de 40 estrategias corren contra futuros perpetuos de Binance, con una API REST que expone curvas de equity y la evaluación de vivo contra backtest. Un hook de pre-push bloquea cualquier commit en el que la ruta de señal en vivo deje de reproducir el backtest. Solo paper trading — nunca ha operado dinero real, y su propia documentación advierte contra leer el Sharpe del backtest como una expectativa en vivo.',
       ...projectRefs.tvindicators,
     },
     {

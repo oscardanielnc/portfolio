@@ -20,9 +20,10 @@ interface Props {
  */
 export function ProjectCard({ project, labels, variant }: Props) {
   const isFeatured = variant === 'featured' || variant === 'featured-reverse';
-  const plate = project.image ? (
-    <Plate project={project} alt={`${labels.screenshot} ${project.name}`} variant={variant} />
-  ) : null;
+  const plate =
+    project.video || project.image ? (
+      <Plate project={project} labels={labels} variant={variant} />
+    ) : null;
 
   return (
     <article
@@ -118,12 +119,12 @@ export function ProjectCard({ project, labels, variant }: Props) {
 
 /**
  * Fixed 16:10 plate, cropped from the top so the app chrome stays readable, inset
- * slightly so the screenshot reads as a framed window rather than a bleeding edge.
+ * slightly so the media reads as a framed window rather than a bleeding edge.
+ *
+ * A project with a recording shows the recording; the screenshot stays in the data as the
+ * fallback for anyone the video never reaches.
  */
-function Plate({ project, alt, variant }: { project: Project; alt: string; variant: Variant }) {
-  const image = project.image;
-  if (!image) return null;
-
+function Plate({ project, labels, variant }: { project: Project; labels: Content['projectLabels']; variant: Variant }) {
   const isFeatured = variant === 'featured' || variant === 'featured-reverse';
 
   return (
@@ -134,20 +135,87 @@ function Plate({ project, alt, variant }: { project: Project; alt: string; varia
       ].join(' ')}
     >
       <div className="h-full overflow-hidden rounded-[10px] border border-line bg-bg shadow-[0_10px_30px_-18px_rgba(0,0,0,0.9)]">
-        <img
-          src={image.src}
-          srcSet={`${image.src.replace('.webp', '@sm.webp')} ${Math.round(image.width / 2)}w, ${image.src} ${image.width}w`}
-          sizes={isFeatured ? '(min-width: 768px) 34rem, 100vw' : '(min-width: 768px) 32rem, 100vw'}
-          width={image.width}
-          height={image.height}
-          alt={alt}
-          loading="lazy"
-          decoding="async"
-          // Below the fold and never the LCP element: keep them off the critical path.
-          fetchPriority="low"
-          className="aspect-[16/10] h-full w-full object-cover object-top"
-        />
+        {project.video ? (
+          <Recording project={project} labels={labels} />
+        ) : (
+          <Screenshot project={project} alt={`${labels.screenshot} ${project.name}`} isFeatured={isFeatured} />
+        )}
       </div>
     </div>
+  );
+}
+
+/**
+ * The site ships no JavaScript, so this is the whole player: a muted, looping, inline
+ * video that the browser starts on its own. No controls, because there is nothing to
+ * control, and no audio track at all rather than a silent one.
+ *
+ * `<source media>` picks the width once at load time. It is not a substitute for srcSet —
+ * it never re-evaluates on resize — but a phone that loads the 500px cut keeps it, which
+ * is the case worth optimising.
+ */
+function Recording({ project, labels }: { project: Project; labels: Content['projectLabels'] }) {
+  const video = project.video;
+  if (!video) return null;
+
+  const small = video.src.replace('.mp4', '@sm.mp4');
+  const box = `aspect-[16/10] h-full w-full ${video.fit === 'contain' ? 'object-contain' : 'object-cover'}`;
+
+  return (
+    <>
+      <video
+        // eslint-disable-next-line jsx-a11y/media-has-caption -- no audio track to caption
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="none"
+        poster={video.poster}
+        width={video.width}
+        height={video.height}
+        aria-label={`${labels.recording} ${project.name}`}
+        className={`plate-motion ${box}`}
+      >
+        <source media="(max-width: 640px)" src={small} type="video/mp4" />
+        <source src={video.src} type="video/mp4" />
+      </video>
+
+      {/*
+        Reduced-motion fallback. Nothing here can pause a video without JavaScript, so the
+        video is hidden and this still takes its place; browsers do not autoplay a display:
+        none video, which is what makes it work. Lazy, so it costs nothing by default.
+      */}
+      <img
+        src={video.poster}
+        width={video.width}
+        height={video.height}
+        alt={`${labels.screenshot} ${project.name}`}
+        loading="lazy"
+        decoding="async"
+        fetchPriority="low"
+        className={`plate-still ${box}`}
+      />
+    </>
+  );
+}
+
+function Screenshot({ project, alt, isFeatured }: { project: Project; alt: string; isFeatured: boolean }) {
+  const image = project.image;
+  if (!image) return null;
+
+  return (
+    <img
+      src={image.src}
+      srcSet={`${image.src.replace('.webp', '@sm.webp')} ${Math.round(image.width / 2)}w, ${image.src} ${image.width}w`}
+      sizes={isFeatured ? '(min-width: 768px) 34rem, 100vw' : '(min-width: 768px) 32rem, 100vw'}
+      width={image.width}
+      height={image.height}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+      // Below the fold and never the LCP element: keep them off the critical path.
+      fetchPriority="low"
+      className="aspect-[16/10] h-full w-full object-cover object-top"
+    />
   );
 }

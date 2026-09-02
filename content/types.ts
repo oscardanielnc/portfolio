@@ -7,6 +7,27 @@ export interface ProjectImage {
   height: number;
 }
 
+/**
+ * A recording of the running app, produced by scripts/record-demos.mjs against the live
+ * deployment. A screenshot shows that a project exists; this shows that it works.
+ */
+export interface ProjectVideo {
+  /** Path of the 1000px MP4. The phone-sized cut is the same name with an `@sm` suffix. */
+  src: string;
+  /** Still frame from the same cut. Also what shows when motion is unwelcome. */
+  poster: string;
+  /** Always 16:10, matching the plate, so the card reserves the right box before it loads. */
+  width: number;
+  height: number;
+  /**
+   * How the clip fills a plate that is taller than 16:10 because a long copy column
+   * stretched the card. Recordings crop happily — you still see the app. Authored
+   * diagrams do not: cropping one eats the words it was built around. `contain` letterboxes
+   * instead, which is invisible when the composition already sits on the site background.
+   */
+  fit?: 'cover' | 'contain';
+}
+
 export interface Project {
   /** Display name, identical in both locales. */
   name: string;
@@ -26,6 +47,8 @@ export interface Project {
   archived?: boolean;
   /** Real screenshot of the running app. Cards without one lay out differently. */
   image?: ProjectImage;
+  /** Recording of the app in use. Takes the plate over `image` when both are present. */
+  video?: ProjectVideo;
 }
 
 export interface Role {
@@ -84,6 +107,8 @@ export interface Content {
     stack: string;
     /** Prefix for screenshot alt text, e.g. "Screenshot of". */
     screenshot: string;
+    /** Accessible name for a demo recording, e.g. "Recording of". */
+    recording: string;
     /** Shown on cards that have no screenshot. */
     noDemo: string;
   };

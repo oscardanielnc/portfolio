@@ -361,9 +361,38 @@ body {
   }
 }
 
+
+/* Demo recordings ------------------------------------------------------------
+   The plate shows one of two things and never both. By default the recording
+   plays and the still is out of the layout; under reduced motion they swap.
+   With no JavaScript on the page this swap is the only way to honour the
+   preference — a video element cannot be paused from CSS, but a browser will
+   not autoplay one it is not displaying. */
+.plate-still {
+  display: none;
+}
+
+@media print {
+  .plate-motion {
+    display: none;
+  }
+
+  .plate-still {
+    display: block;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .plate-motion {
+    display: none;
+  }
+
+  .plate-still {
+    display: block;
   }
 
   .enter,
