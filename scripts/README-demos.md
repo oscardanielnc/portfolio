@@ -133,22 +133,28 @@ cropping a diagram eats the words it was built around.
 
 ## Recording a tool that searches for people
 
-Exposure Dashboard is the one flow where *what* it does is a privacy decision, not a
-staging choice, because whatever it searches for ends up published on the site.
+Exposure Dashboard is the one flow where *what* it searches for is a privacy decision
+rather than a staging choice, because the result is published on the site.
 
-It searches Oscar's own public GitHub handle. That is the only identifier whose subject has
-agreed to appear in the recording, and it is already linked from the portfolio.
+It searches Oscar's own PUCP address — the one already printed in the site's own footer.
+That specific choice is what makes the recording safe.
 
-**It also returns name-collision matches** — other real people called Oscar Daniel, with
-their profile links, bios and follower counts. They have not agreed to anything. The result
-set is not stable either: consecutive searches returned 16 profiles and then 6, so the
-mentions section moves up and down the page and no fixed scroll distance can promise to
-stay above it.
+The first attempt searched his GitHub handle instead, and that was the mistake. A handle
+search matches on name, so it came back full of other real people called Oscar Daniel with
+their TikTok, Instagram and Facebook profiles attached, and the mix changed on every run:
+one search returned sixteen of his own accounts, the next returned none and ten
+collisions. Clamping the scroll to stay above them did work, but it clamped so hard the
+clip never reached the results and the card ended up showing statistics instead of the
+product.
 
-So the flow measures, at record time, where the first mention actually sits, and clamps its
-own scrolling so the bottom of the frame never reaches it — declining to scroll at all when
-there is no safe room. It records the resulting viewport bottom and the computed ceiling as
-a mark, so any take can be audited after the fact from its sidecar JSON.
+**An address belongs to one person, so the collision cannot happen.** Every row a mail
+search returns is his. That is a property of the identifier rather than of a filter, which
+is why it can be relied on, and it is why this flow scrolls freely through its results
+where the handle version could not. If you ever point this flow at a handle, a name or a
+document number, the clamp has to come back.
 
-Keep that bound if you change this flow. Do not point it at anybody else, and never type
-into the password verifier: that field is not part of the demo.
+Each take records what was on screen when it finished — viewport bottom, page height and
+row count — as a mark in its sidecar JSON, so a recording can be audited after the fact
+instead of trusted.
+
+Never type into the password verifier. That field is not part of the demo.
