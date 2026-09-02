@@ -13,11 +13,18 @@
  * A recording carries a sidecar JSON with marks. A `skip-start` / `skip-end` pair is a
  * stretch the flow asked to cut, which is how the 12 seconds of TickerLens waiting on a
  * real retrieval pipeline stops being 12 seconds of a spinner.
+ *
+ * Filenames carry a content hash, and content/demos.ts is generated from them. This is not
+ * decoration. These files first shipped at stable names under Cloudflare's default
+ * `max-age=14400`, so re-recording a demo left every previous visitor watching four hours
+ * of a video that no longer existed in the repository — which is exactly what happened,
+ * and it looked like the site was broken rather than cached. A new encode is a new URL.
  */
-import { mkdir, readdir, readFile, writeFile, stat, rm } from 'node:fs/promises';
+import { mkdir, readdir, readFile, writeFile, stat, rm, rename } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFile } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { promisify } from 'node:util';
 import { existsSync } from 'node:fs';
 import sharp from 'sharp';
@@ -144,6 +151,8 @@ if (!takes.length) {
 }
 
 const manifest = [];
+/** Filled per demo, then written out as content/demos.ts for site.ts to import. */
+const generated = {};
 
 for (const { name, src, explainer } of takes) {
   const job = jobs[name] ?? { posterAt: 0.5, crf: 32 };
@@ -157,9 +166,12 @@ for (const { name, src, explainer } of takes) {
   const kept = segments.reduce((sum, [a, b]) => sum + (b - a), 0);
   const phone = Boolean(sidecar.phone);
 
-  for (const [suffix, width] of WIDTHS) {
+  /**
+   * Encode the full-size cut first and hash it, so every file in this demo's set shares
+   * one fingerprint and a re-encode can never reuse a URL.
+   */
+  const encode = async (dest, width, crf) => {
     const { height, chain } = geometry(width, phone);
-    const dest = join(outDir, `${name}${suffix}.mp4`);
     await rm(dest, { force: true });
     await run(FFMPEG, [
       '-v', 'error', '-y', '-i', src,
@@ -168,36 +180,87 @@ for (const { name, src, explainer } of takes) {
       '-an',                                  // no audio track at all, not a silent one
       '-c:v', 'libx264', '-profile:v', 'high', '-level', '4.0',
       '-preset', 'veryslow',                  // slow here is free; bytes on the wire are not
-      '-crf', String(job.crf + (suffix === '@sm' ? 2 : 0)),
+      '-crf', String(crf),
       '-g', '48', '-pix_fmt', 'yuv420p',
       '-movflags', '+faststart',              // moov atom first, so it starts without a full download
       dest,
     ]);
-    const { size } = await stat(dest);
-    manifest.push({
-      file: `${name}${suffix}.mp4`,
-      out: `${width}x${height}`,
-      seconds: +kept.toFixed(1),
-      kb: +(size / 1024).toFixed(1),
-    });
+    return height;
+  };
+
+  const staging = join(outDir, `.staging-${name}.mp4`);
+  await encode(staging, 1000, job.crf);
+  const hash = createHash('sha256').update(await readFile(staging)).digest('hex').slice(0, 8);
+  const stem = `${name}.${hash}`;
+
+  // Anything left from an earlier hash is dead weight; the generated module never names it.
+  for (const f of await readdir(outDir)) {
+    if (f.startsWith(`${name}.`) && !f.startsWith(`${stem}`)) await rm(join(outDir, f), { force: true });
   }
 
+  const main = join(outDir, `${stem}.mp4`);
+  await rm(main, { force: true });
+  await rename(staging, main);
+
+  const { height } = geometry(1000, phone);
+  manifest.push({ file: `${stem}.mp4`, out: `1000x${height}`, seconds: +kept.toFixed(1), kb: +((await stat(main)).size / 1024).toFixed(1) });
+
+  const smallHeight = await encode(join(outDir, `${stem}@sm.mp4`), 500, job.crf + 2);
+  manifest.push({
+    file: `${stem}@sm.mp4`,
+    out: `500x${smallHeight}`,
+    seconds: +kept.toFixed(1),
+    kb: +((await stat(join(outDir, `${stem}@sm.mp4`))).size / 1024).toFixed(1),
+  });
+
   // Poster: a real frame from the finished cut, so it matches what the video opens on.
-  const { height, chain } = geometry(1000, phone);
+  const { chain } = geometry(1000, phone);
   const still = join(outDir, `.${name}-poster.png`);
   await run(FFMPEG, [
     '-v', 'error', '-y', '-i', src,
+    // The comma needs a literal backslash for ffmpeg, hence the doubled escape here.
     '-filter_complex', `${filterGraph(segments, chain)};[out]select=gte(t\\,${(kept * job.posterAt).toFixed(2)})[p]`,
     '-map', '[p]', '-frames:v', '1', still,
   ]);
-  const poster = join(outDir, `${name}-poster.webp`);
+  const poster = join(outDir, `${stem}-poster.webp`);
   await sharp(still).resize({ width: 800 }).webp({ quality: 72, effort: 6 }).toFile(poster);
   await rm(still, { force: true });
-  const { size } = await stat(poster);
-  manifest.push({ file: `${name}-poster.webp`, out: `800x${Math.round(800 / RATIO)}`, seconds: 0, kb: +(size / 1024).toFixed(1) });
+
+  generated[name] = { src: `/demos/${stem}.mp4`, poster: `/demos/${stem}-poster.webp`, width: 1000, height };
+
+  manifest.push({ file: `${stem}-poster.webp`, out: `800x${Math.round(800 / RATIO)}`, seconds: 0, kb: +((await stat(poster)).size / 1024).toFixed(1) });
 }
 
 // Beside the raw takes rather than in public/: this is a build report, not a site asset.
 await writeFile(join(srcDir, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n');
+
+/**
+ * The hashed paths, as a module content/site.ts imports.
+ *
+ * Generated rather than kept by hand: a hash nobody can predict is not something to copy
+ * across by eye, and a stale path here would ship a 404 in place of a plate.
+ */
+const entries = Object.keys(generated)
+  .sort()
+  .map((k) => `  ${k}: ${JSON.stringify(generated[k])},`)
+  .join('\n');
+
+await writeFile(
+  join(root, 'content', 'demos.ts'),
+  [
+    '/**',
+    ' * Generated by scripts/process-demos.mjs. Do not edit by hand.',
+    ' *',
+    ' * Filenames carry a content hash so that a re-encode publishes a new URL. These are',
+    ' * served immutable, and reusing a name left visitors watching a cached copy of a clip',
+    ' * that had already been replaced in the repository.',
+    ' */',
+    'export const demos = {',
+    entries,
+    '} as const;',
+    '',
+  ].join('\n'),
+);
+
 console.table(manifest);
 console.log(`total shipped: ${(manifest.reduce((s, m) => s + m.kb, 0) / 1024).toFixed(2)} MB`);

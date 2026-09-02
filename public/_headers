@@ -2,6 +2,12 @@
 /_next/static/*
   Cache-Control: public, max-age=31536000, immutable
 
+# Demo clips and their posters. Their filenames carry a content hash, so a new encode is a
+# new URL and this can be immutable. Without it they inherit Cloudflare's four-hour default
+# at a stable name, which left visitors watching a replaced clip for the rest of the day.
+/demos/*
+  Cache-Control: public, max-age=31536000, immutable
+
 /*
   Referrer-Policy: strict-origin-when-cross-origin
   X-Frame-Options: DENY
