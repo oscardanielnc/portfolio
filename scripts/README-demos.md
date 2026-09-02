@@ -67,6 +67,22 @@ Anchor a scroll to an element rather than to a pixel distance. Fixed distances w
 until TickerLens returned a longer analysis, and then the clip scrolled straight past the
 one section worth showing.
 
+## Filenames are content-hashed
+
+`demos:process` writes `tickerlens.dc0c11b7.mp4`, not `tickerlens.mp4`, and generates
+`content/demos.ts` with the hashed paths for `content/site.ts` to import. Never write a
+demo path by hand — the generated module is the only place they live.
+
+This exists because of a real failure, not for tidiness. The clips first shipped at stable
+names, and `public/_headers` only marked `/_next/static` immutable, so they inherited
+Cloudflare's default `Cache-Control: public, max-age=14400`. Re-recording a demo therefore
+left everyone who had already loaded the page watching the previous clip for another four
+hours, with no way to tell that what they were seeing no longer existed in the repository.
+It reads as a broken site, and it wasted an afternoon diagnosing a bug that was a cache.
+
+A new encode now produces a new URL, `/demos/*` is served immutable, and stale files from a
+previous hash are deleted on each run.
+
 ## Encoding
 
 `process-demos.mjs` holds a per-demo `crf`, because the cost of a frame depends on what is

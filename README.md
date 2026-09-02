@@ -85,6 +85,11 @@ returns other people who happen to share it, and publishing them here would not 
 anyone's to consent to. The reasoning is in
 [`scripts/README-demos.md`](scripts/README-demos.md).
 
+Clip filenames carry a content hash and `content/demos.ts` is generated from them, so a
+re-encode publishes a new URL and `/demos/*` can be served immutable. Reusing a stable name
+under Cloudflare's four-hour default left visitors watching a clip that had already been
+replaced.
+
 The player is plain HTML, because `strip-hydration.mjs` still guarantees no JavaScript
 ships: `<video autoplay muted loop playsinline preload="none">` with a poster. Browsers
 pause offscreen autoplaying video themselves, so only the card in view decodes.
