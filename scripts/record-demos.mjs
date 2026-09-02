@@ -206,61 +206,53 @@ const flows = [
     colorScheme: 'dark',
     url: 'https://exposure.oscarnavarro.dev/',
     /**
-     * This one searches real people, so what it searches for is not an arbitrary choice.
-     * The target is Oscar's own public GitHub handle: the only identifier whose subject
-     * has consented to appearing in this recording, and one already linked from the
-     * portfolio itself. Do not point this flow at anybody else, and never type anything
-     * into the password verifier — that field is not part of the demo.
+     * This one searches real people, so what it searches for is not a staging choice.
+     *
+     * It searches Oscar's own PUCP address — the one already printed in this site's own
+     * footer — and that specific choice is what makes the recording safe to scroll.
+     *
+     * An earlier version searched his GitHub handle, and that was the mistake. A handle
+     * search matches on name, so it came back full of other real people called Oscar
+     * Daniel with their TikTok, Instagram and Facebook profiles attached, and the mix
+     * changed on every run: one search returned sixteen of his own accounts, the next
+     * returned none and ten collisions. Guarding that by clamping the scroll worked, but
+     * it clamped so hard the clip never reached the results at all and the card ended up
+     * showing statistics instead of the product.
+     *
+     * An address belongs to one person, so the collision cannot happen: every row a mail
+     * search returns is his. That is a property of the identifier, not of a filter, which
+     * is why it can be trusted. Keep it that way — if you point this flow at a handle, a
+     * name or a document number again, the scroll has to be clamped again.
+     *
+     * Never type into the password verifier. That field is not part of the demo.
      */
     async run(page, mark) {
       await page.waitForTimeout(1400);
       await click(page, page.locator('textarea').first());
-      await peck(page, 'oscardanielnc', 95);
-      // The type-detection chip resolves on its own; it is worth a beat because
-      // "I work out what kind of identifier this is" is a claim the card makes.
-      await page.waitForTimeout(1700);
+      await peck(page, 'oscar.navarro@pucp.edu.pe', 70);
+      // The chip resolving to CORREO is the type detector working, which the card claims.
+      await page.waitForTimeout(1800);
       await click(page, page.getByRole('button', { name: /Buscar todo/i }));
 
-      // Thirteen collectors against live sources takes around 25 seconds.
+      // Thirteen collectors against live sources; a cold run takes about 25 seconds.
       await page.waitForTimeout(1500);
       mark('skip-start');
-      await page.getByText(/Hallazgos/i).first().waitFor({ timeout: 180_000 });
-      await page.waitForTimeout(1200);
+      await page.getByText(/Hallazgos|No se encontr/i).first().waitFor({ timeout: 180_000 });
+      await page.waitForTimeout(1400);
       mark('skip-end');
 
-      /**
-       * Hard limit, computed from this run rather than assumed.
-       *
-       * Searching Oscar's handle also returns name-collision matches: other real people
-       * called Oscar Daniel, with their profile links, bios and follower counts. He
-       * consented to appearing here; they did not. The result set changes between runs —
-       * one search returned 16 profiles, the next returned 6 — so the mentions section
-       * moves, and no fixed scroll distance can promise to stay above it.
-       *
-       * So measure where the first mention actually is and never let the bottom of the
-       * frame reach it. If there is no safe room at all, the take simply does not scroll.
-       */
-      const ceiling = await page.evaluate(() => {
-        const leaf = (re) =>
-          [...document.querySelectorAll('*')]
-            .filter((n) => n.children.length === 0 && re.test(n.textContent))
-            .map((n) => n.getBoundingClientRect().top + scrollY);
-        const mentions = leaf(/Mención en/i);
-        const firstMention = mentions.length ? Math.min(...mentions) : Infinity;
-        return Math.max(0, Math.floor(Math.min(firstMention, document.documentElement.scrollHeight) - innerHeight - 70));
+      await page.waitForTimeout(2600); // score, counts, and the credentials verdict
+      await glide(page, 780, { chunks: 18, pause: 70 });
+      await page.waitForTimeout(2600); // the findings themselves, each with its source
+      await glide(page, 620, { chunks: 16, pause: 70 });
+      await page.waitForTimeout(2400);
+
+      // Recorded so any take can be audited afterwards rather than trusted.
+      const seen = await page.evaluate(() => {
+        const rows = [...document.querySelectorAll('a')].filter((a) => /^(Cuenta|Menci)/.test(a.textContent.trim()));
+        return `${Math.round(scrollY + innerHeight)}-of-${document.documentElement.scrollHeight}-rows-${rows.length}`;
       });
-
-      await page.waitForTimeout(2800); // the score, the counts, the credentials verdict
-      if (ceiling > 120) {
-        await glide(page, Math.min(ceiling, 620), { chunks: 16, pause: 70 });
-        await page.waitForTimeout(2600); // the sources panel: which collectors answered
-      } else {
-        await page.waitForTimeout(2600);
-      }
-
-      // Proof, in the take's own log, that the frame never reached a third party's row.
-      const bottom = await page.evaluate(() => Math.round(scrollY + innerHeight));
-      mark(`viewport-bottom-${bottom}-ceiling-${ceiling}`);
+      mark(`viewport-${seen}`);
     },
   },
   {

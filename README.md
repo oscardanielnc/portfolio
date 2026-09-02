@@ -79,6 +79,12 @@ Kepler has nothing left to record — it is archived — so its plate is authore
 HyperFrames composition under `explainers/`. `demos:process` encodes recordings and
 explainers identically.
 
+Exposure Dashboard searches real people, so its clip searches the address already printed
+in this site's own footer. An address belongs to one person; searching a handle or a name
+returns other people who happen to share it, and publishing them here would not be
+anyone's to consent to. The reasoning is in
+[`scripts/README-demos.md`](scripts/README-demos.md).
+
 The player is plain HTML, because `strip-hydration.mjs` still guarantees no JavaScript
 ships: `<video autoplay muted loop playsinline preload="none">` with a poster. Browsers
 pause offscreen autoplaying video themselves, so only the card in view decodes.
