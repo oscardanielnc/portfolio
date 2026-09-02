@@ -63,7 +63,7 @@ const PAD = '0x0d0d14';
 const jobs = {
   tickerlens: { posterAt: 0.72, crf: 34 },
   kepler: { posterAt: 0.62, crf: 30 },
-  exposure: { posterAt: 0.42, crf: 30 },
+  exposure: { posterAt: 0.45, crf: 33 },
   tvindicators: { posterAt: 0.15, crf: 34 },
   mipeso: { posterAt: 0.55, crf: 30 },
   estudia: { posterAt: 0.5, crf: 33 },

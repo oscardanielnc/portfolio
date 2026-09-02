@@ -200,6 +200,70 @@ const flows = [
     },
   },
   {
+    name: 'exposure',
+    viewport: DESKTOP,
+    // Its own UI is dark, like this site, so no theme override is needed.
+    colorScheme: 'dark',
+    url: 'https://exposure.oscarnavarro.dev/',
+    /**
+     * This one searches real people, so what it searches for is not an arbitrary choice.
+     * The target is Oscar's own public GitHub handle: the only identifier whose subject
+     * has consented to appearing in this recording, and one already linked from the
+     * portfolio itself. Do not point this flow at anybody else, and never type anything
+     * into the password verifier — that field is not part of the demo.
+     */
+    async run(page, mark) {
+      await page.waitForTimeout(1400);
+      await click(page, page.locator('textarea').first());
+      await peck(page, 'oscardanielnc', 95);
+      // The type-detection chip resolves on its own; it is worth a beat because
+      // "I work out what kind of identifier this is" is a claim the card makes.
+      await page.waitForTimeout(1700);
+      await click(page, page.getByRole('button', { name: /Buscar todo/i }));
+
+      // Thirteen collectors against live sources takes around 25 seconds.
+      await page.waitForTimeout(1500);
+      mark('skip-start');
+      await page.getByText(/Hallazgos/i).first().waitFor({ timeout: 180_000 });
+      await page.waitForTimeout(1200);
+      mark('skip-end');
+
+      /**
+       * Hard limit, computed from this run rather than assumed.
+       *
+       * Searching Oscar's handle also returns name-collision matches: other real people
+       * called Oscar Daniel, with their profile links, bios and follower counts. He
+       * consented to appearing here; they did not. The result set changes between runs —
+       * one search returned 16 profiles, the next returned 6 — so the mentions section
+       * moves, and no fixed scroll distance can promise to stay above it.
+       *
+       * So measure where the first mention actually is and never let the bottom of the
+       * frame reach it. If there is no safe room at all, the take simply does not scroll.
+       */
+      const ceiling = await page.evaluate(() => {
+        const leaf = (re) =>
+          [...document.querySelectorAll('*')]
+            .filter((n) => n.children.length === 0 && re.test(n.textContent))
+            .map((n) => n.getBoundingClientRect().top + scrollY);
+        const mentions = leaf(/Mención en/i);
+        const firstMention = mentions.length ? Math.min(...mentions) : Infinity;
+        return Math.max(0, Math.floor(Math.min(firstMention, document.documentElement.scrollHeight) - innerHeight - 70));
+      });
+
+      await page.waitForTimeout(2800); // the score, the counts, the credentials verdict
+      if (ceiling > 120) {
+        await glide(page, Math.min(ceiling, 620), { chunks: 16, pause: 70 });
+        await page.waitForTimeout(2600); // the sources panel: which collectors answered
+      } else {
+        await page.waitForTimeout(2600);
+      }
+
+      // Proof, in the take's own log, that the frame never reached a third party's row.
+      const bottom = await page.evaluate(() => Math.round(scrollY + innerHeight));
+      mark(`viewport-bottom-${bottom}-ceiling-${ceiling}`);
+    },
+  },
+  {
     name: 'estudia',
     viewport: DESKTOP,
     url: 'https://study.oscarnavarro.dev/',

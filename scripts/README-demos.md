@@ -43,8 +43,9 @@ ESTUDIA_USER=...
 ESTUDIA_PASSWORD=...
 ```
 
-Exposure Dashboard also has a login, and is deliberately not recorded. It keeps its
-screenshot.
+Exposure Dashboard needs no account. An earlier version of this file claimed it was behind
+a login; that was wrong, and came from grepping the page for "password" and matching its
+**results** panel, `Contraseñas y credenciales`. It is recorded like any other demo.
 
 ## Adding or changing a flow
 
@@ -91,10 +92,9 @@ Two consequences worth knowing:
 
 ## Explainers
 
-Two projects cannot be recorded: Exposure Dashboard is behind a login, and Kepler is
-archived — there is no longer anything running to point a browser at. For those, a plate
-is authored instead of captured, as a [HyperFrames](https://hyperframes.heygen.com)
-composition under `explainers/<name>/`.
+Kepler cannot be recorded: it is archived, so there is no longer anything running to point
+a browser at. Its plate is authored instead of captured, as a
+[HyperFrames](https://hyperframes.heygen.com) composition under `explainers/<name>/`.
 
 ```
 cd explainers/kepler
@@ -130,3 +130,25 @@ English explainer; a second render per locale is the fix if that ever matters en
 Compositions set `fit: 'contain'` in `content/site.ts`. A long copy column stretches a
 featured card, and the plate stretches with it — cropping a recording is harmless, but
 cropping a diagram eats the words it was built around.
+
+## Recording a tool that searches for people
+
+Exposure Dashboard is the one flow where *what* it does is a privacy decision, not a
+staging choice, because whatever it searches for ends up published on the site.
+
+It searches Oscar's own public GitHub handle. That is the only identifier whose subject has
+agreed to appear in the recording, and it is already linked from the portfolio.
+
+**It also returns name-collision matches** — other real people called Oscar Daniel, with
+their profile links, bios and follower counts. They have not agreed to anything. The result
+set is not stable either: consecutive searches returned 16 profiles and then 6, so the
+mentions section moves up and down the page and no fixed scroll distance can promise to
+stay above it.
+
+So the flow measures, at record time, where the first mention actually sits, and clamps its
+own scrolling so the bottom of the frame never reaches it — declining to scroll at all when
+there is no safe room. It records the resulting viewport bottom and the computed ceiling as
+a mark, so any take can be audited after the fact from its sidecar JSON.
+
+Keep that bound if you change this flow. Do not point it at anybody else, and never type
+into the password verifier: that field is not part of the demo.
