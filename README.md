@@ -75,9 +75,9 @@ npm run demos:record     # Playwright drives the live deployments → view/demos
 npm run demos:process    # ffmpeg → public/demos/*.mp4 (committed, ~2.8 MB for all six)
 ```
 
-Two projects have nothing to record — Exposure Dashboard is behind a login and Kepler is
-archived — so their plates are authored instead, as HyperFrames compositions under
-`explainers/`. `demos:process` encodes recordings and explainers identically.
+Kepler has nothing left to record — it is archived — so its plate is authored instead, as a
+HyperFrames composition under `explainers/`. `demos:process` encodes recordings and
+explainers identically.
 
 The player is plain HTML, because `strip-hydration.mjs` still guarantees no JavaScript
 ships: `<video autoplay muted loop playsinline preload="none">` with a poster. Browsers

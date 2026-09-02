@@ -74,8 +74,10 @@ export const projectRefs = {
     repo: 'https://github.com/oscardanielnc/exposure-dashboard',
     tech: ['Python', 'FastAPI', 'Next.js', 'SQLite', 'Playwright', 'Docker'],
     image: { src: '/projects/exposure.webp', width: 1000, height: 625 },
-    // Behind a login, so it cannot be recorded. This plate is an authored diagram of the
-    // architecture, showing no identity of any kind. See explainers/exposure/.
+    // A real search, for Oscar's own public handle. The flow computes how far it may
+    // scroll so the frame never reaches a third party's row — see scripts/record-demos.mjs.
+    // contain, not cover: this app puts its headline number in a narrow left column, and
+    // a plate stretched by the copy beside it crops exactly that away.
     video: {
       src: '/demos/exposure.mp4',
       poster: '/demos/exposure-poster.webp',
