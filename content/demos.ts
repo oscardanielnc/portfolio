@@ -11,7 +11,7 @@ export const demos = {
   kepler: {"src":"/demos/kepler.61699eca.mp4","poster":"/demos/kepler.61699eca-poster.webp","width":1000,"height":626},
   mipeso: {"src":"/demos/mipeso.c265705f.mp4","poster":"/demos/mipeso.c265705f-poster.webp","width":1000,"height":626},
   'momentum-investor': {"src":"/demos/momentum-investor.cf29232e.mp4","poster":"/demos/momentum-investor.cf29232e-poster.webp","width":1000,"height":626},
-  oscilion: {"src":"/demos/oscilion.9c4cdadf.mp4","poster":"/demos/oscilion.9c4cdadf-poster.webp","width":1000,"height":626},
+  oscilion: {"src":"/demos/oscilion.9044e9f2.mp4","poster":"/demos/oscilion.9044e9f2-poster.webp","width":1000,"height":626},
   tickerlens: {"src":"/demos/tickerlens.dc0c11b7.mp4","poster":"/demos/tickerlens.dc0c11b7-poster.webp","width":1000,"height":626},
   tvindicators: {"src":"/demos/tvindicators.edd3bff4.mp4","poster":"/demos/tvindicators.edd3bff4-poster.webp","width":1000,"height":626},
 } as const;
