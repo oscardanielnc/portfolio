@@ -126,6 +126,13 @@ export function ProjectCard({ project, labels, variant }: Props) {
  */
 function Plate({ project, labels, variant }: { project: Project; labels: Content['projectLabels']; variant: Variant }) {
   const isFeatured = variant === 'featured' || variant === 'featured-reverse';
+  /**
+   * A letterboxed clip shows the plate above and below it. Every `contain` clip is dark
+   * (the explainers are drawn on the dark theme's --bg, and Exposure is a dark app), so
+   * the plate matches that in both themes. On the light theme's --bg the bands read as a
+   * dark strip floating in a white box.
+   */
+  const matte = project.video?.fit === 'contain' ? 'bg-[#08080c]' : 'bg-bg';
 
   return (
     <div
@@ -134,7 +141,7 @@ function Plate({ project, labels, variant }: { project: Project; labels: Content
         isFeatured ? 'md:flex-1 md:p-5' : '',
       ].join(' ')}
     >
-      <div className="h-full overflow-hidden rounded-[10px] border border-line bg-bg shadow-[0_10px_30px_-18px_rgba(0,0,0,0.9)]">
+      <div className={`h-full overflow-hidden rounded-[10px] border border-line ${matte} shadow-[0_10px_30px_-18px_rgba(0,0,0,0.9)]`}>
         {project.video ? (
           <Recording project={project} labels={labels} />
         ) : (
