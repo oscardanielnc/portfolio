@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en" data-resolution="custom">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1600, height=1000" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /*
+        Oscilion is closed and was never deployed publicly, so its plate is a diagram in
+        the same language as explainers/kepler/.
+
+        Sources. Every figure is from the project's README: PF 0.72-0.78 over three years
+        and 12 coins, the inversely calibrated score, 110 dry-run trades at -64.2R, 22
+        combos positive out of sample against 2 positive live, Spearman -0.04 to -0.22,
+        closed 2026-08-03. The wording of the three criteria is the one exception: the
+        README says the go/no-go gate went into the first commit but does not list it, so
+        the criteria are paraphrased from docs/VISION.md, which it links. The fourth
+        criterion there (tolerable drawdown) is left out because the README publishes no
+        figure against it, and marking it failed without one would be inventing a result.
+
+        Deliberately absent: the early Sharpe of -0.47 to +1.89. The project reports it only
+        as the number that did not survive, and a card that loops is exactly where a number
+        like that gets remembered without its caveat.
+      */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg: #08080c;
+        --raised: #0d0d14;
+        --border: #23232e;
+        --border-strong: #38384c;
+        --text: #f4f4f8;
+        --muted: #9b9bad;
+        --accent: #ff6b4a;
+        --accent-soft: rgba(255, 107, 74, 0.16);
+      }
+
+      html,
+      body {
+        width: 1600px;
+        height: 1000px;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Geist, ui-sans-serif, system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* The same coral ambient wash the site uses behind its hero. */
+      body::before {
+        content: '';
+        position: absolute;
+        inset: -20%;
+        background:
+          radial-gradient(48% 40% at 22% 14%, rgba(255, 107, 74, 0.16), transparent 70%),
+          radial-gradient(42% 38% at 82% 84%, rgba(167, 139, 250, 0.11), transparent 70%);
+        pointer-events: none;
+      }
+
+      .clip {
+        position: absolute;
+        inset: 0;
+      }
+
+      /* Scenes animate this inner wrapper, never the .clip the framework owns. */
+      .scene {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 130px;
+      }
+
+      .eyebrow {
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 30px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+
+      /* ---------------------------------------------------------- scene A */
+      .wordmark {
+        font-size: 200px;
+        font-weight: 700;
+        letter-spacing: -0.05em;
+        line-height: 0.95;
+      }
+
+      .dot {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 12px var(--accent-soft);
+      }
+
+      .sub {
+        font-size: 48px;
+        color: var(--muted);
+        margin-top: 26px;
+      }
+
+      /* ---------------------------------------------------------- scenes B and D */
+      .closing {
+        font-size: 68px;
+        font-weight: 600;
+        line-height: 1.25;
+        max-width: 22ch;
+        letter-spacing: -0.02em;
+      }
+
+      .note {
+        margin-top: 32px;
+        font-size: 40px;
+        color: var(--muted);
+        max-width: 32ch;
+        line-height: 1.45;
+      }
+
+      /* ---------------------------------------------------------- scene C */
+      .rows {
+        margin-top: 46px;
+        display: flex;
+        flex-direction: column;
+        gap: 38px;
+      }
+
+      .row {
+        display: flex;
+        gap: 34px;
+        align-items: flex-start;
+      }
+
+      /* The box is drawn empty with the criterion, and only fails when its result lands. */
+      .box {
+        flex: none;
+        width: 58px;
+        height: 58px;
+        margin-top: 4px;
+        border-radius: 12px;
+        border: 2px solid var(--border-strong);
+        background: var(--raised);
+        position: relative;
+      }
+
+      .cross {
+        position: absolute;
+        inset: -2px;
+        border-radius: 12px;
+        border: 2px solid var(--accent);
+        background: var(--accent-soft);
+      }
+
+      .cross::before,
+      .cross::after {
+        content: '';
+        position: absolute;
+        left: 13px;
+        right: 13px;
+        top: 26px;
+        height: 4px;
+        border-radius: 2px;
+        background: var(--accent);
+        transform: rotate(45deg);
+      }
+
+      .cross::after {
+        transform: rotate(-45deg);
+      }
+
+      .criterion {
+        font-size: 36px;
+        color: var(--muted);
+        line-height: 1.3;
+      }
+
+      .result {
+        margin-top: 8px;
+        font-size: 48px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        line-height: 1.2;
+      }
+
+      .detail {
+        margin-top: 8px;
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 30px;
+        color: var(--muted);
+      }
+
+      /* A quiet, permanent label so this can never be read as captured footage. */
+      .schematic {
+        position: absolute;
+        left: 130px;
+        bottom: 66px;
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 26px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #5c5c6b;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="16.4"
+      data-width="1600"
+      data-height="1000"
+    >
+      <!-- A — identity -->
+      <div class="clip" id="sA" data-start="0" data-duration="3.0" data-track-index="1">
+        <div class="scene" id="sA-in">
+          <div class="dot" id="sA-dot"></div>
+          <div class="wordmark" id="sA-word" style="margin-top: 40px">Oscilion</div>
+          <div class="sub" id="sA-sub">Crypto strategy experiment</div>
+        </div>
+      </div>
+
+      <!-- B — the gate came first -->
+      <div class="clip" id="sB" data-start="3.0" data-duration="3.4" data-track-index="1">
+        <div class="scene" id="sB-in">
+          <div class="eyebrow" id="sB-eyebrow">Written in the first commit</div>
+          <div class="closing" id="sB-title" style="margin-top: 24px">
+            Go / no-go criteria, fixed before any signal or backtest code existed.
+          </div>
+        </div>
+      </div>
+
+      <!-- C — criteria first, then the evidence against each one. The central scene. -->
+      <div class="clip" id="sC" data-start="6.4" data-duration="6.4" data-track-index="1">
+        <div class="scene" id="sC-in">
+          <div class="eyebrow" id="sC-eyebrow">The criteria, and what the evidence said</div>
+          <div class="rows">
+            <div class="row" id="sC-r1">
+              <div class="box"><div class="cross" id="sC-x1"></div></div>
+              <div>
+                <div class="criterion">Positive expectancy, net of real costs</div>
+                <div class="res" id="sC-res1">
+                  <div class="result">Every configuration lost money over 3 years</div>
+                  <div class="detail">12 coins · profit factor 0.72–0.78</div>
+                </div>
+              </div>
+            </div>
+            <div class="row" id="sC-r2">
+              <div class="box"><div class="cross" id="sC-x2"></div></div>
+              <div>
+                <div class="criterion">A calibrated conviction score</div>
+                <div class="res" id="sC-res2">
+                  <div class="result">Inversely calibrated</div>
+                  <div class="detail">higher score, worse winrate</div>
+                </div>
+              </div>
+            </div>
+            <div class="row" id="sC-r3">
+              <div class="box"><div class="cross" id="sC-x3"></div></div>
+              <div>
+                <div class="criterion">Live results consistent with the backtest</div>
+                <div class="res" id="sC-res3">
+                  <div class="result">−64.2R over 110 live dry-run trades</div>
+                  <div class="detail">22 combos positive out of sample · 2 positive live</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- D — the verdict, in the project's own words -->
+      <div class="clip" id="sD" data-start="12.8" data-duration="3.6" data-track-index="1">
+        <div class="scene" id="sD-in">
+          <div class="eyebrow" id="sD-eyebrow">Closed 3 Aug 2026 · no real capital traded</div>
+          <div class="closing" id="sD-title" style="margin-top: 24px">Its own conclusion: the strategies have no edge.</div>
+          <div class="note" id="sD-note">
+            Backtest expectancy did not predict live expectancy: Spearman −0.04 to −0.22.
+          </div>
+        </div>
+      </div>
+
+      <div class="schematic">Schematic · published figures</div>
+    </div>
+
+    <script>
+      /*
+        One paused timeline the renderer scrubs frame by frame. Nothing here reads the
+        clock or randomises, so every render of this file is byte-identical to the last.
+      */
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const ease = 'power3.out';
+
+      // A
+      tl.from('#sA-dot', { scale: 0, opacity: 0, duration: 0.7, ease: 'back.out(2)' }, 0.15)
+        .from('#sA-word', { y: 70, opacity: 0, duration: 1.0, ease }, 0.3)
+        .from('#sA-sub', { y: 30, opacity: 0, duration: 0.9, ease }, 0.6)
+        .to('#sA-in', { opacity: 0, duration: 0.45, ease: 'power2.in' }, 2.55)
+        .set('#sA-in', { opacity: 0 }, 3.0);
+
+      // B
+      tl.from('#sB-eyebrow', { y: 26, opacity: 0, duration: 0.6, ease }, 3.15)
+        .from('#sB-title', { y: 36, opacity: 0, duration: 0.85, ease }, 3.3)
+        .to('#sB-in', { opacity: 0, duration: 0.45, ease: 'power2.in' }, 5.95)
+        .set('#sB-in', { opacity: 0 }, 6.4);
+
+      // C — all three criteria arrive together with empty boxes, because they were all
+      // fixed up front. The results then land one at a time, each one failing its box.
+      tl.from('#sC-eyebrow', { y: 26, opacity: 0, duration: 0.6, ease }, 6.55)
+        .from(['#sC-r1', '#sC-r2', '#sC-r3'], { y: 30, opacity: 0, duration: 0.6, ease, stagger: 0.12 }, 6.7);
+
+      [1, 2, 3].forEach((i) => {
+        const at = 7.8 + (i - 1) * 1.05;
+        tl.from(`#sC-x${i}`, { scale: 0.4, opacity: 0, duration: 0.45, ease: 'back.out(2)' }, at)
+          .from(`#sC-res${i}`, { y: 18, opacity: 0, duration: 0.6, ease }, at + 0.1);
+      });
+
+      tl.to('#sC-in', { opacity: 0, duration: 0.45, ease: 'power2.in' }, 12.35)
+        .set('#sC-in', { opacity: 0 }, 12.8);
+
+      // D
+      tl.from('#sD-eyebrow', { y: 26, opacity: 0, duration: 0.6, ease }, 12.95)
+        .from('#sD-title', { y: 36, opacity: 0, duration: 0.85, ease }, 13.1)
+        .from('#sD-note', { y: 26, opacity: 0, duration: 0.8, ease }, 13.4);
+
+      window.__timelines['main'] = tl;
+    </script>
+  </body>
+</html>
