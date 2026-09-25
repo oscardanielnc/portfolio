@@ -69,15 +69,6 @@ export const es: Content = {
       ...projectRefs.tickerlens,
     },
     {
-      name: 'Estudia',
-      kind: 'compañero de estudio con IA',
-      summary:
-        'Fotografía apuntes de clase escritos a mano y obtén un resumen de estudio y un examen autocalificado.',
-      detail:
-        'Un pipeline de tres etapas lleva las fotografías por transcripción, resumen y generación de preguntas. Usa chunking consciente de la ventana de contexto en lugar de recuperación, de forma deliberada: el producto necesita cobertura del documento completo, no una porción relevante. Multiusuario con autenticación, instalable como progressive web app y como aplicación Android. 168 tests, y una auditoría de seguridad cuyos diez hallazgos fueron corregidos todos con tests de regresión que cubren cada uno.',
-      ...projectRefs.estudia,
-    },
-    {
       name: 'tvindicators',
       kind: 'motor de validación de estrategias',
       summary:
@@ -87,12 +78,22 @@ export const es: Content = {
       ...projectRefs.tvindicators,
     },
     {
-      name: 'Kepler',
-      kind: 'sistema de trading neutral al mercado',
-      summary: 'Un sistema cripto neutral al mercado que operó con capital real.',
+      name: 'Estudia',
+      kind: 'compañero de estudio con IA',
+      summary:
+        'Fotografía apuntes de clase escritos a mano y obtén un resumen de estudio y un examen autocalificado.',
       detail:
-        'Siete sleeves de alfa no correlacionados, apalancamiento autodimensionado a un presupuesto de máximo drawdown, ejecución solo maker y un circuit breaker por drawdown. El drawdown máximo en vivo fue de 3.4% contra un presupuesto de 10% a lo largo de 18 días de operación en vivo. La validación usó walk-forward testing con datos out-of-sample purgados y embargo. Archivado por razones de negocio y no de ingeniería: el copy-trading de bajo drawdown a microcapital no producía retorno visible sin escala. Fue una decisión difícil, y sigo considerándola la correcta.',
-      ...projectRefs.kepler,
+        'Un pipeline de tres etapas lleva las fotografías por transcripción, resumen y generación de preguntas. Usa chunking consciente de la ventana de contexto en lugar de recuperación, de forma deliberada: el producto necesita cobertura del documento completo, no una porción relevante. Multiusuario con autenticación, instalable como progressive web app y como aplicación Android. 168 tests, y una auditoría de seguridad cuyos diez hallazgos fueron corregidos todos con tests de regresión que cubren cada uno.',
+      ...projectRefs.estudia,
+    },
+    {
+      name: 'momentum-investor',
+      kind: 'auditoría de momentum en acciones',
+      summary:
+        'Un robot de momentum sobre acciones de EE. UU., y la auditoría que demostró que su ventaja venía de haber elegido la lista a posteriori.',
+      detail:
+        'Mismas reglas, motor, datos y fechas, sobre dos universos. Con 36 líderes elegidos en 2026, la estrategia rindió 29.2% al año; con las acciones que de verdad estaban en el S&P 500 en cada fecha, incluidas las que después colapsaron o fueron adquiridas, rindió 14.4%, por debajo de mantener QQQ, con 18.8%. Elegir la lista a posteriori valía 14.9 puntos de CAGR. La auditoría reproduce la mecánica real del robot y cambia solo el universo. Lo que sobrevive es un filtro de régimen sobre QQQ que no le gana en retorno: rinde de 2 a 4 puntos menos al año a cambio de un drawdown de alrededor de -30% en lugar de -49% a -53% al atravesar 2008. El robot operó en una cuenta paper de Alpaca, con órdenes idempotentes y stops en el bróker reconciliados en cada heartbeat. Pasar a dinero real dependía de la investigación, así que nunca ocurrió.',
+      ...projectRefs.momentumInvestor,
       archived: true,
     },
     {
@@ -105,12 +106,31 @@ export const es: Content = {
       ...projectRefs.exposure,
     },
     {
+      name: 'Kepler',
+      kind: 'sistema de trading neutral al mercado',
+      summary: 'Un sistema cripto neutral al mercado que operó con capital real.',
+      detail:
+        'Siete sleeves de alfa no correlacionados, apalancamiento autodimensionado a un presupuesto de máximo drawdown, ejecución solo maker y un circuit breaker por drawdown. El drawdown máximo en vivo fue de 3.4% contra un presupuesto de 10% a lo largo de 18 días de operación en vivo. La validación usó walk-forward testing con datos out-of-sample purgados y embargo. Archivado por razones de negocio y no de ingeniería: el copy-trading de bajo drawdown a microcapital no producía retorno visible sin escala. Fue una decisión difícil, y sigo considerándola la correcta.',
+      ...projectRefs.kepler,
+      archived: true,
+    },
+    {
       name: 'Mi Peso',
       kind: 'registro de peso local-first',
       summary: 'Un registro de peso sin servidor y sin cuenta.',
       detail:
         'SQLite compilado a WebAssembly y persistido en el navegador, con gráficos dibujados a mano en SVG y sin librería de charting. Un mismo código se publica como progressive web app y como aplicación Android. Su propio SECURITY.md declara las dos limitaciones honestas: la base de datos no está cifrada en el dispositivo, y el APK publicado está firmado con una clave de debug y no con una clave de release.',
       ...projectRefs.mipeso,
+    },
+    {
+      name: 'Oscilion',
+      kind: 'experimento de estrategias cripto',
+      summary:
+        'Un sistema de trading cripto construido para responder una pregunta —¿hay ventaja después de costos reales?— y cerrado cuando la respuesta fue no.',
+      detail:
+        'Sus criterios de go/no-go entraron en el primer commit, antes de que existiera código de señales o de backtest. La tesis original de reversión en rangos los incumplió: en tres años y 12 monedas, neto de costos, todas las configuraciones perdieron dinero, y su score de convicción estaba calibrado al revés. Luego, cinco estrategias direccionales que habían pasado walk-forward y doble out-of-sample corrieron en vivo en dry-run: 110 operaciones en 7.8 semanas dieron -64.2R, y de 22 combinaciones positivas fuera de muestra, 2 fueron positivas en vivo. Cerrado el 3 de agosto de 2026 en la v1.0, sin haber operado nunca capital real. Su propia conclusión es que las estrategias no tienen ventaja. El código de señales es el mismo en el backtest y en el monitor en vivo, así que lo que se validó es lo que corrió.',
+      ...projectRefs.oscilion,
+      archived: true,
     },
   ],
 
