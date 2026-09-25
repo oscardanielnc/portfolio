@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en" data-resolution="custom">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1600, height=1000" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /*
+        momentum-investor is not deployed, so like Kepler its plate is a diagram rather
+        than a recording, built the same way and in the same visual language.
+
+        Every figure is copied from the project's README: the three-universe table
+        (research/backtest_v10_pit.py, 2018-10-01 to 2026-06-26), the 14.9-point gap, and
+        the 2-4 points a year the surviving rule gives up to QQQ. The bars are drawn to
+        scale from zero, 30% CAGR = full track, so their lengths are the published numbers
+        and nothing else. There is no equity curve, for the same reason Kepler has none.
+
+        The point of the piece is the one thing the project will not let itself soften:
+        the strategy's edge was the stock list, chosen with hindsight.
+
+        Canvas and type scale follow explainers/kepler/: 1600x1000 to match the 16:10
+        plate, nothing that has to be read smaller than ~40px.
+      */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg: #08080c;
+        --raised: #0d0d14;
+        --border: #23232e;
+        --border-strong: #38384c;
+        --text: #f4f4f8;
+        --muted: #9b9bad;
+        --accent: #ff6b4a;
+        --accent-soft: rgba(255, 107, 74, 0.16);
+        --violet: #a78bfa;
+      }
+
+      html,
+      body {
+        width: 1600px;
+        height: 1000px;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Geist, ui-sans-serif, system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* The same coral ambient wash the site uses behind its hero. */
+      body::before {
+        content: '';
+        position: absolute;
+        inset: -20%;
+        background:
+          radial-gradient(48% 40% at 22% 14%, rgba(255, 107, 74, 0.16), transparent 70%),
+          radial-gradient(42% 38% at 82% 84%, rgba(167, 139, 250, 0.11), transparent 70%);
+        pointer-events: none;
+      }
+
+      .clip {
+        position: absolute;
+        inset: 0;
+      }
+
+      /* Scenes animate this inner wrapper, never the .clip the framework owns. */
+      .scene {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 130px;
+      }
+
+      .eyebrow {
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 30px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+
+      .caption {
+        font-size: 46px;
+        line-height: 1.35;
+        color: var(--muted);
+        max-width: 26ch;
+      }
+
+      .caption strong {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      /* ---------------------------------------------------------- scene A */
+      .wordmark {
+        font-size: 132px;
+        font-weight: 700;
+        letter-spacing: -0.05em;
+        line-height: 0.95;
+      }
+
+      .dot {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 12px var(--accent-soft);
+      }
+
+      .sub {
+        font-size: 48px;
+        color: var(--muted);
+        margin-top: 30px;
+      }
+
+      /* ---------------------------------------------------------- scene B */
+      .rows {
+        margin-top: 50px;
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+      }
+
+      .row-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+      }
+
+      .row-label {
+        font-size: 42px;
+        font-weight: 500;
+        color: var(--text);
+      }
+
+      .row-val {
+        font-size: 56px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .track {
+        margin-top: 12px;
+        height: 30px;
+        border-radius: 999px;
+        border: 2px solid var(--border);
+        background: var(--raised);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .bar {
+        position: absolute;
+        inset: 0 auto 0 0;
+        transform-origin: left;
+        border-radius: 999px;
+      }
+
+      /* The hindsight list: hatched, because it is the number that is not real. */
+      .bar-hind {
+        background: repeating-linear-gradient(
+          -45deg,
+          rgba(155, 155, 173, 0.55) 0 12px,
+          rgba(155, 155, 173, 0.22) 12px 24px
+        );
+      }
+
+      .bar-pit {
+        background: linear-gradient(90deg, rgba(255, 107, 74, 0.85), var(--accent));
+      }
+
+      .bar-qqq {
+        background: linear-gradient(90deg, rgba(167, 139, 250, 0.7), var(--violet));
+      }
+
+      .row-dd {
+        margin-top: 10px;
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 30px;
+        color: var(--muted);
+      }
+
+      .row-val small {
+        font-size: 30px;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+      }
+
+      .v-pit {
+        color: var(--accent);
+      }
+
+      .v-qqq {
+        color: var(--violet);
+      }
+
+      /* ---------------------------------------------------------- scene C */
+      .big {
+        font-size: 190px;
+        font-weight: 700;
+        letter-spacing: -0.04em;
+        color: var(--accent);
+        line-height: 1;
+      }
+
+      .big small {
+        font-size: 56px;
+        font-weight: 500;
+        color: var(--muted);
+        letter-spacing: 0;
+      }
+
+
+      /* ---------------------------------------------------------- scene D */
+      .closing {
+        font-size: 68px;
+        font-weight: 600;
+        line-height: 1.25;
+        max-width: 22ch;
+        letter-spacing: -0.02em;
+      }
+
+      .note {
+        margin-top: 32px;
+        font-size: 40px;
+        color: var(--muted);
+        max-width: 32ch;
+        line-height: 1.45;
+      }
+
+      /* A quiet, permanent label so this can never be read as captured footage. */
+      .schematic {
+        position: absolute;
+        left: 130px;
+        bottom: 66px;
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 26px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #5c5c6b;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="16.4"
+      data-width="1600"
+      data-height="1000"
+    >
+      <!-- A — identity -->
+      <div class="clip" id="sA" data-start="0" data-duration="3.2" data-track-index="1">
+        <div class="scene" id="sA-in">
+          <div class="dot" id="sA-dot"></div>
+          <div class="wordmark" id="sA-word" style="margin-top: 44px">momentum-investor</div>
+          <div class="sub" id="sA-sub">A US-stock momentum robot, and its audit</div>
+        </div>
+      </div>
+
+      <!-- B — the three universes. The central scene: same rules, only the list changes. -->
+      <div class="clip" id="sB" data-start="3.2" data-duration="6.4" data-track-index="1">
+        <div class="scene" id="sB-in">
+          <div class="eyebrow" id="sB-eyebrow">Same rules · 2018–2026 · only the universe changes</div>
+          <div class="rows">
+            <div class="row" id="sB-r1">
+              <div class="row-head">
+                <span class="row-label">36 leaders, chosen in 2026</span>
+                <span class="row-val">29.2%<small> CAGR</small></span>
+              </div>
+              <div class="track"><div class="bar bar-hind" id="sB-b1" style="width: 97.33%"></div></div>
+              <div class="row-dd">max drawdown −29.7%</div>
+            </div>
+            <div class="row" id="sB-r2">
+              <div class="row-head">
+                <span class="row-label">S&amp;P 500, point-in-time</span>
+                <span class="row-val v-pit">14.4%<small> CAGR</small></span>
+              </div>
+              <div class="track"><div class="bar bar-pit" id="sB-b2" style="width: 48%"></div></div>
+              <div class="row-dd">max drawdown −35.2%</div>
+            </div>
+            <div class="row" id="sB-r3">
+              <div class="row-head">
+                <span class="row-label">QQQ, buy and hold</span>
+                <span class="row-val v-qqq">18.8%<small> CAGR</small></span>
+              </div>
+              <div class="track"><div class="bar bar-qqq" id="sB-b3" style="width: 62.67%"></div></div>
+              <div class="row-dd">max drawdown −35.6%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C — the finding -->
+      <div class="clip" id="sC" data-start="9.6" data-duration="3.2" data-track-index="1">
+        <div class="scene" id="sC-in">
+          <div class="eyebrow" id="sC-eyebrow">The finding</div>
+          <div class="big" id="sC-big" style="margin-top: 20px">14.9<small> points of CAGR</small></div>
+          <div class="caption" id="sC-cap" style="margin-top: 28px">
+            came from choosing the stock list with hindsight, <strong>not from the strategy.</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- D — what survived, stated without softening -->
+      <div class="clip" id="sD" data-start="12.8" data-duration="3.6" data-track-index="1">
+        <div class="scene" id="sD-in">
+          <div class="eyebrow" id="sD-eyebrow">Paper account · never traded real money</div>
+          <div class="closing" id="sD-title" style="margin-top: 24px">What survived does not beat QQQ on return.</div>
+          <div class="note" id="sD-note">
+            It earns 2–4 points a year less, for a drawdown of about −30% instead of −49% to −53% through 2008.
+          </div>
+        </div>
+      </div>
+
+      <div class="schematic">Schematic · published figures</div>
+    </div>
+
+    <script>
+      /*
+        One paused timeline the renderer scrubs frame by frame. Nothing here reads the
+        clock or randomises, so every render of this file is byte-identical to the last.
+      */
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const ease = 'power3.out';
+
+      // A
+      tl.from('#sA-dot', { scale: 0, opacity: 0, duration: 0.7, ease: 'back.out(2)' }, 0.15)
+        .from('#sA-word', { y: 70, opacity: 0, duration: 1.0, ease }, 0.3)
+        .from('#sA-sub', { y: 30, opacity: 0, duration: 0.9, ease }, 0.6)
+        .to('#sA-in', { opacity: 0, duration: 0.45, ease: 'power2.in' }, 2.75)
+        .set('#sA-in', { opacity: 0 }, 3.2);
+
+      // B — the hindsight list first, then the honest universe falls to half of it, then
+      // QQQ lands between the two. That order is the whole argument.
+      tl.from('#sB-eyebrow', { y: 26, opacity: 0, duration: 0.6, ease }, 3.35)
+        .from('#sB-r1', { y: 30, opacity: 0, duration: 0.6, ease }, 3.55)
+        .from('#sB-b1', { scaleX: 0, duration: 1.1, ease: 'power2.out' }, 3.75)
+        .from('#sB-r2', { y: 30, opacity: 0, duration: 0.6, ease }, 5.0)
+        .from('#sB-b2', { scaleX: 0, duration: 1.1, ease: 'power2.out' }, 5.2)
+        .from('#sB-r3', { y: 30, opacity: 0, duration: 0.6, ease }, 6.45)
+        .from('#sB-b3', { scaleX: 0, duration: 1.1, ease: 'power2.out' }, 6.65)
+        .to('#sB-in', { opacity: 0, duration: 0.45, ease: 'power2.in' }, 9.15)
+        .set('#sB-in', { opacity: 0 }, 9.6);
+
+      // C — 29.2 − 14.4
+      tl.from('#sC-eyebrow', { y: 26, opacity: 0, duration: 0.6, ease }, 9.75)
+        .from('#sC-big', { y: 40, opacity: 0, duration: 0.8, ease }, 9.9)
+        .from('#sC-cap', { y: 26, opacity: 0, duration: 0.8, ease }, 10.3)
+        .to('#sC-in', { opacity: 0, duration: 0.45, ease: 'power2.in' }, 12.35)
+        .set('#sC-in', { opacity: 0 }, 12.8);
+
+      // D
+      tl.from('#sD-eyebrow', { y: 26, opacity: 0, duration: 0.6, ease }, 12.95)
+        .from('#sD-title', { y: 36, opacity: 0, duration: 0.85, ease }, 13.1)
+        .from('#sD-note', { y: 26, opacity: 0, duration: 0.8, ease }, 13.4);
+
+      window.__timelines['main'] = tl;
+    </script>
+  </body>
+</html>
