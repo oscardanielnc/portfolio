@@ -72,16 +72,17 @@ prove a project exists; these show that it works.
 ```bash
 npm run demos            # record every live demo, then encode
 npm run demos:record     # Playwright drives the live deployments → view/demos/ (gitignored)
-npm run demos:process    # ffmpeg → public/demos/ (committed, 3.2 MB for all six)
+npm run demos:process    # ffmpeg → public/demos/ (committed, 3.9 MB for all eight)
 ```
 
 Playwright drives the real deployments, so the footage is of the software itself and
 regenerates when an app changes rather than being re-recorded by hand. A phone downloads at
 most the `@sm` cut of the one card it is looking at.
 
-Kepler has nothing left to record — it is archived — so its plate is authored instead, as a
-HyperFrames composition under `explainers/`. `demos:process` encodes recordings and
-explainers identically.
+Kepler, momentum-investor and Oscilion have nothing running to record — Kepler is archived,
+and the other two were closed by their own research without ever being deployed publicly —
+so their plates are authored instead, as HyperFrames compositions under `explainers/`.
+`demos:process` encodes recordings and explainers identically.
 
 Exposure Dashboard searches real people, so its clip searches the address already printed
 in this site's own footer. An address belongs to one person; a handle or a name matches
@@ -129,7 +130,9 @@ All copy lives in three typed files and nowhere else:
 
 Both locale files implement `Content` from `content/types.ts`, so a field added to one is a
 type error until it is added to the other. Adding a project means adding it to `projectRefs`
-in `site.ts` and to the `projects` array in both locale files.
+in `site.ts` and to the `projects` array in both locale files. The card layout is
+positional: `variants` in `components/site-page.tsx` gives each index its card shape, and
+half-width `standard` cards only line up when they come in pairs.
 
 `components/site-page.tsx` renders a `Content` object and is shared by both routes. The two
 routes are separate root layouts (`app/(en)/` and `app/(es)/`) purely so each can set its own

@@ -108,9 +108,12 @@ Two consequences worth knowing:
 
 ## Explainers
 
-Kepler cannot be recorded: it is archived, so there is no longer anything running to point
-a browser at. Its plate is authored instead of captured, as a
-[HyperFrames](https://hyperframes.heygen.com) composition under `explainers/<name>/`.
+Three projects cannot be recorded, because nothing of them is running to point a browser
+at: Kepler is archived, and momentum-investor and Oscilion were closed by their own
+research without ever being deployed publicly. Their plates are authored instead of
+captured, as [HyperFrames](https://hyperframes.heygen.com) compositions under
+`explainers/<name>/`. All three pin the same CLI version, so they come out of the same
+renderer.
 
 ```
 cd explainers/kepler
@@ -121,7 +124,8 @@ cd ../.. && npm run demos:process
 
 `demos:process` picks up `explainers/<name>/renders/<name>.mp4` automatically and encodes
 it to the same widths and the same budget as a recording, so the card cannot tell them
-apart.
+apart. The folder name becomes the key in `content/demos.ts`, so `momentum-investor` is
+read as `demos['momentum-investor']`.
 
 ffmpeg has to be on `PATH` for the HyperFrames CLI specifically — unlike `demos:process`,
 it does not know about winget's install location. In a shell opened before the install:
@@ -132,11 +136,20 @@ export PATH="$PATH:$LOCALAPPDATA/Microsoft/WinGet/Packages/Gyan.FFmpeg_Microsoft
 
 Two rules these compositions follow, and should keep following:
 
-**No invented data.** Kepler's explainer uses only figures the project actually published —
-seven sleeves, 3.4% against a 10% budget, 18 days live. There is no animated equity curve,
-because a line that looks like real performance and is not is the one dishonest thing a
-portfolio cannot afford. Each composition carries a permanent `SCHEMATIC · PUBLISHED
-FIGURES` label for the same reason.
+**No invented data.** Each explainer uses only figures its project's README publishes —
+for Kepler, seven sleeves, 3.4% against a 10% budget, 18 days live; for momentum-investor,
+the three-universe table, with bars drawn to scale from zero. There is no animated equity
+curve anywhere, because a line that looks like real performance and is not is the one
+dishonest thing a portfolio cannot afford. Each composition carries a permanent
+`SCHEMATIC · PUBLISHED FIGURES` label for the same reason.
+
+One documented exception: Oscilion's README says its go/no-go criteria went into the first
+commit but does not list them, so the wording of the three criteria on screen is
+paraphrased from its `docs/VISION.md`. Every number next to them is still from the README,
+and the fourth criterion (tolerable drawdown) is left out because the README publishes no
+figure against it. Oscilion's early Sharpe of -0.47 to +1.89 is deliberately absent too: the
+project reports it only as the number that did not survive, and a looping plate is where a
+number gets remembered without its caveat.
 
 **Authored text is English.** The recordings are of Spanish-language apps, which is simply
 what those apps are. Authored copy is a choice, and the site's default locale is English,
