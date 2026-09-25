@@ -65,6 +65,21 @@ export const projectRefs = {
     // built from Kepler's own published figures. See explainers/kepler/.
     video: { ...demos.kepler, fit: 'contain' },
   },
+  momentumInvestor: {
+    demo: null,
+    repo: 'https://github.com/oscardanielnc/momentum-investor',
+    tech: ['Python', 'pandas', 'FastAPI', 'SQLite', 'Alpaca API', 'Chart.js', 'systemd'],
+    // Never deployed publicly, so like Kepler this is an authored diagram of the
+    // README's own figures. See explainers/momentum-investor/.
+    video: { ...demos['momentum-investor'], fit: 'contain' },
+  },
+  oscilion: {
+    demo: null,
+    repo: 'https://github.com/oscardanielnc/oscilion-b26',
+    tech: ['Python', 'pandas', 'ccxt', 'statsmodels', 'SQLite', 'FastAPI', 'React + TypeScript', 'systemd'],
+    // Closed, so nothing left to record. See explainers/oscilion/.
+    video: { ...demos.oscilion, fit: 'contain' },
+  },
   exposure: {
     demo: 'https://exposure.oscarnavarro.dev',
     repo: 'https://github.com/oscardanielnc/exposure-dashboard',
