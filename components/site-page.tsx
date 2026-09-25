@@ -8,9 +8,9 @@ const shell = 'mx-auto max-w-5xl px-4 sm:px-6';
 const heading = 'text-3xl font-semibold tracking-[-0.03em] sm:text-4xl';
 
 /** Card composition per project, in the fixed order the projects are listed in.
-    Every project now carries a plate, so nothing takes the text variant any more: the
-    two half-width standards sit together in one row and the rest are full width,
-    mirroring left and right alternately so the page does not read as a stack. */
+    Every project now carries a plate, so nothing takes the text variant any more:
+    half-width standards come in pairs so each fills one row, and the full-width cards
+    between them mirror left and right alternately so the page does not read as a stack. */
 const variants: readonly Variant[] = [
   'featured',
   'standard',
@@ -18,6 +18,8 @@ const variants: readonly Variant[] = [
   'featured-reverse',
   'featured',
   'featured-reverse',
+  'standard',
+  'standard',
 ];
 
 export function SitePage({ content }: { content: Content }) {
