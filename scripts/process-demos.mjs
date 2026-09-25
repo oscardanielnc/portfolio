@@ -242,7 +242,8 @@ await writeFile(join(srcDir, 'manifest.json'), JSON.stringify(manifest, null, 2)
  */
 const entries = Object.keys(generated)
   .sort()
-  .map((k) => `  ${k}: ${JSON.stringify(generated[k])},`)
+  // A folder name like `momentum-investor` is not a valid bare key, so quote those.
+  .map((k) => `  ${/^[A-Za-z_$][\w$]*$/.test(k) ? k : `'${k}'`}: ${JSON.stringify(generated[k])},`)
   .join('\n');
 
 await writeFile(
