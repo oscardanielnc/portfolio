@@ -70,6 +70,9 @@ const PAD = '0x0d0d14';
 const jobs = {
   tickerlens: { posterAt: 0.72, crf: 34 },
   kepler: { posterAt: 0.62, crf: 30 },
+  // Explainers: the poster lands on each one's central table, fully drawn.
+  'momentum-investor': { posterAt: 0.53, crf: 30 },
+  oscilion: { posterAt: 0.7, crf: 30 },
   exposure: { posterAt: 0.62, crf: 35 },
   tvindicators: { posterAt: 0.15, crf: 34 },
   mipeso: { posterAt: 0.55, crf: 30 },
