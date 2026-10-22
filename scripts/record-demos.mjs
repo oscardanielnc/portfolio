@@ -312,6 +312,77 @@ const flows = [
       await page.waitForTimeout(3400); // the grading is the whole point of the shot
     },
   },
+  {
+    name: 'payment-orchestrator',
+    viewport: DESKTOP,
+    url: 'http://localhost:5173/login',
+    needsEnv: ['PO_DEMO_EMAIL', 'PO_DEMO_PASSWORD'],
+    // The app's copy is English; Stripe's card form follows the browser locale.
+    locale: 'en-US',
+    /**
+     * The only project recorded against a local stack: it has no public deployment,
+     * because every rail runs in Stripe test mode or on a testnet. Start it first
+     * (docker compose up, the API, the worker, `stripe listen` and the web app) — the
+     * repository's README says how. The card is Stripe's published test card.
+     *
+     * Payment link → card checkout → the charge's ledger postings: the claim is that a
+     * payment ends as a balanced double-entry posting, so the clip has to reach it.
+     */
+    async run(page, mark) {
+      mark('skip-start', 0);
+      await page.getByLabel('Email').fill(process.env.PO_DEMO_EMAIL);
+      await page.getByLabel('Password').fill(process.env.PO_DEMO_PASSWORD);
+      await page.getByRole('button', { name: 'Sign in' }).click();
+      await page.getByRole('heading', { name: 'Charges' }).waitFor({ timeout: 30_000 });
+      await page.waitForTimeout(600);
+      mark('skip-end');
+
+      await page.waitForTimeout(900);
+      await click(page, page.getByRole('button', { name: 'New payment link' }));
+      await click(page, page.getByLabel('Amount'));
+      await peck(page, '24.00', 110);
+      await click(page, page.getByLabel('Description'));
+      await peck(page, 'Two bags of Cusco beans', 45);
+      await click(page, page.getByRole('button', { name: 'Create link' }));
+      await page.getByText('Payment link ready').waitFor();
+      await page.waitForTimeout(1200);
+      const link = await page.locator('a[href*="/pay/"]').first().getAttribute('href');
+      const chargeUrl = page.url();
+
+      mark('skip-start');
+      await page.goto(link);
+      await page.getByRole('button', { name: 'Card' }).waitFor();
+      mark('skip-end');
+      await page.waitForTimeout(700);
+      await click(page, page.getByRole('button', { name: 'Card' }));
+      const stripe = page.frameLocator('iframe[title="Secure payment input frame"]').first();
+      await stripe.locator('input[name="number"]').waitFor({ timeout: 30_000 });
+      // Stripe's test-mode developer badge is not part of the product. It carries an inline
+      // !important style, so only an inline !important of our own outranks it.
+      await page.evaluate(() =>
+        document
+          .querySelectorAll('iframe[src*="elements-inner-easel"]')
+          .forEach((f) => f.style.setProperty('display', 'none', 'important')),
+      );
+      await click(page, stripe.locator('input[name="number"]'));
+      await stripe.locator('input[name="number"]').pressSequentially('4242424242424242', { delay: 45 });
+      await stripe.locator('input[name="expiry"]').pressSequentially('1234', { delay: 70 });
+      await stripe.locator('input[name="cvc"]').pressSequentially('123', { delay: 70 });
+      await click(page, page.getByRole('button', { name: /^Pay/ }));
+      // Stripe's signed webhook reaches the worker, which settles the charge.
+      await page.getByText('Payment received').waitFor({ timeout: 90_000 });
+      await page.waitForTimeout(2000);
+
+      mark('skip-start');
+      await page.goto(chargeUrl);
+      await page.getByText('Two bags of Cusco beans').first().click();
+      await page.getByRole('heading', { name: 'Ledger entries' }).waitFor();
+      mark('skip-end');
+      await page.waitForTimeout(1800);
+      await glide(page, 700, { chunks: 16, pause: 60 });
+      await page.waitForTimeout(3200);
+    },
+  },
 ];
 
 const only = process.argv.slice(2).filter((a) => !a.startsWith('-'));
@@ -327,6 +398,11 @@ for (const flow of selected) {
     console.log(`skip  ${flow.name} — set ESTUDIA_USER and ESTUDIA_PASSWORD to record it`);
     continue;
   }
+  const missing = (flow.needsEnv ?? []).filter((v) => !process.env[v]);
+  if (missing.length) {
+    console.log(`skip  ${flow.name} — set ${missing.join(' and ')} to record it`);
+    continue;
+  }
 
   const tmp = join(outDir, `.tmp-${flow.name}`);
   await rm(tmp, { recursive: true, force: true });
@@ -336,7 +412,7 @@ for (const flow of selected) {
     viewport: flow.viewport,
     deviceScaleFactor: 1,
     recordVideo: { dir: tmp, size: flow.viewport },
-    locale: 'es-ES',
+    locale: flow.locale ?? 'es-ES',
     colorScheme: flow.colorScheme ?? 'light',
   });
   await context.addInitScript(CURSOR);

@@ -92,6 +92,17 @@ export function ProjectCard({ project, labels, variant }: Props) {
                 <ExternalIcon className="h-3.5 w-3.5" />
                 <span className="sr-only">{`— ${project.name}`}</span>
               </a>
+            ) : project.walkthrough ? (
+              <a
+                href={project.walkthrough}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary px-4 py-2.5 text-sm"
+              >
+                {labels.watch}
+                <ExternalIcon className="h-3.5 w-3.5" />
+                <span className="sr-only">{`— ${project.name}`}</span>
+              </a>
             ) : (
               <span className="inline-flex items-center gap-2 rounded-control border border-dashed border-line-strong px-4 py-2.5 text-sm font-medium text-muted">
                 <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-line-strong" />

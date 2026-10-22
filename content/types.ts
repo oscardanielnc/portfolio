@@ -45,6 +45,11 @@ export interface Project {
   repo: string | null;
   /** Shown in place of the demo button when demo is null. */
   archived?: boolean;
+  /**
+   * A narrated walkthrough video, for a project that cannot have a public live demo
+   * (Payment Orchestrator runs only in test mode). Takes the demo button's place.
+   */
+  walkthrough?: string;
   /** Real screenshot of the running app. Cards without one lay out differently. */
   image?: ProjectImage;
   /** Recording of the app in use. Takes the plate over `image` when both are present. */
@@ -104,6 +109,8 @@ export interface Content {
     live: string;
     code: string;
     archived: string;
+    /** Button that opens a project's walkthrough video. */
+    watch: string;
     stack: string;
     /** Prefix for screenshot alt text, e.g. "Screenshot of". */
     screenshot: string;

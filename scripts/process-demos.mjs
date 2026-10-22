@@ -77,6 +77,7 @@ const jobs = {
   tvindicators: { posterAt: 0.15, crf: 34 },
   mipeso: { posterAt: 0.55, crf: 30 },
   estudia: { posterAt: 0.5, crf: 33 },
+  'payment-orchestrator': { posterAt: 0.9, crf: 33 },
 };
 
 async function duration(file) {

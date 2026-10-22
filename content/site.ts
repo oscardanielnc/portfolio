@@ -13,6 +13,7 @@ export const site = {
 
 export const techStack = [
   'React',
+  'NestJS',
   'Next.js',
   'TypeScript',
   'JavaScript',
@@ -21,6 +22,7 @@ export const techStack = [
   'FastAPI',
   'Node.js',
   'PostgreSQL',
+  'Redis',
   'SQLite',
   'Docker',
   'nginx',
@@ -36,6 +38,15 @@ export const techStack = [
 
 /** Locale-independent parts of each project: links and technology lists. */
 export const projectRefs = {
+  paymentOrchestrator: {
+    demo: null,
+    repo: 'https://github.com/oscardanielnc/payment-orchestrator',
+    tech: ['NestJS', 'TypeScript', 'PostgreSQL', 'Prisma', 'Redis + BullMQ', 'React 19', 'Stripe', 'Mercado Pago', 'viem', 'TronWeb', 'Docker'],
+    // No public deployment: every rail runs in Stripe test mode or on a testnet, so the plate
+    // is recorded against a local stack and the button opens a narrated two-minute walkthrough.
+    walkthrough: '/walkthroughs/payment-orchestrator.mp4',
+    video: demos['payment-orchestrator'],
+  },
   tickerlens: {
     demo: 'https://tickerlens.oscarnavarro.dev',
     repo: 'https://github.com/oscardanielnc/tickerlens',
