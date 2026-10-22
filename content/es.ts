@@ -67,7 +67,7 @@ export const es: Content = {
       summary:
         'Una API y un checkout alojado que llevan cada pago a tarjetas, Mercado Pago, USDT en TRON o USDC en Base, y registran cada centavo en un libro contable de partida doble.',
       detail:
-        'Ejecutado solo en modo de prueba y en testnets públicas, y verificado con pagos reales de prueba en Stripe, usuarios de prueba de Mercado Pago y transferencias on-chain en TRON Nile y Base Sepolia. Claves de idempotencia en Postgres, un outbox transaccional y un libro contable de solo anexar que protegen los triggers de la base de datos. Los depósitos cripto llegan a direcciones derivadas de una clave pública extendida, así que el servidor no puede gastarlos. Un pago cuyo webhook nunca llega lo atrapan una consulta de estado y una conciliación diaria que nunca mueve dinero por su cuenta. Veintidós decisiones de arquitectura quedaron escritas junto con las opciones que descartaron.',
+        'Ejecutado solo en modo de prueba y en testnets públicas, y verificado con pagos reales de prueba en Stripe, usuarios de prueba de Mercado Pago y transferencias on-chain en TRON Nile y Base Sepolia. Claves de idempotencia en Postgres, un outbox transaccional y un libro contable de solo anexar que protegen los triggers de la base de datos. Los depósitos cripto llegan a direcciones derivadas de una clave pública extendida, así que el servidor no puede gastarlos. Un pago cuyo webhook nunca llega lo atrapan una consulta de estado y una conciliación diaria que nunca mueve dinero por su cuenta. Veintitrés decisiones de arquitectura quedaron escritas junto con las opciones que descartaron.',
       ...projectRefs.paymentOrchestrator,
     },
     {
