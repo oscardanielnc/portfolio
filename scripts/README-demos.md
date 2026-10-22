@@ -43,6 +43,19 @@ ESTUDIA_USER=...
 ESTUDIA_PASSWORD=...
 ```
 
+Payment Orchestrator is the one flow recorded against a **local** stack, because it has no
+public deployment: every rail runs in Stripe test mode or on a testnet. Start the stack as its
+README says (Docker, API, worker, `stripe listen`, web app), create a dashboard user with
+`user:create`, and add it here; the flow skips itself when either variable is missing:
+
+```
+PO_DEMO_EMAIL=...
+PO_DEMO_PASSWORD=...
+```
+
+Its card also links a narrated two-minute walkthrough, `public/walkthroughs/payment-orchestrator.mp4`,
+rendered from the HyperFrames project that lives next to the repository, not in this site.
+
 Exposure Dashboard needs no account. An earlier version of this file claimed it was behind
 a login; that was wrong, and came from grepping the page for "password" and matching its
 **results** panel, `Contraseñas y credenciales`. It is recorded like any other demo.

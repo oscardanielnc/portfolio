@@ -12,6 +12,7 @@ export const demos = {
   mipeso: {"src":"/demos/mipeso.c265705f.mp4","poster":"/demos/mipeso.c265705f-poster.webp","width":1000,"height":626},
   'momentum-investor': {"src":"/demos/momentum-investor.cf29232e.mp4","poster":"/demos/momentum-investor.cf29232e-poster.webp","width":1000,"height":626},
   oscilion: {"src":"/demos/oscilion.9044e9f2.mp4","poster":"/demos/oscilion.9044e9f2-poster.webp","width":1000,"height":626},
+  'payment-orchestrator': {"src":"/demos/payment-orchestrator.898d2db8.mp4","poster":"/demos/payment-orchestrator.898d2db8-poster.webp","width":1000,"height":626},
   tickerlens: {"src":"/demos/tickerlens.dc0c11b7.mp4","poster":"/demos/tickerlens.dc0c11b7-poster.webp","width":1000,"height":626},
   tvindicators: {"src":"/demos/tvindicators.edd3bff4.mp4","poster":"/demos/tvindicators.edd3bff4-poster.webp","width":1000,"height":626},
 } as const;

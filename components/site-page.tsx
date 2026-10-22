@@ -12,6 +12,7 @@ const heading = 'text-3xl font-semibold tracking-[-0.03em] sm:text-4xl';
     half-width standards come in pairs so each fills one row, and the full-width cards
     between them mirror left and right alternately so the page does not read as a stack. */
 const variants: readonly Variant[] = [
+  'featured-reverse',
   'featured',
   'standard',
   'standard',

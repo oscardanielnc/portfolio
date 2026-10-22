@@ -72,7 +72,7 @@ prove a project exists; these show that it works.
 ```bash
 npm run demos            # record every live demo, then encode
 npm run demos:record     # Playwright drives the live deployments → view/demos/ (gitignored)
-npm run demos:process    # ffmpeg → public/demos/ (committed, 3.9 MB for all eight)
+npm run demos:process    # ffmpeg → public/demos/ (committed, 4.4 MB for all nine)
 ```
 
 Playwright drives the real deployments, so the footage is of the software itself and
