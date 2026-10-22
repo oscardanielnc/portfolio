@@ -62,7 +62,7 @@ export const en: Content = {
       summary:
         'One API and a hosted checkout that route each payment to cards, Mercado Pago, USDT on TRON or USDC on Base, and record every cent in a double-entry ledger.',
       detail:
-        'Run only in test mode and on public testnets, and verified with real Stripe test payments, Mercado Pago test users and on-chain transfers on TRON Nile and Base Sepolia. Idempotency keys in Postgres, a transactional outbox, and an append-only ledger that database triggers protect. Crypto deposits go to addresses derived from an extended public key, so the server cannot spend them. A payment whose webhook never arrives is caught by a status check and a daily reconciliation that never moves money on its own. Twenty-two architecture decisions are written down with the options they rejected.',
+        'Run only in test mode and on public testnets, and verified with real Stripe test payments, Mercado Pago test users and on-chain transfers on TRON Nile and Base Sepolia. Idempotency keys in Postgres, a transactional outbox, and an append-only ledger that database triggers protect. Crypto deposits go to addresses derived from an extended public key, so the server cannot spend them. A payment whose webhook never arrives is caught by a status check and a daily reconciliation that never moves money on its own. Twenty-three architecture decisions are written down with the options they rejected.',
       ...projectRefs.paymentOrchestrator,
     },
     {
