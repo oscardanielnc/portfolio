@@ -1,4 +1,5 @@
 import { demos } from './demos';
+import type { TechGroupId } from './types';
 
 /** Facts that are identical in every locale. Single source of truth. */
 export const site = {
@@ -35,6 +36,16 @@ export const techStack = [
   'Capacitor',
   'WebAssembly',
 ] as const;
+
+/** The same list, grouped by layer for the Stack section. Labels live in each locale. */
+export const techGroups = [
+  { id: 'frontend', items: ['React', 'Next.js', 'TypeScript', 'JavaScript', 'Tailwind CSS'] },
+  { id: 'backend', items: ['NestJS', 'Node.js', 'Python', 'FastAPI'] },
+  { id: 'data', items: ['PostgreSQL', 'Redis', 'SQLite'] },
+  { id: 'ai', items: ['LLM integration', 'RAG'] },
+  { id: 'platforms', items: ['Progressive Web Apps', 'Capacitor', 'WebAssembly'] },
+  { id: 'infrastructure', items: ['Docker', 'nginx', 'Linux', 'Git', 'CI/CD'] },
+] as const satisfies readonly { id: TechGroupId; items: readonly (typeof techStack)[number][] }[];
 
 /** Locale-independent parts of each project: links and technology lists. */
 export const projectRefs = {

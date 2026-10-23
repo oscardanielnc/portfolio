@@ -55,6 +55,47 @@ export const en: Content = {
     noDemo: 'No public demo',
   },
 
+  ui: {
+    sections: { about: 'About', projects: 'Projects', experience: 'Experience', stack: 'Stack' },
+    nextLines: {
+      about: 'Who I am and how I work',
+      projects: 'Nine projects, each with its recording',
+      experience: 'Where I have worked, and when',
+      stack: 'The tools behind the projects',
+    },
+    sectionsNav: 'Sections',
+    back: 'Back to the wheel',
+    scrollCue: 'Scroll to explore',
+    hint: 'Scroll, swipe or use ← → · click to open',
+    loading: 'Loading the avatar',
+    next: 'Next section',
+    footerLead: ['Let’s build something', 'together'],
+    copy: 'Copy',
+    copied: 'Copied',
+    selected: 'Selected',
+    email: 'Email',
+    cv: 'CV (PDF)',
+    role: 'Role',
+    location: 'Location',
+    core: 'Core',
+    projectsCount: '{n} projects',
+    projectsNote:
+      'Each one is deployed, recorded or documented. The ones marked archived were closed on purpose, and they say why.',
+    stackLede: 'The tools behind the projects, grouped by layer.',
+    whereToSee: 'Where to see them',
+    whereToSeeLine: 'Every project lists its own stack.',
+    liveTag: 'Live product',
+    layers: 'Layers',
+    techGroups: {
+      frontend: 'Frontend',
+      backend: 'Backend',
+      data: 'Data',
+      ai: 'AI',
+      platforms: 'Apps & platforms',
+      infrastructure: 'Infrastructure',
+    },
+  },
+
   projects: [
     {
       name: 'Payment Orchestrator',

@@ -63,6 +63,44 @@ export interface Role {
   line: string;
 }
 
+export type SectionId = 'about' | 'projects' | 'experience' | 'stack';
+export type TechGroupId = 'frontend' | 'backend' | 'data' | 'ai' | 'platforms' | 'infrastructure';
+
+export interface StageCopy {
+  /** The four sections, in wheel order. Also their titles. */
+  sections: Record<SectionId, string>;
+  /** One line under the "Next section" link, per target section. */
+  nextLines: Record<SectionId, string>;
+  /** Accessible name of the wheel. */
+  sectionsNav: string;
+  back: string;
+  scrollCue: string;
+  /** How to use the wheel, shown under it on the home stage. */
+  hint: string;
+  loading: string;
+  next: string;
+  /** Footer line, split so the last words can glow: [plain, highlighted]. */
+  footerLead: readonly [string, string];
+  copy: string;
+  copied: string;
+  selected: string;
+  email: string;
+  cv: string;
+  role: string;
+  location: string;
+  core: string;
+  /** "{n} projects" — {n} is replaced by the count. */
+  projectsCount: string;
+  projectsNote: string;
+  stackLede: string;
+  whereToSee: string;
+  whereToSeeLine: string;
+  /** Tag on a project video: running product, archived, or no public demo. */
+  liveTag: string;
+  layers: string;
+  techGroups: Record<TechGroupId, string>;
+}
+
 export interface Content {
   locale: Locale;
   /** Path of this page and of the other language, for the switcher and hreflang. */
@@ -119,6 +157,9 @@ export interface Content {
     /** Shown on cards that have no screenshot. */
     noDemo: string;
   };
+
+  /** Copy of the avatar stage: the wheel, the section panel and its chrome. */
+  ui: StageCopy;
 
   projects: readonly Project[];
   alsoBuilt: string;
