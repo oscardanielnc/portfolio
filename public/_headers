@@ -8,6 +8,10 @@
 /demos/*
   Cache-Control: public, max-age=31536000, immutable
 
+# The avatar stage: its script and model are content-hashed by scripts/build-stage.mjs.
+/stage/*
+  Cache-Control: public, max-age=31536000, immutable
+
 /*
   Referrer-Policy: strict-origin-when-cross-origin
   X-Frame-Options: DENY

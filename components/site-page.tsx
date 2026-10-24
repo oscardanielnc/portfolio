@@ -1,194 +1,378 @@
-import { site } from '@/content/site';
-import type { Content } from '@/content/types';
-import { Header } from './header';
-import { ProjectCard, type Variant } from './project-card';
-import { ArrowIcon, DownloadIcon, GitHubIcon, LinkedInIcon } from './icons';
+import { site, techGroups } from '@/content/site';
+import type { Content, Project, SectionId } from '@/content/types';
+import { LanguageSwitch } from './language-switch';
 
-const shell = 'mx-auto max-w-5xl px-4 sm:px-6';
-const heading = 'text-3xl font-semibold tracking-[-0.03em] sm:text-4xl';
+/**
+ * The whole site is this one page, rendered to static HTML.
+ *
+ * Without JavaScript it reads top to bottom: name, the four sections, contact. With it,
+ * stage/main.ts turns the same markup into the avatar stage: the wheel links open each
+ * section in a full-screen panel through a portal, and the avatar keeps you company from
+ * its dock. Nothing here depends on that script, so search engines and readers with
+ * JavaScript off get every word.
+ */
 
-/** Card composition per project, in the fixed order the projects are listed in.
-    Every project now carries a plate, so nothing takes the text variant any more:
-    half-width standards come in pairs so each fills one row, and the full-width cards
-    between them mirror left and right alternately so the page does not read as a stack. */
-const variants: readonly Variant[] = [
-  'featured-reverse',
-  'featured',
-  'standard',
-  'standard',
-  'featured-reverse',
-  'featured',
-  'featured-reverse',
-  'standard',
-  'standard',
-];
+export const SECTIONS: readonly SectionId[] = ['about', 'projects', 'experience', 'stack'];
+/** Light of each section on the floor ring of the stage. */
+const SECTION_COLORS = ['#9CCBFF', '#7FD6F2', '#86A8FF', '#B4D8FF'];
 
-export function SitePage({ content }: { content: Content }) {
-  const [lead, ...rest] = content.hero.intro;
+const pad2 = (n: number) => String(n).padStart(2, '0');
+
+/** Section title with its last letter in the accent colour. */
+function Title({ label }: { label: string }) {
+  return (
+    <>
+      {label.slice(0, -1)}
+      <span>{label.slice(-1)}</span>
+    </>
+  );
+}
+
+function Pill({ href, children, ghost, download }: { href: string; children: React.ReactNode; ghost?: boolean; download?: boolean }) {
+  const external = href.startsWith('http');
+  return (
+    <a
+      className={ghost ? 'pill ghost' : 'pill'}
+      href={href}
+      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      {...(download ? { download: true } : {})}
+    >
+      {children}
+    </a>
+  );
+}
+
+function SectionHead({ index, content }: { index: number; content: Content }) {
+  const id = SECTIONS[index]!;
+  return (
+    <>
+      <div className="eyebrow">
+        <span>
+          <b>{pad2(index + 1)}</b> / {pad2(SECTIONS.length)}
+        </span>
+        <span className="cue">{content.ui.scrollCue}</span>
+      </div>
+      <h2 className="sec-title" tabIndex={-1}>
+        <Title label={content.ui.sections[id]} />
+      </h2>
+    </>
+  );
+}
+
+function NextLink({ index, content }: { index: number; content: Content }) {
+  const n = (index + 1) % SECTIONS.length;
+  const id = SECTIONS[n]!;
+  return (
+    <a className="next" href={`#${id}`} data-go={n}>
+      <small>
+        {content.ui.next} · <b>{pad2(n + 1)}</b> / {pad2(SECTIONS.length)}
+      </small>
+      <strong>{content.ui.sections[id]}</strong>
+      <em>{content.ui.nextLines[id]}</em>
+      <span className="go" aria-hidden="true">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M4 10h12M11 5l5 5-5 5" />
+        </svg>
+      </span>
+    </a>
+  );
+}
+
+function ProjectBlock({ project, index, content }: { project: Project; index: number; content: Content }) {
+  const l = content.projectLabels;
+  const video = project.video;
+  const tag = project.demo ? content.ui.liveTag : project.archived ? l.archived : l.noDemo;
+  return (
+    <article className="proj" id={`project-${index + 1}`} data-anchor={project.name}>
+      <figure className="media">
+        <div className={video?.fit === 'contain' ? 'card contain' : 'card'}>
+          {video && (
+            // Plain HTML player: with the stage script it plays only while on screen,
+            // without it the visitor gets the controls. preload="none" until then.
+            <video
+              muted
+              loop
+              playsInline
+              controls
+              preload="none"
+              poster={video.poster}
+              width={video.width}
+              height={video.height}
+              data-sm={video.src.replace(/\.mp4$/, '@sm.mp4')}
+              aria-label={`${l.recording} ${project.name}`}
+            >
+              <source src={video.src} type="video/mp4" />
+            </video>
+          )}
+          <span className="tag">{tag}</span>
+        </div>
+      </figure>
+      <div className="txt">
+        <div className="top">
+          <b>{pad2(index + 1)}</b>
+          <span>{project.kind}</span>
+          {project.archived && <span className="badge">{l.archived}</span>}
+        </div>
+        <h3>{project.name}</h3>
+        <p className="sum">{project.summary}</p>
+        <p className="det">{project.detail}</p>
+        <div className="meta">
+          <h4>{l.stack}</h4>
+          <ul className="chips">
+            {project.tech.map((t) => (
+              <li key={t}>{t}</li>
+            ))}
+          </ul>
+        </div>
+        <div className="ctas">
+          {project.demo && <Pill href={project.demo}>{l.live}</Pill>}
+          {project.walkthrough && <Pill href={project.walkthrough}>{l.watch}</Pill>}
+          {project.repo && (
+            <Pill href={project.repo} ghost>
+              {l.code}
+            </Pill>
+          )}
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function ContactLinks({ content }: { content: Content }) {
+  return (
+    <div className="contact">
+      <span className="mail">
+        <span>{site.email}</span>
+        <button type="button" data-copy hidden>
+          {content.ui.copy}
+        </button>
+      </span>
+      <a className="mail-link" href={`mailto:${site.email}`}>
+        {content.ui.email}
+      </a>
+      <a href={site.linkedin} target="_blank" rel="noopener noreferrer">
+        {content.nav.linkedin}
+      </a>
+      <a href={site.github} target="_blank" rel="noopener noreferrer">
+        {content.nav.github}
+      </a>
+      <a href={content.cvHref} download>
+        {content.ui.cv}
+      </a>
+    </div>
+  );
+}
+
+export function SitePage({ content, model, stageScript }: { content: Content; model: string; stageScript: string }) {
+  const ui = content.ui;
+  const [lead, second, third] = content.hero.intro;
+  const sectionLinks = (className?: string) =>
+    SECTIONS.map((id, i) => (
+      <a key={id} className={className} href={`#${id}`} data-go={i}>
+        {ui.sections[id]}
+      </a>
+    ));
+  const stageData = {
+    model,
+    colors: SECTION_COLORS,
+    copy: ui.copy,
+    copied: ui.copied,
+    selected: ui.selected,
+    email: site.email,
+  };
 
   return (
     <>
-      <a
-        href="#main"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-control focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-on-accent"
-      >
+      <a className="skip" href="#main">
         {content.nav.skipToContent}
       </a>
 
-      <Header content={content} />
+      <canvas id="stage" aria-hidden="true" />
+
+      <header className="top">
+        <div>
+          <h1 className="name">{site.shortName}</h1>
+          <p className="role">{content.hero.headline}</p>
+        </div>
+        <LanguageSwitch content={content} />
+      </header>
+
+      <nav id="wheel" aria-label={ui.sectionsNav}>
+        {sectionLinks()}
+      </nav>
+      <p id="hint">{ui.hint}</p>
+      <p id="loading" role="status">
+        <span>{ui.loading}</span>
+      </p>
+
+      <div id="portalRing" aria-hidden="true" />
 
       <main id="main">
-        {/* Hero */}
-        <section className="ambient overflow-hidden pt-28 sm:pt-36">
-          <div className={`${shell} grid gap-x-12 gap-y-12 pb-20 lg:grid-cols-12 lg:pb-28`}>
-            <div className="lg:col-span-7">
-              <p className="eyebrow enter enter-1">{content.hero.location}</p>
+        <div id="panel">
+          <aside className="rail">
+            <div className="rail-top">
+              <button className="back" type="button" data-back hidden>
+                ← {ui.back}
+              </button>
+              <LanguageSwitch content={content} />
+            </div>
+            <div className="who">
+              <b>{site.shortName}</b>
+              <span>{content.hero.headline}</span>
+            </div>
+            <nav className="secnav" aria-label={ui.sectionsNav}>
+              {sectionLinks()}
+            </nav>
+            <div className="index" id="railIndex" hidden />
+          </aside>
 
-              <h1 className="display enter-soft enter-2 mt-6">{site.name}</h1>
-
-              <p className="enter-soft enter-2 mt-4 text-xl font-medium text-muted sm:text-2xl">
-                {content.hero.headline}
-              </p>
-
-              {lead && (
-                <p className="enter-soft enter-3 mt-8 max-w-[58ch] text-[0.9375rem] leading-[1.8] text-muted sm:text-base">
-                  {lead}
-                </p>
-              )}
-
-              <div className="enter enter-4 mt-10 flex flex-wrap items-center gap-3">
-                <a href="#projects" className="btn btn-primary px-5 py-3 text-sm">
-                  {content.hero.primaryCta}
-                  <ArrowIcon className="h-4 w-4" />
-                </a>
-                <a href={content.cvHref} download className="btn btn-secondary px-5 py-3 text-sm">
-                  <DownloadIcon className="h-4 w-4" />
-                  {content.hero.secondaryCta}
-                </a>
-              </div>
+          <div className="scroller" id="scroller" tabIndex={-1}>
+            <div className="topbar">
+              <button className="back" type="button" data-back aria-label={ui.back} hidden>
+                ←
+              </button>
+              {sectionLinks('tab')}
+              <LanguageSwitch content={content} />
             </div>
 
-            <div className="enter enter-4 flex flex-col justify-end gap-5 lg:col-span-5 lg:pb-1">
-              {rest.map((paragraph) => (
-                <p
-                  key={paragraph.slice(0, 24)}
-                  className="max-w-[52ch] text-[0.875rem] leading-[1.85] text-muted"
-                >
-                  {paragraph}
-                </p>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <hr className="rule" />
-
-        {/* Projects */}
-        <section id="projects" className={`${shell} py-20 sm:py-28`}>
-          <h2 className={`${heading} reveal`}>{content.sections.projects}</h2>
-
-          <div className="mt-10 grid gap-5 md:grid-cols-2">
-            {content.projects.map((project, index) => (
-              <ProjectCard
-                key={project.name}
-                project={project}
-                labels={content.projectLabels}
-                variant={variants[index] ?? 'standard'}
-              />
-            ))}
-          </div>
-
-          <p className="reveal mt-10 max-w-[75ch] text-sm leading-[1.8] text-muted">
-            {content.alsoBuilt}
-          </p>
-        </section>
-
-        <hr className="rule" />
-
-        {/* Experience */}
-        <section id="experience" className={`${shell} py-20 sm:py-28`}>
-          <h2 className={`${heading} reveal`}>{content.sections.experience}</h2>
-
-          <ol className="mt-10 grid gap-4">
-            {content.experience.map((role) => (
-              <li
-                key={`${role.company}-${role.dates}`}
-                className="panel panel-interactive reveal rounded-card p-5 sm:p-6"
-              >
-                <div className="flex flex-col gap-x-4 gap-y-1.5 sm:flex-row sm:items-baseline sm:justify-between">
-                  <h3 className="text-base font-semibold tracking-tight">
-                    {role.title}
-                    <span className="font-normal text-muted"> · {role.company}</span>
-                  </h3>
-                  <p className="shrink-0 font-mono text-xs text-muted">{role.dates}</p>
+            <div className="content">
+              {/* About */}
+              <section className="sec" id="about" data-sec={0}>
+                <SectionHead index={0} content={content} />
+                <div className="intro">
+                  <div>
+                    <p className="big">{lead}</p>
+                    <p>{second}</p>
+                    <p>{third}</p>
+                    <div className="ctas">
+                      <a className="pill" href="#projects" data-go={1}>
+                        {content.hero.primaryCta}
+                      </a>
+                      <Pill href={content.cvHref} ghost download>
+                        {content.hero.secondaryCta}
+                      </Pill>
+                    </div>
+                  </div>
+                  <div className="meta">
+                    <h4>{ui.role}</h4>
+                    <p>{content.hero.headline}</p>
+                    <h4>{ui.location}</h4>
+                    <p>{content.hero.location}</p>
+                    <h4>{ui.core}</h4>
+                    <ul>
+                      <li>React</li>
+                      <li>Next.js</li>
+                      <li>TypeScript</li>
+                    </ul>
+                  </div>
                 </div>
-                <p className="mt-2.5 max-w-[78ch] text-[0.9375rem] leading-[1.75] text-muted">
-                  {role.line}
-                </p>
-              </li>
-            ))}
-          </ol>
-        </section>
+                <NextLink index={0} content={content} />
+              </section>
 
-        <hr className="rule" />
+              {/* Projects */}
+              <section className="sec" id="projects" data-sec={1} data-index-title={ui.sections.projects}>
+                <SectionHead index={1} content={content} />
+                <div className="intro">
+                  <div>
+                    <p className="big">{second}</p>
+                  </div>
+                  <div className="meta">
+                    <h4>{ui.projectsCount.replace('{n}', String(content.projects.length))}</h4>
+                    <p>{ui.projectsNote}</p>
+                  </div>
+                </div>
+                {content.projects.map((project, i) => (
+                  <ProjectBlock key={project.name} project={project} index={i} content={content} />
+                ))}
+                <p className="also">{content.alsoBuilt}</p>
+                <NextLink index={1} content={content} />
+              </section>
 
-        {/* Technologies */}
-        <section id="tech" className={`${shell} py-20 sm:py-28`}>
-          <h2 className={`${heading} reveal`}>{content.sections.tech}</h2>
+              {/* Experience */}
+              <section className="sec" id="experience" data-sec={2} data-index-title={ui.sections.experience}>
+                <SectionHead index={2} content={content} />
+                <div className="intro">
+                  <div>
+                    <p className="big">{lead}</p>
+                    <div className="ctas">
+                      <Pill href={content.cvHref} download>
+                        {content.nav.cv}
+                      </Pill>
+                      <Pill href={site.linkedin} ghost>
+                        {content.nav.linkedin}
+                      </Pill>
+                    </div>
+                  </div>
+                  <div className="meta">
+                    <h4>{ui.location}</h4>
+                    <p>{content.hero.location}</p>
+                  </div>
+                </div>
+                <ol className="jobs">
+                  {content.experience.map((role) => (
+                    <li key={`${role.company}-${role.dates}`} data-anchor={role.company.replace(/ \(.*\)/, '')}>
+                      <div className="dates">{role.dates}</div>
+                      <div>
+                        <h3>{role.title}</h3>
+                        <div className="co">{role.company}</div>
+                        <p>{role.line}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+                <NextLink index={2} content={content} />
+              </section>
 
-          <ul className="reveal mt-10 flex flex-wrap gap-2">
-            {content.tech.map((tech) => (
-              <li
-                key={tech}
-                className="panel rounded-tag px-3 py-1.5 text-[0.8125rem] text-ink transition-colors duration-200 hover:border-line-strong hover:text-accent"
-              >
-                {tech}
-              </li>
-            ))}
-          </ul>
-        </section>
+              {/* Stack */}
+              <section className="sec" id="stack" data-sec={3} data-index-title={ui.layers}>
+                <SectionHead index={3} content={content} />
+                <div className="intro">
+                  <div>
+                    <p className="big">{ui.stackLede}</p>
+                  </div>
+                  <div className="meta">
+                    <h4>{ui.whereToSee}</h4>
+                    <p>{ui.whereToSeeLine}</p>
+                    <div className="ctas tight">
+                      <a className="pill ghost" href="#projects" data-go={1}>
+                        {content.hero.primaryCta}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div className="groups">
+                  {techGroups.map((g) => (
+                    <section key={g.id} className="group" data-anchor={ui.techGroups[g.id]}>
+                      <h3>{ui.techGroups[g.id]}</h3>
+                      <ul className="chips">
+                        {g.items.map((t) => (
+                          <li key={t}>{t}</li>
+                        ))}
+                      </ul>
+                    </section>
+                  ))}
+                </div>
+                <NextLink index={3} content={content} />
+              </section>
+            </div>
+          </div>
+        </div>
       </main>
 
-      <hr className="rule" />
-
-      {/* Contact */}
-      <footer id="contact" className="ambient overflow-hidden">
-        <div className={`${shell} py-20 sm:py-28`}>
-          <h2 className={`${heading} reveal`}>{content.sections.contact}</h2>
-
-          <a
-            href={`mailto:${site.email}`}
-            className="display-link reveal mt-8 inline-block text-2xl font-semibold tracking-[-0.02em] transition-opacity duration-200 hover:opacity-80 sm:text-3xl"
-          >
-            {site.email}
-          </a>
-
-          <ul className="reveal mt-8 flex flex-wrap gap-3">
-            <li>
-              <a
-                href={site.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-secondary px-4 py-2.5 text-sm"
-              >
-                <GitHubIcon className="h-4 w-4" />
-                {content.nav.github}
-              </a>
-            </li>
-            <li>
-              <a
-                href={site.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-secondary px-4 py-2.5 text-sm"
-              >
-                <LinkedInIcon className="h-4 w-4" />
-                {content.nav.linkedin}
-              </a>
-            </li>
-          </ul>
-        </div>
+      <footer id="contact">
+        <p className="lead">
+          {ui.footerLead[0]} <span>{ui.footerLead[1]}</span>
+        </p>
+        <ContactLinks content={content} />
       </footer>
+
+      <script
+        type="application/json"
+        id="stage-data"
+        // Build-time constants, not user input.
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(stageData) }}
+      />
+      <script type="module" src={stageScript} />
     </>
   );
 }

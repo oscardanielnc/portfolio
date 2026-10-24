@@ -1,27 +1,12 @@
-import type { Metadata, Viewport } from 'next';
-import { Geist } from 'next/font/google';
+import type { Metadata } from 'next';
 import { en } from '@/content/en';
-import { buildMetadata, PersonJsonLd } from '@/lib/seo';
+import { buildMetadata } from '@/lib/seo';
+import { RootLayout, stageViewport } from '@/lib/root-layout';
 import '../globals.css';
 
-const geist = Geist({ subsets: ['latin'], display: 'swap', variable: '--font-geist' });
-
 export const metadata: Metadata = buildMetadata(en);
-
-export const viewport: Viewport = {
-  themeColor: [
-    { media: '(prefers-color-scheme: dark)', color: '#08080c' },
-    { media: '(prefers-color-scheme: light)', color: '#fbfbfc' },
-  ],
-};
+export const viewport = stageViewport;
 
 export default function EnglishRootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en" className={geist.variable}>
-      <body className="font-sans antialiased">
-        {children}
-        <PersonJsonLd content={en} />
-      </body>
-    </html>
-  );
+  return <RootLayout content={en}>{children}</RootLayout>;
 }

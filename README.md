@@ -1,11 +1,18 @@
 # oscarnavarro.dev
 
-Personal site and portfolio. Next.js 15 (App Router, TypeScript strict), Tailwind CSS v4,
+Personal site and portfolio. Next.js 15 (App Router, TypeScript strict), plain CSS,
 statically exported to flat files and served from Cloudflare Pages.
 
-No server, no API routes, no SSR. No runtime dependencies beyond React and Next.
-No analytics, no tracking scripts. One typeface (Geist), self-hosted at build time by
-`next/font` — the browser never contacts Google.
+The home is an **avatar stage**: a 3D caricature of Oscar in the centre of a wheel of four
+sections (About, Projects, Experience, Stack). Each section opens full screen through a
+portal, and the avatar keeps you company from its dock beside the content. It is three.js
+in one plain module (`stage/`), outside React; the page itself is static HTML that reads
+complete without it.
+
+No server, no API routes, no SSR. No analytics, no tracking scripts. One display typeface
+(Bricolage Grotesque, from the `@fontsource-variable` package), bundled at build time by
+`next/font/local` — neither the build nor the browser contacts Google. Body text uses the
+system face.
 
 - English: `/`
 - Spanish: `/es/`
@@ -14,22 +21,30 @@ No analytics, no tracking scripts. One typeface (Geist), self-hosted at build ti
 
 ```bash
 npm ci
-npm run build      # next build --turbopack, then scripts/strip-hydration.mjs → out/
+npm run build      # stage bundle, next build --turbopack, strip-hydration → out/
 ```
+
+`npm run dev` also builds the stage first. `npm run stage` rebuilds only the stage.
 
 The build runs **Turbopack**. Next's webpack builder crashes on Node 22 and newer inside
 its WebAssembly hasher (`WasmHash._updateWithBuffer`), which made `npm run build` fail on
 any current Node while still working on Cloudflare's Node 20. Turbopack builds on both.
 
-`npm run build` ends by removing React's hydration payload from the exported HTML.
-Nothing on this site is interactive in JavaScript — every control is a native anchor or a
-CSS state — so the ~90 kB (brotli) of runtime Next ships would boot, hydrate a tree nobody
-touches, and change nothing. Dropping it is worth about a second of LCP on mobile.
+`npm run build` ends by removing React's hydration payload from the exported HTML. React
+renders every page at build time and never runs in the browser: no component is
+interactive, so the ~90 kB (brotli) of runtime Next ships would boot, hydrate a tree
+nobody touches, and change nothing.
 
-`scripts/strip-hydration.mjs` **fails the build** if it finds a `'use client'` directive
-anywhere in `app/`, `components/`, `lib/` or `content/`, so a page whose JavaScript
-silently does not run can never ship. If you add real interactivity, remove the
-`&& node scripts/strip-hydration.mjs` from the `build` script — do not weaken the guard.
+The only JavaScript that ships is the avatar stage, and it is not React:
+
+| Step | What it does |
+|---|---|
+| `scripts/build-stage.mjs` | Bundles `stage/main.ts` and three.js with esbuild into `public/stage/stage.<hash>.js`, copies `assets/avatar/oscar-v2.glb` to `public/stage/oscar-v2.<hash>.glb`, and writes their URLs to `lib/stage-assets.ts`. All three are generated and gitignored |
+| `next build` | Renders the page, which links the stage as one `<script type="module">` |
+| `scripts/strip-hydration.mjs` | Removes React's scripts. **Fails the build** on any `'use client'` in `app/`, `components/`, `lib/` or `content/`, and on any `<script src>` left in the HTML other than `/stage/` |
+
+Why the stage lives outside React: [docs/adr/0002-avatar-stage-outside-react.md](docs/adr/0002-avatar-stage-outside-react.md).
+How the avatar behaves: [docs/design/avatar.md](docs/design/avatar.md).
 
 | | |
 |---|---|
@@ -94,10 +109,11 @@ re-encode always publishes a new URL and `/demos/*` can be served immutable. Reu
 stable name under Cloudflare's four-hour default left visitors watching a clip that had
 already been replaced — which reads as a broken site rather than a cached one.
 
-The player is plain HTML, because `strip-hydration.mjs` still guarantees no JavaScript
-ships: `<video autoplay muted loop playsinline preload="none">` with a poster, and no audio
-track at all. Browsers pause offscreen autoplaying video themselves, so only the card in
-view decodes, and under `prefers-reduced-motion` the poster replaces the clip.
+The player is plain HTML: `<video muted loop playsinline controls preload="none">` with a
+poster, and no audio track at all. The stage script removes the controls and plays each
+clip only while it is on screen, switching phones to the `@sm` cut. Under
+`prefers-reduced-motion`, or without JavaScript, nothing plays by itself and the controls
+stay.
 
 Full detail — the credentials contract, the privacy bound on the Exposure flow, and the
 rules the explainers follow — is in [`scripts/README-demos.md`](scripts/README-demos.md).
@@ -105,7 +121,7 @@ rules the explainers follow — is in [`scripts/README-demos.md`](scripts/README
 ## Response headers
 
 `public/_headers` is copied verbatim into the deploy. It sets year-long immutable caching
-for the two content-hashed trees — `/_next/static` and `/demos` — plus HSTS,
+for the three content-hashed trees — `/_next/static`, `/demos` and `/stage` — plus HSTS,
 `X-Frame-Options`, and a referrer policy.
 
 Cloudflare Pages otherwise defaults to `max-age=14400`. Four hours of caching on a stable
@@ -130,13 +146,15 @@ All copy lives in three typed files and nowhere else:
 
 Both locale files implement `Content` from `content/types.ts`, so a field added to one is a
 type error until it is added to the other. Adding a project means adding it to `projectRefs`
-in `site.ts` and to the `projects` array in both locale files. The card layout is
-positional: `variants` in `components/site-page.tsx` gives each index its card shape, and
-half-width `standard` cards only line up when they come in pairs.
+in `site.ts` and to the `projects` array in both locale files. The stage's own words (the
+wheel, the panel, "Next section", the footer line) are the `ui` block of each locale file;
+the Stack section groups `techStack` by `techGroups` in `site.ts`.
 
 `components/site-page.tsx` renders a `Content` object and is shared by both routes. The two
-routes are separate root layouts (`app/(en)/` and `app/(es)/`) purely so each can set its own
-`<html lang>`; there is no i18n library.
+routes are separate root layouts (`app/(en)/` and `app/(es)/`, both through
+`lib/root-layout.tsx`) purely so each can set its own `<html lang>`; there is no i18n
+library. Each section has an address (`/#projects`, `/es/#experience`), and the language
+switch keeps it.
 
 ## Social preview image
 
@@ -213,6 +231,5 @@ tags point at the apex, and serving both hosts unredirected splits SEO signals.
 
 ## What the site deliberately does not have
 
-Skill percentage bars, animated counters, typewriter effects, particle backgrounds, hijacked
-scrolling, a contact form, testimonials, client logos, or an empty blog. These were excluded
+Skill percentage bars, animated counters, typewriter effects, particle backgrounds, a contact form, testimonials, client logos, or an empty blog. These were excluded
 on purpose; please do not add them back.

@@ -108,7 +108,10 @@ let styledPages = 0;
 
 for (const path of htmlFiles) {
   const text = await readFile(path, 'utf8');
-  if (/<script[^>]*src=/.test(text) || /__next_f/.test(text)) {
+  // The one script a page may keep is the avatar stage (stage/main.ts, built by
+  // scripts/build-stage.mjs): a plain module outside React, so React still never boots.
+  // See docs/adr/0002-avatar-stage-outside-react.md.
+  if (/<script[^>]*src="(?!\/stage\/)/.test(text) || /__next_f/.test(text)) {
     console.error(`strip-hydration: ${path} still references scripts`);
     process.exit(1);
   }
