@@ -10,9 +10,9 @@ export const en: Content = {
   cvHref: site.cv.en,
 
   meta: {
-    title: 'Oscar Daniel Navarro Cieza — Frontend & AI-Augmented Full-Stack Developer',
+    title: 'Oscar Daniel Navarro Cieza — Full-Stack Product Engineer · AI Engineer',
     description:
-      'Four years building web and mobile applications in production. React, Next.js and TypeScript, with responsibility for backend, database and deployment. Peru, UTC-5, remote.',
+      'Full-stack product engineer, four years shipping production web and mobile apps. Frontend specialist (React, Next.js, TypeScript) who builds the whole stack when needed: NestJS, PostgreSQL, payments, React Native. Peru, UTC-5, remote.',
   },
 
   nav: {
@@ -26,15 +26,37 @@ export const en: Content = {
   },
 
   hero: {
-    headline: 'Frontend & AI-Augmented Full-Stack Developer',
+    headline: 'Full-Stack Product Engineer · AI Engineer',
     location: 'Peru · Remote (UTC-5) — full overlap with US Eastern',
     intro: [
-      'Four years building web and mobile applications in production. My core is frontend — React, Next.js and TypeScript — and I take responsibility for backend, database and deployment when a small team needs it.',
-      'Most of my recent work puts language models inside products people actually use. I deploy and maintain all of it myself, and I deliberately left several of these running unattended for weeks to find out whether they would hold up.',
+      'Four years shipping production web and mobile applications. Frontend is my specialty — React, Next.js and TypeScript — and I build the rest of the stack whenever the product needs it: NestJS APIs, PostgreSQL, queues, payments and mobile.',
+      'I work with Claude Code every day. I write the specs and architecture decisions first, test every path, and make sure I understand the code well enough to defend it and fix it fast.',
       'Based in Peru, UTC-5. Remote only, available as an independent contractor.',
     ],
     primaryCta: 'View projects',
     secondaryCta: 'Download CV',
+  },
+
+  howIWork: {
+    title: 'How I work',
+    items: [
+      {
+        title: 'Specs before code',
+        line: 'Every repository keeps its vision, feature specs, architecture decision records and runbooks.',
+      },
+      {
+        title: 'Tested, then trusted',
+        line: 'I test every path. The payment orchestrator has 300+ tests and was verified on real test networks.',
+      },
+      {
+        title: 'Learning by teaching myself',
+        line: 'When a project needs something new, I write my own lessons first.',
+      },
+      {
+        title: 'Context that persists',
+        line: 'Project docs plus a personal knowledge base give AI agents the full picture in every session.',
+      },
+    ],
   },
 
   sections: {
@@ -48,6 +70,7 @@ export const en: Content = {
     live: 'View live',
     code: 'Code',
     archived: 'Archived',
+    featured: 'Featured',
     watch: 'Watch the demo',
     stack: 'Stack',
     screenshot: 'Screenshot of',
@@ -59,7 +82,7 @@ export const en: Content = {
     sections: { about: 'About', projects: 'Projects', experience: 'Experience', stack: 'Stack' },
     nextLines: {
       about: 'Who I am and how I work',
-      projects: 'Nine projects, each with its recording',
+      projects: 'Ten projects, from payments to trading research',
       experience: 'Where I have worked, and when',
       stack: 'The tools behind the projects',
     },
@@ -93,6 +116,9 @@ export const en: Content = {
       ai: 'AI',
       platforms: 'Apps & platforms',
       infrastructure: 'Infrastructure',
+      mobile: 'Mobile',
+      payments: 'Payments',
+      testing: 'Testing',
     },
   },
 
@@ -103,8 +129,18 @@ export const en: Content = {
       summary:
         'One API and a hosted checkout that route each payment to cards, Mercado Pago, USDT on TRON or USDC on Base, and record every cent in a double-entry ledger.',
       detail:
-        'Run only in test mode and on public testnets, and verified with real Stripe test payments, Mercado Pago test users and on-chain transfers on TRON Nile and Base Sepolia. Idempotency keys in Postgres, a transactional outbox, and an append-only ledger that database triggers protect. Crypto deposits go to addresses derived from an extended public key, so the server cannot spend them. A payment whose webhook never arrives is caught by a status check and a daily reconciliation that never moves money on its own. Twenty-three architecture decisions are written down with the options they rejected.',
+        'Run only in test mode and on public testnets, and verified with real Stripe test payments, Mercado Pago test users and on-chain transfers on TRON Nile and Base Sepolia. Idempotency keys in Postgres, a transactional outbox, and an append-only ledger that database triggers protect. Crypto deposits go to addresses derived from an extended public key, so the server cannot spend them. A payment whose webhook never arrives is caught by a status check and a daily reconciliation that never moves money on its own. Twenty-three architecture decisions are written down with the options they rejected. I built it while learning NestJS, ledgers and on-chain payments from scratch, from lessons I wrote myself, and it has more than 300 tests.',
       ...projectRefs.paymentOrchestrator,
+      featured: true,
+    },
+    {
+      name: 'Kawsay',
+      kind: 'offline-first nutrition app',
+      summary: 'A food, activity and mood journal whose nutrition targets follow the day you actually had.',
+      detail:
+        'An Expo and React Native app that works without a connection: SQLite with Drizzle on the phone, synced to a NestJS and Prisma API. The phone and the server share the same TypeScript rules, so targets are computed offline. The AI only picks foods; food-composition tables compute the nutrients, and private entries never reach the model. More than 600 tests. In daily use by its author; the repository stays private until its public release.',
+      ...projectRefs.kawsay,
+      featured: true,
     },
     {
       name: 'TickerLens',
@@ -113,6 +149,32 @@ export const en: Content = {
       detail:
         'Every claim in the analysis links back to the source it came from. Retrieval runs over facts the application computes itself rather than over scraped text, with embeddings generated in-process and tokens streamed to the client as they are produced. Rate limiting is hardened against spoofed forwarded headers, and the app degrades gracefully when the database or the embedding model is unavailable.',
       ...projectRefs.tickerlens,
+      featured: true,
+    },
+    {
+      name: 'Estudia',
+      kind: 'AI study companion',
+      summary: 'Photograph handwritten class notes, get a study summary and an auto-graded exam.',
+      detail:
+        'A three-stage pipeline takes the photographs through transcription, summary and question generation. It uses context-window-aware chunking rather than retrieval, deliberately: the product needs full-document coverage, not a relevant slice. Multi-user with authentication, installable as a progressive web app and as an Android app. 168 tests, and a security audit whose ten findings were all fixed with regression tests covering each one.',
+      ...projectRefs.estudia,
+    },
+    {
+      name: 'Exposure Dashboard',
+      kind: 'OSINT aggregation',
+      summary:
+        'Give it a username, email or national ID and it reports public exposure with a confidence score and its reasoning.',
+      detail:
+        'Thirteen plugin-based collectors run in parallel with isolated failure handling, so one failing source never takes down a search. Identities are correlated across accounts by avatar perceptual hash, bio similarity and shared outbound links. Every redirect hop is validated against SSRF. 234 tests, running on a single vCPU.',
+      ...projectRefs.exposure,
+    },
+    {
+      name: 'Mi Peso',
+      kind: 'local-first weight tracker',
+      summary: 'A weight tracker with no server and no account.',
+      detail:
+        'SQLite compiled to WebAssembly and persisted in the browser, with charts drawn by hand in SVG and no charting library. One codebase ships as a progressive web app and as an Android app. Its own SECURITY.md states the two honest limitations: the database is not encrypted on the device, and the published APK is signed with a debug key rather than a release key.',
+      ...projectRefs.mipeso,
     },
     {
       name: 'tvindicators',
@@ -122,14 +184,6 @@ export const en: Content = {
       detail:
         'The system exists to rule strategies out, not to make money: it measures each one’s live expectancy against its backtest and flags the ones that stop reproducing what they promised. Most failing is the expected result — a strategy that holds up outside its own backtest is the exception, and finding one means measuring the rest honestly. Over 40 strategies run against Binance perpetual futures, with a REST API exposing equity curves and the live-versus-backtest evaluation. A pre-push hook blocks any commit where the live signal path stops reproducing the backtest. Paper trading only — it has never traded real money, and its own documentation warns against reading the backtest Sharpe as a live expectation.',
       ...projectRefs.tvindicators,
-    },
-    {
-      name: 'Estudia',
-      kind: 'AI study companion',
-      summary: 'Photograph handwritten class notes, get a study summary and an auto-graded exam.',
-      detail:
-        'A three-stage pipeline takes the photographs through transcription, summary and question generation. It uses context-window-aware chunking rather than retrieval, deliberately: the product needs full-document coverage, not a relevant slice. Multi-user with authentication, installable as a progressive web app and as an Android app. 168 tests, and a security audit whose ten findings were all fixed with regression tests covering each one.',
-      ...projectRefs.estudia,
     },
     {
       name: 'momentum-investor',
@@ -142,15 +196,6 @@ export const en: Content = {
       archived: true,
     },
     {
-      name: 'Exposure Dashboard',
-      kind: 'OSINT aggregation',
-      summary:
-        'Give it a username, email or national ID and it reports public exposure with a confidence score and its reasoning.',
-      detail:
-        'Thirteen plugin-based collectors run in parallel with isolated failure handling, so one failing source never takes down a search. Identities are correlated across accounts by avatar perceptual hash, bio similarity and shared outbound links. Every redirect hop is validated against SSRF. 234 tests, running on a single vCPU.',
-      ...projectRefs.exposure,
-    },
-    {
       name: 'Kepler',
       kind: 'market-neutral trading system',
       summary: 'A market-neutral crypto system that ran on real capital.',
@@ -158,14 +203,6 @@ export const en: Content = {
         'Seven uncorrelated alpha sleeves, leverage auto-sized to a maximum-drawdown budget, maker-only execution and a drawdown circuit breaker. Live maximum drawdown was 3.4% against a 10% budget across 18 days of live operation. Validation used walk-forward testing with purged out-of-sample data and embargo. Archived for business reasons rather than engineering ones: low-drawdown copy-trading at micro-capital produced no visible return without scale. It was a difficult decision, and I still consider it the correct one.',
       ...projectRefs.kepler,
       archived: true,
-    },
-    {
-      name: 'Mi Peso',
-      kind: 'local-first weight tracker',
-      summary: 'A weight tracker with no server and no account.',
-      detail:
-        'SQLite compiled to WebAssembly and persisted in the browser, with charts drawn by hand in SVG and no charting library. One codebase ships as a progressive web app and as an Android app. Its own SECURITY.md states the two honest limitations: the database is not encrypted on the device, and the published APK is signed with a debug key rather than a release key.',
-      ...projectRefs.mipeso,
     },
     {
       name: 'Oscilion',
@@ -193,7 +230,7 @@ export const en: Content = {
       title: 'Software Engineer (contract)',
       company: 'Belsitec',
       dates: 'Jun 2023 – Present',
-      line: 'Admission and student portals for a university operating in Peru, Florida and Mexico; a full web platform and an attendance app for a private school.',
+      line: 'Admission and student portals for a university operating in Peru, Florida and Mexico; a full web platform and attendance app for a private school; and Contipay, the in-house payment gateway I maintain.',
     },
     {
       title: 'Frontend & Full-Stack Developer',

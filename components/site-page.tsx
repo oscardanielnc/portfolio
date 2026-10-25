@@ -111,6 +111,7 @@ function ProjectBlock({ project, index, content }: { project: Project; index: nu
         <div className="top">
           <b>{pad2(index + 1)}</b>
           <span>{project.kind}</span>
+          {project.featured && <span className="badge featured">{l.featured}</span>}
           {project.archived && <span className="badge">{l.archived}</span>}
         </div>
         <h3>{project.name}</h3>
@@ -266,6 +267,17 @@ export function SitePage({ content, model, stageScript }: { content: Content; mo
                     </ul>
                   </div>
                 </div>
+                <section className="how" aria-labelledby="how-title">
+                  <h3 id="how-title">{content.howIWork.title}</h3>
+                  <ul>
+                    {content.howIWork.items.map((item) => (
+                      <li key={item.title}>
+                        <h4>{item.title}</h4>
+                        <p>{item.line}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
                 <NextLink index={0} content={content} />
               </section>
 

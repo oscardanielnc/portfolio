@@ -19,3 +19,4 @@ Rejected on 2026-10-22: all-light (lights barely show on white) and all-dark (Os
 | Date | Change |
 |---|---|
 | 2026-10-22 | Coral accent `#ff6b4a` dropped: Oscar does not like orange |
+| 2026-10-25 | Profile v3: "How I work" as a 2×2 grid of white cards under the About intro (chosen over a numbered list and the meta column); the first three projects carry a filled `Featured` badge. The OG image, favicon and Kawsay plate moved to the stage blues; the older plates keep their coral until they are re-rendered |
