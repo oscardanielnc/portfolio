@@ -13,17 +13,17 @@ import sharp from 'sharp';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const publicDir = join(root, 'public');
 
-const BG = '#08080c';
-const INK = '#f4f4f8';
-const MUTED = '#9b9bad';
-const ACCENT = '#ff6b4a';
-const ACCENT_2 = '#a78bfa';
+const BG = '#0A1222';
+const INK = '#EAF1FB';
+const MUTED = '#96A6BE';
+const ACCENT = '#9CCBFF';
+const ACCENT_2 = '#86A8FF';
 
 const FONT = "'Segoe UI', 'Inter', 'Helvetica Neue', Arial, sans-serif";
 const MONO = "'Consolas', 'DejaVu Sans Mono', monospace";
 
 const NAME = 'Oscar Daniel Navarro Cieza';
-const HEADLINE = 'Frontend &amp; AI-Augmented Full-Stack Developer';
+const HEADLINE = 'Full-Stack Product Engineer · AI Engineer';
 const LOCATION = 'Peru · Remote (UTC-5) — full overlap with US Eastern';
 const DOMAIN = 'oscarnavarro.dev';
 
@@ -39,7 +39,7 @@ const og = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" vi
     </radialGradient>
     <linearGradient id="name" x1="0" y1="0" x2="0.35" y2="1">
       <stop offset="30%" stop-color="${INK}"/>
-      <stop offset="100%" stop-color="#9a9aa2"/>
+      <stop offset="100%" stop-color="#B4C3D8"/>
     </linearGradient>
   </defs>
 
@@ -59,11 +59,11 @@ const og = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" vi
   <text x="140" y="350" font-family="${FONT}" font-size="24" font-weight="400"
         fill="${MUTED}">${LOCATION}</text>
 
-  <line x1="96" y1="470" x2="1104" y2="470" stroke="#23232e" stroke-width="1"/>
+  <line x1="96" y1="470" x2="1104" y2="470" stroke="#1C2A44" stroke-width="1"/>
 
   <text x="96" y="522" font-family="${MONO}" font-size="24" fill="${MUTED}">${DOMAIN}</text>
   <text x="1104" y="522" text-anchor="end" font-family="${FONT}" font-size="22" fill="${MUTED}"
-        >React · Next.js · TypeScript · Python</text>
+        >React · Next.js · TypeScript · NestJS</text>
 </svg>`;
 
 const icon = `<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 64 64">
