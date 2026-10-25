@@ -249,9 +249,13 @@ function updateView(dt: number) {
   camera.updateProjectionMatrix();
   const feet1 = toScreen(v3.set(0, 0, 0).project(camera));
   const s = screenBox(fitBox);
-  // 2) section: the largest zoom that fits the pose in the dock, on its floor, centred
+  // 2) section: the largest zoom that fits the pose in the dock, on its floor, centred,
+  //    but never larger than standing: a compact pose (lying on the chair) would fill the
+  //    dock and read as a giant next to every other clip
   const D = dockRect();
-  const zoomS = Math.min((D.x1 - D.x0) / (s.x1 - s.x0), (D.y1 - D.y0) / (s.y1 - s.y0));
+  const fit = (b: { x0: number; y0: number; x1: number; y1: number }) =>
+    Math.min((D.x1 - D.x0) / (b.x1 - b.x0), (D.y1 - D.y0) / (b.y1 - b.y0));
+  const zoomS = Math.min(fit(s), fit(screenBox(boxes.get(IDLE) ?? DEFAULT_BOX)));
   const ox = cx + zoomS * ((s.x0 + s.x1) / 2 - cx) - (D.x0 + D.x1) / 2;
   const oy = cy + zoomS * (s.y1 - cy) - D.y1;
   const feetS = { x: cx + zoomS * (feet1.x - cx) - ox, y: cy + zoomS * (feet1.y - cy) - oy };
