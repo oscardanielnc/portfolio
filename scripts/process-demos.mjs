@@ -73,6 +73,7 @@ const jobs = {
   // Explainers: the poster lands on each one's central table, fully drawn.
   'momentum-investor': { posterAt: 0.53, crf: 30 },
   oscilion: { posterAt: 0.7, crf: 30 },
+  kawsay: { posterAt: 0.62, crf: 30 },
   exposure: { posterAt: 0.62, crf: 35 },
   tvindicators: { posterAt: 0.15, crf: 34 },
   mipeso: { posterAt: 0.55, crf: 30 },

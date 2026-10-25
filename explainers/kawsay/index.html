@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en" data-resolution="custom">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1600, height=1000" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /*
+        Kawsay is private until its public release, and its real screens are full of its
+        author's own meals, weight and mood. Recording it would publish exactly that, so this
+        plate is a diagram of how it works instead, with no app screen and no personal data.
+
+        Every claim is one the project states: offline-first on SQLite + Drizzle, synced to a
+        NestJS + Prisma API, the same TypeScript rules on both sides, the AI picking foods
+        while composition tables compute the nutrients, private entries kept from the model,
+        600+ tests.
+
+        Canvas is 1600x1000 (16:10) to match the card plate, and type is sized for a plate
+        rendered around 544px wide, so nothing that has to be read is smaller than ~30px.
+        Colours are the site's stage tokens.
+      */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg: #0a1222;
+        --raised: #111c31;
+        --border: #1c2a44;
+        --border-strong: #2c4166;
+        --text: #eaf1fb;
+        --muted: #96a6be;
+        --accent: #9ccbff;
+        --accent-soft: rgba(156, 203, 255, 0.16);
+      }
+
+      html,
+      body {
+        width: 1600px;
+        height: 1000px;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Geist, ui-sans-serif, system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      body::before {
+        content: '';
+        position: absolute;
+        inset: -20%;
+        background:
+          radial-gradient(48% 40% at 22% 14%, rgba(156, 203, 255, 0.14), transparent 70%),
+          radial-gradient(42% 38% at 82% 84%, rgba(134, 168, 255, 0.1), transparent 70%);
+        pointer-events: none;
+      }
+
+      .clip {
+        position: absolute;
+        inset: 0;
+      }
+
+      /* The framework owns .clip visibility, so fades live on this inner wrapper. */
+      .scene {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 130px;
+      }
+
+      .eyebrow {
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 30px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+
+      .caption {
+        font-size: 46px;
+        line-height: 1.35;
+        color: var(--muted);
+        max-width: 26ch;
+      }
+
+      .caption strong {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      /* ---------------------------------------------------------- scene A */
+      .wordmark {
+        font-size: 200px;
+        font-weight: 700;
+        letter-spacing: -0.05em;
+        line-height: 0.95;
+      }
+
+      .dot {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 12px var(--accent-soft);
+      }
+
+      .sub {
+        font-size: 48px;
+        color: var(--muted);
+        margin-top: 26px;
+      }
+
+      /* ---------------------------------------------------------- scene B */
+      .flow {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        margin-top: 60px;
+      }
+
+      .node {
+        width: 520px;
+        border-radius: 22px;
+        border: 2px solid var(--border-strong);
+        background: var(--raised);
+        padding: 34px 38px;
+      }
+
+      .node b {
+        display: block;
+        font-size: 50px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+
+      .node span {
+        display: block;
+        margin-top: 12px;
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 32px;
+        color: var(--muted);
+      }
+
+      .link {
+        width: 300px;
+        position: relative;
+        text-align: center;
+      }
+
+      .link i {
+        display: block;
+        height: 4px;
+        margin: 0 24px;
+        background: var(--accent);
+        transform-origin: left;
+      }
+
+      .link em {
+        display: block;
+        margin-top: 18px;
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-style: normal;
+        font-size: 30px;
+        color: var(--accent);
+      }
+
+      .shared {
+        margin-top: 48px;
+        font-size: 44px;
+        color: var(--muted);
+      }
+
+      .shared strong {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      /* ---------------------------------------------------------- scene C */
+      .split {
+        display: flex;
+        gap: 40px;
+        margin-top: 56px;
+      }
+
+      .half {
+        flex: 1;
+        border-radius: 22px;
+        border: 2px solid var(--border);
+        background: var(--raised);
+        padding: 38px 40px;
+      }
+
+      .half small {
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 30px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .half b {
+        display: block;
+        margin-top: 14px;
+        font-size: 64px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        color: var(--accent);
+      }
+
+      .half p {
+        margin-top: 12px;
+        font-size: 38px;
+        line-height: 1.35;
+        color: var(--muted);
+      }
+
+      /* ---------------------------------------------------------- scene D */
+      .big {
+        font-size: 170px;
+        font-weight: 700;
+        letter-spacing: -0.04em;
+        color: var(--accent);
+        line-height: 1;
+      }
+
+      .big small {
+        font-size: 60px;
+        font-weight: 500;
+        color: var(--muted);
+        letter-spacing: 0;
+      }
+
+      .note {
+        margin-top: 32px;
+        font-size: 44px;
+        color: var(--muted);
+        max-width: 30ch;
+        line-height: 1.45;
+      }
+
+      .note strong {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      /* A quiet, permanent label so this can never be read as captured footage. */
+      .schematic {
+        position: absolute;
+        left: 130px;
+        bottom: 66px;
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 26px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #5d6e88;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="15"
+      data-width="1600"
+      data-height="1000"
+    >
+      <!-- A — identity -->
+      <div class="clip" id="sA" data-start="0" data-duration="3.4" data-track-index="1">
+        <div class="scene" id="sA-in">
+          <div class="dot" id="sA-dot"></div>
+          <div class="wordmark" id="sA-word" style="margin-top: 40px">Kawsay</div>
+          <div class="sub" id="sA-sub">Offline-first nutrition app · Expo, React Native</div>
+        </div>
+      </div>
+
+      <!-- B — offline on the phone, synced to the API, one set of rules -->
+      <div class="clip" id="sB" data-start="3.4" data-duration="4.2" data-track-index="1">
+        <div class="scene" id="sB-in">
+          <div class="eyebrow" id="sB-eyebrow">Works without a connection</div>
+          <div class="flow" id="sB-flow">
+            <div class="node" id="sB-phone"><b>Phone</b><span>SQLite + Drizzle</span></div>
+            <div class="link" id="sB-link"><i id="sB-line"></i><em>sync</em></div>
+            <div class="node" id="sB-api"><b>API</b><span>NestJS + Prisma</span></div>
+          </div>
+          <div class="shared" id="sB-shared">
+            Same <strong>TypeScript rules</strong> on both sides, so targets compute offline
+          </div>
+        </div>
+      </div>
+
+      <!-- C — the AI picks, the table computes -->
+      <div class="clip" id="sC" data-start="7.6" data-duration="4.0" data-track-index="1">
+        <div class="scene" id="sC-in">
+          <div class="eyebrow" id="sC-eyebrow">Where the AI stops</div>
+          <div class="split">
+            <div class="half" id="sC-ai">
+              <small>The AI</small>
+              <b>picks foods</b>
+              <p>Private entries never reach the model</p>
+            </div>
+            <div class="half" id="sC-table">
+              <small>Composition tables</small>
+              <b>compute nutrients</b>
+              <p>Nutrients come from the data, not the model</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- D — tested and in use -->
+      <div class="clip" id="sD" data-start="11.6" data-duration="3.4" data-track-index="1">
+        <div class="scene" id="sD-in">
+          <div class="eyebrow" id="sD-eyebrow">Phone, API and shared core</div>
+          <div class="big" id="sD-big" style="margin-top: 20px">600+<small> tests</small></div>
+          <div class="note" id="sD-note">
+            <strong>In daily use by its author.</strong> Private until its public release.
+          </div>
+        </div>
+      </div>
+
+      <div class="schematic">Schematic · no personal data</div>
+    </div>
+
+    <script>
+      /* One paused timeline the renderer scrubs frame by frame; nothing reads the clock. */
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const ease = 'power3.out';
+
+      // A
+      tl.from('#sA-dot', { scale: 0, opacity: 0, duration: 0.7, ease: 'back.out(2)' }, 0.15)
+        .from('#sA-word', { y: 70, opacity: 0, duration: 1.0, ease }, 0.3)
+        .from('#sA-sub', { y: 30, opacity: 0, duration: 0.9, ease }, 0.6)
+        .to('#sA-in', { opacity: 0, duration: 0.45, ease: 'power2.in' }, 2.95)
+        .set('#sA-in', { opacity: 0 }, 3.4);
+
+      // B — phone first, then the sync line draws, then the API arrives
+      tl.from('#sB-eyebrow', { y: 26, opacity: 0, duration: 0.6, ease }, 3.55)
+        .from('#sB-phone', { x: -40, opacity: 0, duration: 0.7, ease }, 3.75)
+        .from('#sB-line', { scaleX: 0, duration: 0.8, ease: 'power2.inOut' }, 4.25)
+        .from('#sB-link em', { opacity: 0, duration: 0.5, ease }, 4.55)
+        .from('#sB-api', { x: 40, opacity: 0, duration: 0.7, ease }, 4.85)
+        .from('#sB-shared', { y: 26, opacity: 0, duration: 0.7, ease }, 5.4)
+        .to('#sB-in', { opacity: 0, duration: 0.45, ease: 'power2.in' }, 7.15)
+        .set('#sB-in', { opacity: 0 }, 7.6);
+
+      // C
+      tl.from('#sC-eyebrow', { y: 26, opacity: 0, duration: 0.6, ease }, 7.75)
+        .from('#sC-ai', { y: 44, opacity: 0, duration: 0.7, ease }, 7.95)
+        .from('#sC-table', { y: 44, opacity: 0, duration: 0.7, ease }, 8.55)
+        .to('#sC-in', { opacity: 0, duration: 0.45, ease: 'power2.in' }, 11.15)
+        .set('#sC-in', { opacity: 0 }, 11.6);
+
+      // D
+      tl.from('#sD-eyebrow', { y: 26, opacity: 0, duration: 0.6, ease }, 11.75)
+        .from('#sD-big', { y: 40, opacity: 0, duration: 0.85, ease }, 11.9)
+        .from('#sD-note', { y: 26, opacity: 0, duration: 0.8, ease }, 12.25);
+
+      window.__timelines['main'] = tl;
+    </script>
+  </body>
+</html>

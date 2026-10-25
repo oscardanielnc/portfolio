@@ -121,12 +121,13 @@ Two consequences worth knowing:
 
 ## Explainers
 
-Three projects cannot be recorded, because nothing of them is running to point a browser
-at: Kepler is archived, and momentum-investor and Oscilion were closed by their own
-research without ever being deployed publicly. Their plates are authored instead of
-captured, as [HyperFrames](https://hyperframes.heygen.com) compositions under
-`explainers/<name>/`. All three pin the same CLI version, so they come out of the same
-renderer.
+Four projects are not recorded. Kepler is archived, and momentum-investor and Oscilion were
+closed by their own research without ever being deployed publicly, so nothing of them is
+running to point a browser at. Kawsay runs every day, but it is private and every real
+screen of it shows its author's meals, weight, symptoms and mood; a demo seed was the other
+option and was passed over for a diagram. Their plates are authored instead of captured, as
+[HyperFrames](https://hyperframes.heygen.com) compositions under `explainers/<name>/`. All
+four pin the same CLI version, so they come out of the same renderer.
 
 ```
 cd explainers/kepler
@@ -154,7 +155,9 @@ for Kepler, seven sleeves, 3.4% against a 10% budget, 18 days live; for momentum
 the three-universe table, with bars drawn to scale from zero. There is no animated equity
 curve anywhere, because a line that looks like real performance and is not is the one
 dishonest thing a portfolio cannot afford. Each composition carries a permanent
-`SCHEMATIC · PUBLISHED FIGURES` label for the same reason.
+`SCHEMATIC · PUBLISHED FIGURES` label for the same reason. Kawsay's reads
+`SCHEMATIC · NO PERSONAL DATA`: it shows no app screen at all, only the architecture and
+the test count its project states, in the site's blue stage tokens.
 
 One documented exception: Oscilion's README says its go/no-go criteria went into the first
 commit but does not list them, so the wording of the three criteria on screen is
