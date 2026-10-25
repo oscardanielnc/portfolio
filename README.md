@@ -87,7 +87,7 @@ prove a project exists; these show that it works.
 ```bash
 npm run demos            # record every live demo, then encode
 npm run demos:record     # Playwright drives the live deployments → view/demos/ (gitignored)
-npm run demos:process    # ffmpeg → public/demos/ (committed, 4.4 MB for all nine)
+npm run demos:process    # ffmpeg → public/demos/ (committed, 4.7 MB for all ten)
 ```
 
 Playwright drives the real deployments, so the footage is of the software itself and
@@ -97,6 +97,8 @@ most the `@sm` cut of the one card it is looking at.
 Kepler, momentum-investor and Oscilion have nothing running to record — Kepler is archived,
 and the other two were closed by their own research without ever being deployed publicly —
 so their plates are authored instead, as HyperFrames compositions under `explainers/`.
+Kawsay is authored too, for a different reason: it is private, and its real screens hold
+its author's own meals, weight and mood.
 `demos:process` encodes recordings and explainers identically.
 
 Exposure Dashboard searches real people, so its clip searches the address already printed

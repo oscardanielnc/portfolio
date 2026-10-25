@@ -19,6 +19,17 @@ export const techStack = [
   'TypeScript',
   'JavaScript',
   'Tailwind CSS',
+  'three.js',
+  'React Native',
+  'Expo',
+  'Prisma',
+  'BullMQ',
+  'Stripe',
+  'Mercado Pago',
+  'viem',
+  'TronWeb',
+  'Vitest',
+  'Testcontainers',
   'Python',
   'FastAPI',
   'Node.js',
@@ -39,11 +50,14 @@ export const techStack = [
 
 /** The same list, grouped by layer for the Stack section. Labels live in each locale. */
 export const techGroups = [
-  { id: 'frontend', items: ['React', 'Next.js', 'TypeScript', 'JavaScript', 'Tailwind CSS'] },
-  { id: 'backend', items: ['NestJS', 'Node.js', 'Python', 'FastAPI'] },
+  { id: 'frontend', items: ['React', 'Next.js', 'TypeScript', 'JavaScript', 'Tailwind CSS', 'three.js'] },
+  { id: 'mobile', items: ['React Native', 'Expo'] },
+  { id: 'backend', items: ['NestJS', 'Node.js', 'Prisma', 'BullMQ', 'Python', 'FastAPI'] },
   { id: 'data', items: ['PostgreSQL', 'Redis', 'SQLite'] },
+  { id: 'payments', items: ['Stripe', 'Mercado Pago', 'viem', 'TronWeb'] },
   { id: 'ai', items: ['LLM integration', 'RAG'] },
   { id: 'platforms', items: ['Progressive Web Apps', 'Capacitor', 'WebAssembly'] },
+  { id: 'testing', items: ['Vitest', 'Testcontainers'] },
   { id: 'infrastructure', items: ['Docker', 'nginx', 'Linux', 'Git', 'CI/CD'] },
 ] as const satisfies readonly { id: TechGroupId; items: readonly (typeof techStack)[number][] }[];
 
@@ -57,6 +71,15 @@ export const projectRefs = {
     // is recorded against a local stack and the button opens a narrated two-minute walkthrough.
     walkthrough: '/walkthroughs/payment-orchestrator.mp4',
     video: demos['payment-orchestrator'],
+  },
+  kawsay: {
+    // Private until its public release, so there is no repository or deployment to link.
+    demo: null,
+    repo: null,
+    tech: ['Expo', 'React Native', 'TypeScript', 'SQLite + Drizzle', 'NestJS', 'Prisma', 'PostgreSQL', 'DeepSeek'],
+    // Its real screens hold its author's own meals and weight, so the plate is an authored
+    // diagram with no app screen in it. See explainers/kawsay/.
+    video: { ...demos.kawsay, fit: 'contain' },
   },
   tickerlens: {
     demo: 'https://tickerlens.oscarnavarro.dev',

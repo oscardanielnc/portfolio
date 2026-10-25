@@ -45,6 +45,8 @@ export interface Project {
   repo: string | null;
   /** Shown in place of the demo button when demo is null. */
   archived?: boolean;
+  /** One of the projects to look at first; gets a badge next to its number. */
+  featured?: boolean;
   /**
    * A narrated walkthrough video, for a project that cannot have a public live demo
    * (Payment Orchestrator runs only in test mode). Takes the demo button's place.
@@ -56,6 +58,12 @@ export interface Project {
   video?: ProjectVideo;
 }
 
+/** One principle of the "How I work" block in About. */
+export interface Practice {
+  title: string;
+  line: string;
+}
+
 export interface Role {
   title: string;
   company: string;
@@ -64,7 +72,16 @@ export interface Role {
 }
 
 export type SectionId = 'about' | 'projects' | 'experience' | 'stack';
-export type TechGroupId = 'frontend' | 'backend' | 'data' | 'ai' | 'platforms' | 'infrastructure';
+export type TechGroupId =
+  | 'frontend'
+  | 'mobile'
+  | 'backend'
+  | 'data'
+  | 'payments'
+  | 'ai'
+  | 'platforms'
+  | 'testing'
+  | 'infrastructure';
 
 export interface StageCopy {
   /** The four sections, in wheel order. Also their titles. */
@@ -136,6 +153,11 @@ export interface Content {
     secondaryCta: string;
   };
 
+  howIWork: {
+    title: string;
+    items: readonly Practice[];
+  };
+
   sections: {
     projects: string;
     experience: string;
@@ -147,6 +169,7 @@ export interface Content {
     live: string;
     code: string;
     archived: string;
+    featured: string;
     /** Button that opens a project's walkthrough video. */
     watch: string;
     stack: string;
