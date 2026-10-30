@@ -11,7 +11,7 @@ export const demos = {
   kawsay: {"src":"/demos/kawsay.9e977d28.mp4","poster":"/demos/kawsay.9e977d28-poster.webp","width":1000,"height":626},
   kepler: {"src":"/demos/kepler.61699eca.mp4","poster":"/demos/kepler.61699eca-poster.webp","width":1000,"height":626},
   mipeso: {"src":"/demos/mipeso.c265705f.mp4","poster":"/demos/mipeso.c265705f-poster.webp","width":1000,"height":626},
-  'mis-notas': {"src":"/demos/mis-notas.0756f33f.mp4","poster":"/demos/mis-notas.0756f33f-poster.webp","width":1000,"height":626},
+  'mis-notas': {"src":"/demos/mis-notas.1a111199.mp4","poster":"/demos/mis-notas.1a111199-poster.webp","width":1000,"height":626},
   'momentum-investor': {"src":"/demos/momentum-investor.cf29232e.mp4","poster":"/demos/momentum-investor.cf29232e-poster.webp","width":1000,"height":626},
   oscilion: {"src":"/demos/oscilion.9044e9f2.mp4","poster":"/demos/oscilion.9044e9f2-poster.webp","width":1000,"height":626},
   'payment-orchestrator': {"src":"/demos/payment-orchestrator.898d2db8.mp4","poster":"/demos/payment-orchestrator.898d2db8-poster.webp","width":1000,"height":626},
