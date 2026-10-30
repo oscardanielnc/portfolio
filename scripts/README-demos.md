@@ -121,13 +121,14 @@ Two consequences worth knowing:
 
 ## Explainers
 
-Four projects are not recorded. Kepler is archived, and momentum-investor and Oscilion were
+Five projects are not recorded. Kepler is archived, and momentum-investor and Oscilion were
 closed by their own research without ever being deployed publicly, so nothing of them is
 running to point a browser at. Kawsay runs every day, but it is private and every real
 screen of it shows its author's meals, weight, symptoms and mood; a demo seed was the other
-option and was passed over for a diagram. Their plates are authored instead of captured, as
+option and was passed over for a diagram. Mis notas is an Android app with no web build,
+and its one real user's screens hold her own grades. Their plates are authored instead of captured, as
 [HyperFrames](https://hyperframes.heygen.com) compositions under `explainers/<name>/`. All
-four pin the same CLI version, so they come out of the same renderer.
+five pin the same CLI version, so they come out of the same renderer.
 
 ```
 cd explainers/kepler

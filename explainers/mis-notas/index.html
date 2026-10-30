@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en" data-resolution="custom">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1600, height=1000" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /*
+        Mis notas is an Android app with no web build to point a browser at, and its only real
+        user's screens hold her own grades. So, like Kawsay, the plate is a diagram of how it
+        works, with no personal data.
+
+        Every claim is one the project's README states: a course is a weighted tree (the
+        weights shown are Sociología's real template), parents are never rounded until the
+        course grade, each grade has a simulated and a real layer and only the real one is
+        saved, the general average is weighted by credits, 53 tests, and the APK went from
+        112 MB to 21 MB.
+
+        Canvas is 1600x1000 (16:10) to match the card plate, and type is sized for a plate
+        rendered around 544px wide, so nothing that has to be read is smaller than ~30px.
+        Colours are the site's stage tokens.
+      */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg: #0a1222;
+        --raised: #111c31;
+        --border: #1c2a44;
+        --border-strong: #2c4166;
+        --text: #eaf1fb;
+        --muted: #96a6be;
+        --accent: #9ccbff;
+        --accent-soft: rgba(156, 203, 255, 0.16);
+      }
+
+      html,
+      body {
+        width: 1600px;
+        height: 1000px;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Geist, ui-sans-serif, system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      body::before {
+        content: '';
+        position: absolute;
+        inset: -20%;
+        background:
+          radial-gradient(48% 40% at 22% 14%, rgba(156, 203, 255, 0.14), transparent 70%),
+          radial-gradient(42% 38% at 82% 84%, rgba(134, 168, 255, 0.1), transparent 70%);
+        pointer-events: none;
+      }
+
+      .clip {
+        position: absolute;
+        inset: 0;
+      }
+
+      /* The framework owns .clip visibility, so fades live on this inner wrapper. */
+      .scene {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 130px;
+      }
+
+      .eyebrow {
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 30px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+
+      .note {
+        margin-top: 44px;
+        font-size: 44px;
+        line-height: 1.4;
+        color: var(--muted);
+        max-width: 32ch;
+      }
+
+      .note strong {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      /* ---------------------------------------------------------- scene A */
+      .wordmark {
+        font-size: 200px;
+        font-weight: 700;
+        letter-spacing: -0.05em;
+        line-height: 0.95;
+      }
+
+      .ring {
+        width: 64px;
+        height: 64px;
+      }
+
+      .sub {
+        font-size: 48px;
+        color: var(--muted);
+        margin-top: 26px;
+      }
+
+      /* ---------------------------------------------------------- scene B */
+      .tree {
+        display: flex;
+        align-items: center;
+        gap: 56px;
+        margin-top: 56px;
+      }
+
+      .final {
+        border-radius: 22px;
+        background: var(--accent);
+        color: var(--bg);
+        padding: 30px 36px;
+        font-size: 46px;
+        font-weight: 700;
+      }
+
+      .units {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+      }
+
+      .unit {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        border-radius: 20px;
+        border: 2px solid var(--border-strong);
+        background: var(--raised);
+        padding: 18px 26px;
+      }
+
+      .unit b {
+        font-size: 38px;
+        font-weight: 600;
+        width: 230px;
+      }
+
+      .unit em {
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-style: normal;
+        font-size: 32px;
+        color: var(--accent);
+        width: 90px;
+      }
+
+      .chip {
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 30px;
+        color: var(--muted);
+        border: 2px solid var(--border);
+        border-radius: 14px;
+        padding: 6px 14px;
+      }
+
+      /* ---------------------------------------------------------- scene C */
+      .picker {
+        position: relative;
+        height: 260px;
+        margin-top: 50px;
+        overflow: hidden;
+      }
+
+      .strip {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+      }
+
+      .tick {
+        position: absolute;
+        bottom: 0;
+        width: 120px;
+        margin-left: -60px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .tick .n {
+        font-size: 56px;
+        font-weight: 600;
+        color: var(--muted);
+        height: 90px;
+        line-height: 90px;
+        margin-bottom: 26px;
+      }
+
+      .tick .l {
+        width: 4px;
+        height: 30px;
+        border-radius: 2px;
+        background: var(--border-strong);
+      }
+
+      .tick .star {
+        width: 44px;
+        height: 44px;
+        margin-bottom: 26px;
+        opacity: 0;
+      }
+
+      .center-line {
+        position: absolute;
+        left: 670px;
+        bottom: 0;
+        width: 6px;
+        height: 54px;
+        margin-left: -3px;
+        border-radius: 3px;
+        background: var(--accent);
+      }
+
+      .layers {
+        display: flex;
+        gap: 34px;
+        margin-top: 40px;
+      }
+
+      .layer {
+        flex: 1;
+        border-radius: 20px;
+        border: 2px solid var(--border);
+        background: var(--raised);
+        padding: 24px 30px;
+        font-size: 36px;
+        color: var(--muted);
+      }
+
+      .layer b {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      /* ---------------------------------------------------------- scene D */
+      .stats {
+        display: flex;
+        gap: 90px;
+        margin-top: 40px;
+      }
+
+      .big {
+        font-size: 150px;
+        font-weight: 700;
+        letter-spacing: -0.04em;
+        color: var(--accent);
+        line-height: 1;
+      }
+
+      .big small {
+        font-size: 52px;
+        font-weight: 500;
+        color: var(--muted);
+        letter-spacing: 0;
+      }
+
+      .was {
+        margin-top: 12px;
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 32px;
+        color: var(--muted);
+      }
+
+      /* A quiet, permanent label so this can never be read as captured footage. */
+      .schematic {
+        position: absolute;
+        left: 130px;
+        bottom: 66px;
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 26px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #5d6e88;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="15"
+      data-width="1600"
+      data-height="1000"
+    >
+      <!-- A — identity -->
+      <div class="clip" id="sA" data-start="0" data-duration="3.2" data-track-index="1">
+        <div class="scene" id="sA-in">
+          <svg class="ring" id="sA-ring" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" fill="none" stroke="#1c2a44" stroke-width="14" />
+            <circle
+              id="sA-arc"
+              cx="50"
+              cy="50"
+              r="40"
+              fill="none"
+              stroke="#9ccbff"
+              stroke-width="14"
+              stroke-linecap="round"
+              stroke-dasharray="180 252"
+              transform="rotate(-90 50 50)"
+            />
+          </svg>
+          <div class="wordmark" id="sA-word" style="margin-top: 40px">Mis notas</div>
+          <div class="sub" id="sA-sub">Grade simulator for students · Expo, React Native</div>
+        </div>
+      </div>
+
+      <!-- B — the syllabus as a weighted tree -->
+      <div class="clip" id="sB" data-start="3.2" data-duration="4.0" data-track-index="1">
+        <div class="scene" id="sB-in">
+          <div class="eyebrow" id="sB-eyebrow">Every syllabus is a weighted tree</div>
+          <div class="tree">
+            <div class="final" id="sB-final">Final</div>
+            <div class="units">
+              <div class="unit" id="sB-u1">
+                <b>Unit I</b><em>30%</em><span class="chip">PC 40</span><span class="chip">EVAL 60</span>
+              </div>
+              <div class="unit" id="sB-u2">
+                <b>Unit II</b><em>30%</em><span class="chip">PC 40</span><span class="chip">EVAL 60</span>
+              </div>
+              <div class="unit" id="sB-u3">
+                <b>Unit III</b><em>40%</em><span class="chip">REG 20</span><span class="chip">FICHA 30</span
+                ><span class="chip">EVAL 50</span>
+              </div>
+            </div>
+          </div>
+          <div class="note" id="sB-note" style="margin-top: 40px">
+            One recursive formula for every course, <strong>no rounding</strong> until the end
+          </div>
+        </div>
+      </div>
+
+      <!-- C — drag to simulate, the star keeps what really happened -->
+      <div class="clip" id="sC" data-start="7.2" data-duration="4.4" data-track-index="1">
+        <div class="scene" id="sC-in">
+          <div class="eyebrow" id="sC-eyebrow">Drag to ask “what if?”</div>
+          <div class="picker">
+            <div class="strip" id="sC-strip" data-layout-allow-overflow></div>
+            <div class="center-line"></div>
+          </div>
+          <div class="layers">
+            <div class="layer" id="sC-sim"><b>Simulated</b> · lives while the app is open</div>
+            <div class="layer" id="sC-real"><b>Real ★</b> · the only layer saved</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- D — small, tested -->
+      <div class="clip" id="sD" data-start="11.6" data-duration="3.4" data-track-index="1">
+        <div class="scene" id="sD-in">
+          <div class="eyebrow" id="sD-eyebrow">Pure TypeScript core, Android APK</div>
+          <div class="stats">
+            <div id="sD-tests"><div class="big">53<small> tests</small></div></div>
+            <div id="sD-apk">
+              <div class="big">21<small> MB</small></div>
+              <div class="was">APK, down from 112 MB</div>
+            </div>
+          </div>
+          <div class="note" id="sD-note">
+            General average <strong>weighted by credits</strong>, from day one
+          </div>
+        </div>
+      </div>
+
+      <div class="schematic">Schematic · no personal data</div>
+    </div>
+
+    <script>
+      /* Build the picker numbers once; positions are fixed, only the strip moves. */
+      const STEP = 140;
+      const CENTER = 670;
+      const REAL = 14;
+      const strip = document.getElementById('sC-strip');
+      const starPath =
+        'M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z';
+      for (let i = 0; i <= 20; i++) {
+        const t = document.createElement('div');
+        t.className = 'tick';
+        t.style.left = i * STEP + 'px';
+        t.innerHTML =
+          '<svg class="star" id="star-' + i + '" viewBox="0 0 24 24"><path fill="#9ccbff" d="' +
+          starPath +
+          '"/></svg><div class="n" id="n-' + i + '">' + i + '</div><div class="l"></div>';
+        strip.appendChild(t);
+      }
+      const at = (v) => CENTER - v * STEP;
+
+      /* One paused timeline the renderer scrubs frame by frame; nothing reads the clock. */
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const ease = 'power3.out';
+
+      // A — the ring fills, then the name
+      tl.from('#sA-arc', { attr: { 'stroke-dasharray': '0 252' }, duration: 1.0, ease }, 0.1)
+        .from('#sA-word', { y: 70, opacity: 0, duration: 1.0, ease }, 0.3)
+        .from('#sA-sub', { y: 30, opacity: 0, duration: 0.9, ease }, 0.6)
+        .to('#sA-in', { opacity: 0, duration: 0.45, ease: 'power2.in' }, 2.75)
+        .set('#sA-in', { opacity: 0 }, 3.2);
+
+      // B — final first, then each unit
+      tl.from('#sB-eyebrow', { y: 26, opacity: 0, duration: 0.6, ease }, 3.35)
+        .from('#sB-final', { x: -40, opacity: 0, duration: 0.6, ease }, 3.55)
+        .from('#sB-u1', { x: 40, opacity: 0, duration: 0.6, ease }, 3.85)
+        .from('#sB-u2', { x: 40, opacity: 0, duration: 0.6, ease }, 4.05)
+        .from('#sB-u3', { x: 40, opacity: 0, duration: 0.6, ease }, 4.25)
+        .from('#sB-note', { y: 26, opacity: 0, duration: 0.7, ease }, 4.8)
+        .to('#sB-in', { opacity: 0, duration: 0.45, ease: 'power2.in' }, 6.75)
+        .set('#sB-in', { opacity: 0 }, 7.2);
+
+      // C — slide from 8 to 17, settle back on the real 14, its star appears
+      const picker = { v: 8 };
+      const paint = () => {
+        gsap.set('#sC-strip', { x: at(picker.v) });
+        for (let i = 0; i <= 20; i++) {
+          const d = Math.abs(i - picker.v);
+          gsap.set('#n-' + i, {
+            scale: gsap.utils.clamp(0.8, 1.9, 1.9 - d * 0.9),
+            opacity: gsap.utils.clamp(0.15, 1, 1 - d * 0.3),
+            color: d < 0.5 ? '#eaf1fb' : '#96a6be',
+          });
+        }
+      };
+      paint();
+      tl.from('#sC-eyebrow', { y: 26, opacity: 0, duration: 0.6, ease }, 7.35)
+        .to(picker, { v: 17, duration: 1.4, ease: 'power2.inOut', onUpdate: paint }, 7.6)
+        .to(picker, { v: REAL, duration: 1.0, ease: 'power3.out', onUpdate: paint }, 9.1)
+        .to('#star-' + REAL, { opacity: 1, duration: 0.4, ease }, 9.9)
+        .from('#sC-sim', { y: 30, opacity: 0, duration: 0.6, ease }, 8.0)
+        .from('#sC-real', { y: 30, opacity: 0, duration: 0.6, ease }, 9.9)
+        .to('#sC-in', { opacity: 0, duration: 0.45, ease: 'power2.in' }, 11.15)
+        .set('#sC-in', { opacity: 0 }, 11.6);
+
+      // D
+      tl.from('#sD-eyebrow', { y: 26, opacity: 0, duration: 0.6, ease }, 11.75)
+        .from('#sD-tests', { y: 40, opacity: 0, duration: 0.8, ease }, 11.9)
+        .from('#sD-apk', { y: 40, opacity: 0, duration: 0.8, ease }, 12.15)
+        .from('#sD-note', { y: 26, opacity: 0, duration: 0.8, ease }, 12.5);
+
+      window.__timelines['main'] = tl;
+    </script>
+  </body>
+</html>

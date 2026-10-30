@@ -177,6 +177,14 @@ export const en: Content = {
       ...projectRefs.mipeso,
     },
     {
+      name: 'Mis notas',
+      kind: 'grade simulator app',
+      summary: 'Drag a number and see the final grade you need, before the exam rather than after it.',
+      detail:
+        'An Expo and React Native app for a university student in Peru. Each syllabus is a weighted tree computed by one recursive function in a pure TypeScript core, with no rounding until the course grade. Every grade has two layers: the one you drag to ask "what if?", and the real one, marked with a star, which is the only one saved. The general average is weighted by credits. The number picker runs on the UI thread with Reanimated, and the APK went from 112 MB to 21 MB by shipping only arm64 and shrinking with R8. 53 tests.',
+      ...projectRefs.misNotas,
+    },
+    {
       name: 'tvindicators',
       kind: 'strategy validation engine',
       summary:

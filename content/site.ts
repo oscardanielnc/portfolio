@@ -143,4 +143,13 @@ export const projectRefs = {
     // Recorded on a phone viewport and letterboxed into the plate, because it is a phone app.
     video: demos.mipeso,
   },
+  misNotas: {
+    // An Android app with no web build, so the button downloads the APK from GitHub Releases.
+    demo: 'https://github.com/oscardanielnc/simulador-notas/releases/latest',
+    repo: 'https://github.com/oscardanielnc/simulador-notas',
+    tech: ['Expo', 'React Native', 'TypeScript', 'Reanimated', 'Zustand', 'Zod', 'Jest', 'EAS Build'],
+    // Its one real user's screens hold her own grades, so like Kawsay the plate is an
+    // authored diagram with no app screen in it. See explainers/mis-notas/.
+    video: { ...demos['mis-notas'], fit: 'contain' },
+  },
 } as const;
