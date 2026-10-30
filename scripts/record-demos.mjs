@@ -200,6 +200,88 @@ const flows = [
     },
   },
   {
+    name: 'mis-notas',
+    viewport: PHONE,
+    device: 'phone',
+    // Android-only app: this records its own code built for the web (`pnpm web` in
+    // simulador-notas serves it on :4180). Same components, same store, same picker.
+    url: 'http://localhost:4180/',
+    /**
+     * The claim is "drag a number, see the grade you need". So: open a course, drag the
+     * picker, mark the grade real with its star, simulate a whole unit, and come back to
+     * the home average. The grades are sample values seeded here, never the real user's.
+     */
+    async run(page, mark) {
+      mark('skip-start', 0);
+      await page.evaluate(() => {
+        const g = (v) => ({ sim: v, real: v });
+        localStorage.setItem(
+          'grades',
+          JSON.stringify({
+            state: {
+              grades: {
+                'gestion-informacion': { u1: g(15), u2: g(14), u3: g(16) },
+                matematica: { 'u1-te': g(16), 'u1-ex': g(13), 'u1-es': g(15) },
+              },
+            },
+            version: 1,
+          }),
+        );
+      });
+      await page.reload({ waitUntil: 'networkidle' });
+      await page.getByText('Sociología').first().waitFor({ timeout: 30_000 });
+      await page.waitForTimeout(500);
+      mark('skip-end');
+      await page.waitForTimeout(1600);
+      await click(page, page.getByText('Sociología').first());
+      await page.waitForTimeout(1400);
+
+      const ruler = page.getByLabel('Regla de notas');
+      /**
+       * Drags the picker left by `numbers` steps (48 px each) in slow strokes. Each stroke
+       * ends with a crawl, so the gesture lifts with almost no velocity and the picker's
+       * fling does not carry it past the intended grade.
+       */
+      const drag = async (numbers) => {
+        const box = await ruler.boundingBox();
+        if (!box) throw new Error('picker has no box');
+        const y = box.y + box.height * 0.6;
+        const x0 = box.x + box.width * 0.8;
+        let left = numbers * 48;
+        while (left > 0) {
+          const stroke = Math.min(left, 192);
+          await page.mouse.move(x0, y, { steps: 8 });
+          await page.mouse.down();
+          await page.mouse.move(x0 - stroke + 6, y, { steps: 20 });
+          for (let px = 5; px >= 0; px--) {
+            await page.mouse.move(x0 - stroke + px, y);
+            await page.waitForTimeout(70);
+          }
+          await page.mouse.up();
+          await page.waitForTimeout(300);
+          left -= stroke;
+        }
+      };
+
+      await drag(15);
+      await page.waitForTimeout(700);
+      await click(page, page.getByText('Marcar real').first());
+      await page.waitForTimeout(1200);
+      await click(page, page.getByText('EVAL').first());
+      await page.waitForTimeout(700);
+      await drag(13);
+      await page.waitForTimeout(700);
+      await click(page, page.getByText('Marcar real').first());
+      await page.waitForTimeout(1200);
+      await click(page, page.getByText('Unidad III').first());
+      await page.waitForTimeout(800);
+      await drag(16);
+      await page.waitForTimeout(1500);
+      await click(page, page.getByLabel('Volver'));
+      await page.waitForTimeout(2600);
+    },
+  },
+  {
     name: 'exposure',
     viewport: DESKTOP,
     // Its own UI is dark, like this site, so no theme override is needed.

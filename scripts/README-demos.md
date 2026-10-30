@@ -76,6 +76,13 @@ and write its NVDA analysis, and Mi Peso really does spend three seconds booting
 out of WebAssembly. The marks are timestamps rather than hardcoded timecodes precisely
 because those numbers change on every run.
 
+**A native app is recorded from its own web build.** Mis notas ships only as an Android APK,
+so its flow drives the same code built with react-native-web: `pnpm web` in simulador-notas
+serves it on `localhost:4180`, and the flow seeds sample grades into `localStorage` before
+it starts, so no real user's grades are ever on screen. Its picker flings on release, so
+`drag()` ends every stroke with a slow crawl; lifting at speed carried it four numbers
+past the grade the clip was meant to land on.
+
 Anchor a scroll to an element rather than to a pixel distance. Fixed distances worked
 until TickerLens returned a longer analysis, and then the clip scrolled straight past the
 one section worth showing.
@@ -121,14 +128,13 @@ Two consequences worth knowing:
 
 ## Explainers
 
-Five projects are not recorded. Kepler is archived, and momentum-investor and Oscilion were
+Four projects are not recorded. Kepler is archived, and momentum-investor and Oscilion were
 closed by their own research without ever being deployed publicly, so nothing of them is
 running to point a browser at. Kawsay runs every day, but it is private and every real
 screen of it shows its author's meals, weight, symptoms and mood; a demo seed was the other
-option and was passed over for a diagram. Mis notas is an Android app with no web build,
-and its one real user's screens hold her own grades. Their plates are authored instead of captured, as
+option and was passed over for a diagram. Their plates are authored instead of captured, as
 [HyperFrames](https://hyperframes.heygen.com) compositions under `explainers/<name>/`. All
-five pin the same CLI version, so they come out of the same renderer.
+four pin the same CLI version, so they come out of the same renderer.
 
 ```
 cd explainers/kepler

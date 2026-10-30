@@ -148,8 +148,8 @@ export const projectRefs = {
     demo: 'https://github.com/oscardanielnc/simulador-notas/releases/latest',
     repo: 'https://github.com/oscardanielnc/simulador-notas',
     tech: ['Expo', 'React Native', 'TypeScript', 'Reanimated', 'Zustand', 'Zod', 'Jest', 'EAS Build'],
-    // Its one real user's screens hold her own grades, so like Kawsay the plate is an
-    // authored diagram with no app screen in it. See explainers/mis-notas/.
-    video: { ...demos['mis-notas'], fit: 'contain' },
+    // Recorded from the app's own web build (same components and store) with sample grades,
+    // letterboxed into the plate like Mi Peso because it is a phone app.
+    video: demos['mis-notas'],
   },
 } as const;
