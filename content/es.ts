@@ -183,6 +183,14 @@ export const es: Content = {
       ...projectRefs.mipeso,
     },
     {
+      name: 'Mis notas',
+      kind: 'app simuladora de notas',
+      summary: 'Desliza un número y ve la nota que necesitas en el examen, antes de rendirlo y no después.',
+      detail:
+        'Una app en Expo y React Native para una estudiante universitaria en Perú. Cada sílabo es un árbol con pesos que calcula una sola función recursiva en un núcleo de TypeScript puro, sin redondear hasta la nota del curso. Cada nota tiene dos capas: la que deslizas para preguntarte "¿y si…?" y la real, marcada con una estrella, que es la única que se guarda. El promedio general se pondera por créditos. El selector de números corre en el hilo de la interfaz con Reanimated, y el APK bajó de 112 MB a 21 MB al incluir solo arm64 y reducirse con R8. 53 pruebas.',
+      ...projectRefs.misNotas,
+    },
+    {
       name: 'tvindicators',
       kind: 'motor de validación de estrategias',
       summary:
