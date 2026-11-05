@@ -149,26 +149,8 @@ const flows = [
       await page.waitForTimeout(2400);
     },
   },
-  {
-    name: 'tvindicators',
-    viewport: DESKTOP,
-    url: 'https://tvbot.oscarnavarro.dev/',
-    /**
-     * Dashboard first for the equity curve, then Evaluación, which is the part that
-     * actually distinguishes the project: live expectancy measured against backtest.
-     */
-    async run(page) {
-      await page.waitForTimeout(2500);
-      await glide(page, 1100);
-      await page.waitForTimeout(1600);
-      await glide(page, -1100);
-      await page.waitForTimeout(700);
-      await click(page, page.getByText('Evaluación', { exact: false }).first());
-      await page.waitForTimeout(3000);
-      await glide(page, 1500);
-      await page.waitForTimeout(2200);
-    },
-  },
+  // tvindicators was closed on 2026-11-05 and its dashboard taken offline. Its clip in
+  // public/demos/ was recorded while it ran and is kept as is; there is nothing left to re-record.
   {
     name: 'mipeso',
     viewport: PHONE,

@@ -96,7 +96,9 @@ export const projectRefs = {
     video: demos.estudia,
   },
   tvindicators: {
-    demo: 'https://tvbot.oscarnavarro.dev',
+    // Closed on 2026-11-05 and taken off the VM. The recording predates the shutdown,
+    // so the video stays; there is no live dashboard left to link.
+    demo: null,
     repo: 'https://github.com/oscardanielnc/tvindicators',
     tech: ['Python', 'ccxt', 'SQLite', 'FastAPI', 'systemd'],
     image: { src: '/projects/tvindicators.webp', width: 1000, height: 625 },
