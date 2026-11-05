@@ -194,10 +194,11 @@ export const es: Content = {
       name: 'tvindicators',
       kind: 'motor de validación de estrategias',
       summary:
-        'Estrategias de trading reimplementadas en Python y sometidas a paper trading continuo para averiguar cuáles sobreviven al mercado real.',
+        'Estrategias de trading reimplementadas en Python y sometidas a 146 días de paper trading para averiguar cuáles sobreviven al mercado real. Ninguna lo hizo.',
       detail:
-        'El propósito del sistema es descartar, no ganar: mide la expectancy en vivo de cada estrategia contra su backtest y marca cuáles no reproducen lo que prometieron. Que la mayoría falle es el resultado esperado — una estrategia que se sostiene fuera de su propio backtest es la excepción, y encontrarla exige medir con honestidad las que no. Más de 40 estrategias corren contra futuros perpetuos de Binance, con una API REST que expone curvas de equity y la evaluación de vivo contra backtest. Un hook de pre-push bloquea cualquier commit en el que la ruta de señal en vivo deje de reproducir el backtest. Solo paper trading — nunca ha operado dinero real, y su propia documentación advierte contra leer el Sharpe del backtest como una expectativa en vivo.',
+        'El propósito del sistema era descartar, no ganar: medía la expectancy en vivo de cada estrategia contra su backtest. 79 estrategias corrieron contra futuros perpetuos de Binance y perpetuos de acciones, con una API REST que exponía curvas de equity y la evaluación de vivo contra backtest, y un hook de pre-push que bloqueaba cualquier commit en el que la ruta de señal en vivo dejara de reproducir el backtest. En 1,057 trades cerrados, el backtest prometía +105 puntos básicos por trade y el mercado pagó -30 (t = -2.9). Un arnés de reconciliación encontró 0 diferencias entre vivo y backtest, así que el código hacía lo que decía la investigación; la ventaja en sí era sesgo de selección por haber probado más de 185 ideas. Las dos tesis de cripto perdieron con significancia estadística, y el breakout del rango de apertura en acciones, el único candidato que mostraba +90 pb tras 11 trades, se volteó a -27 pb con 22 más. Cerrado en noviembre de 2026. Solo paper trading: nunca operó dinero real.',
       ...projectRefs.tvindicators,
+      archived: true,
     },
     {
       name: 'momentum-investor',

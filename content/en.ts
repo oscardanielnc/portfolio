@@ -188,10 +188,11 @@ export const en: Content = {
       name: 'tvindicators',
       kind: 'strategy validation engine',
       summary:
-        'Trading strategies reimplemented in Python and put through continuous paper trading to find out which ones survive contact with the live market.',
+        'Trading strategies reimplemented in Python and paper-traded for 146 days to find out which ones survive the live market. None did.',
       detail:
-        'The system exists to rule strategies out, not to make money: it measures each one’s live expectancy against its backtest and flags the ones that stop reproducing what they promised. Most failing is the expected result — a strategy that holds up outside its own backtest is the exception, and finding one means measuring the rest honestly. Over 40 strategies run against Binance perpetual futures, with a REST API exposing equity curves and the live-versus-backtest evaluation. A pre-push hook blocks any commit where the live signal path stops reproducing the backtest. Paper trading only — it has never traded real money, and its own documentation warns against reading the backtest Sharpe as a live expectation.',
+        'The system existed to rule strategies out, not to make money: it measured each one’s live expectancy against its backtest. 79 strategies ran against Binance perpetual futures and stock perps, with a REST API exposing equity curves and the live-versus-backtest evaluation, and a pre-push hook that blocked any commit where the live signal path stopped reproducing the backtest. Over 1,057 closed trades the backtest promised +105 basis points per trade and the live market paid -30 (t = -2.9). A reconciliation harness found 0 mismatches between live and backtest, so the code did what the research said; the edge itself was selection bias from testing more than 185 ideas. The two crypto theses lost with statistical significance, and the stock opening-range breakout, the one candidate showing +90 bps after 11 trades, reversed to -27 bps once it had 22 more. Closed in November 2026. Paper trading only: it never traded real money.',
       ...projectRefs.tvindicators,
+      archived: true,
     },
     {
       name: 'momentum-investor',

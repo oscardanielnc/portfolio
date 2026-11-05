@@ -97,6 +97,8 @@ most the `@sm` cut of the one card it is looking at.
 Kepler, momentum-investor and Oscilion have nothing running to record — Kepler is archived,
 and the other two were closed by their own research without ever being deployed publicly —
 so their plates are authored instead, as HyperFrames compositions under `explainers/`.
+tvindicators keeps the clip recorded while it ran: it was closed on 2026-11-05 and its
+dashboard taken offline, so it is no longer in the recorder.
 Kawsay is authored too, for a different reason: it is private, and its real screens hold
 its author's own meals, weight and mood.
 `demos:process` encodes recordings and explainers identically.
