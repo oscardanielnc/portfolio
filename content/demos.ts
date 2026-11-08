@@ -8,7 +8,7 @@
 export const demos = {
   estudia: {"src":"/demos/estudia.71417c62.mp4","poster":"/demos/estudia.71417c62-poster.webp","width":1000,"height":626},
   exposure: {"src":"/demos/exposure.d192e7da.mp4","poster":"/demos/exposure.d192e7da-poster.webp","width":1000,"height":626},
-  kawsay: {"src":"/demos/kawsay.9e977d28.mp4","poster":"/demos/kawsay.9e977d28-poster.webp","width":1000,"height":626},
+  kawsay: {"src":"/demos/kawsay.5edc8d6a.mp4","poster":"/demos/kawsay.5edc8d6a-poster.webp","width":1000,"height":626},
   kepler: {"src":"/demos/kepler.61699eca.mp4","poster":"/demos/kepler.61699eca-poster.webp","width":1000,"height":626},
   mipeso: {"src":"/demos/mipeso.c265705f.mp4","poster":"/demos/mipeso.c265705f-poster.webp","width":1000,"height":626},
   'mis-notas': {"src":"/demos/mis-notas.1a111199.mp4","poster":"/demos/mis-notas.1a111199-poster.webp","width":1000,"height":626},

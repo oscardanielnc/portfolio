@@ -83,6 +83,24 @@ it starts, so no real user's grades are ever on screen. Its picker flings on rel
 `drag()` ends every stroke with a slow crawl; lifting at speed carried it four numbers
 past the grade the clip was meant to land on.
 
+**A native app with no web build is recorded on an Android emulator.** Kawsay has no
+react-native-web build, so `scripts/android/` drives its release APK with adb, finding views
+by their visible text the way a person would. `kawsay_setup.py` wipes the app and logs an
+invented profile and breakfast; `record_kawsay.py` runs the flow under `adb screenrecord`
+with touches shown, then writes `view/demos/kawsay.webm` and its marks. Each uiautomator
+lookup takes a second or two, so every lookup is a skip mark: the clip keeps the app's pace
+and drops the script's. screenrecord only writes a frame when the screen changes, so the
+take is converted to a constant 30 fps before cutting; cut first, and a screen held still
+for three seconds survives as one frame. Without an account the text agent is off, so the
+clip shows manual logging, which is what the app does offline.
+
+```
+emulator -avd kawsay &           # API 34 x86_64 image, WHPX; install the release APK once
+python -X utf8 scripts/android/kawsay_setup.py
+python -X utf8 scripts/android/record_kawsay.py
+npm run demos:process
+```
+
 Anchor a scroll to an element rather than to a pixel distance. Fixed distances worked
 until TickerLens returned a longer analysis, and then the clip scrolled straight past the
 one section worth showing.
@@ -128,13 +146,16 @@ Two consequences worth knowing:
 
 ## Explainers
 
-Four projects are not recorded. Kepler is archived, and momentum-investor and Oscilion were
+Three projects are not recorded. Kepler is archived, and momentum-investor and Oscilion were
 closed by their own research without ever being deployed publicly, so nothing of them is
-running to point a browser at. Kawsay runs every day, but it is private and every real
-screen of it shows its author's meals, weight, symptoms and mood; a demo seed was the other
-option and was passed over for a diagram. Their plates are authored instead of captured, as
+running to point a browser at. Their plates are authored instead of captured, as
 [HyperFrames](https://hyperframes.heygen.com) compositions under `explainers/<name>/`. All
-four pin the same CLI version, so they come out of the same renderer.
+three pin the same CLI version, so they come out of the same renderer.
+
+Kawsay used to be the fourth: its real screens hold its author's meals, weight and mood, so
+it got a diagram. A diagram of an app reads as slides, not as software, and it was replaced by
+a recording of the real APK seeded with invented data (below). Prefer that for any app whose
+real data is private: an authored plate is for projects with nothing running.
 
 ```
 cd explainers/kepler
@@ -162,9 +183,7 @@ for Kepler, seven sleeves, 3.4% against a 10% budget, 18 days live; for momentum
 the three-universe table, with bars drawn to scale from zero. There is no animated equity
 curve anywhere, because a line that looks like real performance and is not is the one
 dishonest thing a portfolio cannot afford. Each composition carries a permanent
-`SCHEMATIC · PUBLISHED FIGURES` label for the same reason. Kawsay's reads
-`SCHEMATIC · NO PERSONAL DATA`: it shows no app screen at all, only the architecture and
-the test count its project states, in the site's blue stage tokens.
+`SCHEMATIC · PUBLISHED FIGURES` label for the same reason.
 
 One documented exception: Oscilion's README says its go/no-go criteria went into the first
 commit but does not list them, so the wording of the three criteria on screen is

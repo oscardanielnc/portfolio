@@ -87,7 +87,7 @@ prove a project exists; these show that it works.
 ```bash
 npm run demos            # record every live demo, then encode
 npm run demos:record     # Playwright drives the live deployments → view/demos/ (gitignored)
-npm run demos:process    # ffmpeg → public/demos/ (committed, 5.0 MB for all eleven)
+npm run demos:process    # ffmpeg → public/demos/ (committed, 5.9 MB for all eleven)
 ```
 
 Playwright drives the real deployments, so the footage is of the software itself and
@@ -99,8 +99,8 @@ and the other two were closed by their own research without ever being deployed 
 so their plates are authored instead, as HyperFrames compositions under `explainers/`.
 tvindicators keeps the clip recorded while it ran: it was closed on 2026-11-05 and its
 dashboard taken offline, so it is no longer in the recorder.
-Kawsay is authored too, for a different reason: it is private, and its real screens hold
-its author's own meals, weight and mood.
+Kawsay is recorded from its release APK on an Android emulator, on a fresh install with an
+invented profile and meals, so none of its author's own data is on screen.
 `demos:process` encodes recordings and explainers identically.
 
 Exposure Dashboard searches real people, so its clip searches the address already printed

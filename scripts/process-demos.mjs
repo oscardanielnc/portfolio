@@ -73,9 +73,10 @@ const jobs = {
   // Explainers: the poster lands on each one's central table, fully drawn.
   'momentum-investor': { posterAt: 0.53, crf: 30 },
   oscilion: { posterAt: 0.7, crf: 30 },
-  kawsay: { posterAt: 0.62, crf: 30 },
   // The poster lands on a course with two real grades starred and a unit being simulated.
   'mis-notas': { posterAt: 0.8, crf: 30 },
+  // The poster lands on a portion preview: every gauge with today's needle and the one after it.
+  kawsay: { posterAt: 0.4, crf: 32 },
   exposure: { posterAt: 0.62, crf: 35 },
   tvindicators: { posterAt: 0.15, crf: 34 },
   mipeso: { posterAt: 0.55, crf: 30 },
