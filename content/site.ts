@@ -73,13 +73,13 @@ export const projectRefs = {
     video: demos['payment-orchestrator'],
   },
   kawsay: {
-    // Private until its public release, so there is no repository or deployment to link.
+    // An Android app with no store listing, so there is no deployment to link.
     demo: null,
-    repo: null,
+    repo: 'https://github.com/oscardanielnc/kawsay',
     tech: ['Expo', 'React Native', 'TypeScript', 'SQLite + Drizzle', 'NestJS', 'Prisma', 'PostgreSQL', 'DeepSeek'],
-    // Its real screens hold its author's own meals and weight, so the plate is an authored
-    // diagram with no app screen in it. See explainers/kawsay/.
-    video: { ...demos.kawsay, fit: 'contain' },
+    // Recorded from the release APK on an Android emulator, on a fresh install with an
+    // invented profile and meals, so none of its author's data is on screen.
+    video: demos.kawsay,
   },
   tickerlens: {
     demo: 'https://tickerlens.oscarnavarro.dev',

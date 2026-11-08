@@ -143,7 +143,7 @@ export const es: Content = {
       kind: 'app de nutrición offline-first',
       summary: 'Un diario de comida, actividad y ánimo cuyas metas de nutrición se ajustan al día que realmente tuviste.',
       detail:
-        'Una app en Expo y React Native que funciona sin conexión: SQLite con Drizzle en el celular, sincronizado con una API en NestJS y Prisma. El celular y el servidor comparten las mismas reglas en TypeScript, así que las metas se calculan sin conexión. La IA solo elige los alimentos; las tablas de composición calculan los nutrientes, y las entradas privadas nunca llegan al modelo. Más de 600 pruebas. Su autor la usa a diario; el repositorio sigue privado hasta su lanzamiento público.',
+        'Una app en Expo y React Native que funciona sin conexión: SQLite con Drizzle en el celular, sincronizado con una API en NestJS y Prisma. El celular y el servidor comparten las mismas reglas en TypeScript, así que las metas se calculan sin conexión. Las comidas se pueden registrar escribiendo, con un agente con herramientas que solo elige alimentos del catálogo y porciones; las tablas de composición calculan cada nutriente y nada se guarda hasta que el usuario confirma. Dos conjuntos de evals con chequeos exactos lo vigilan en CI: el agente saca 87.8 en 150 frases sintéticas, y el prompt del resumen pasó de 67.5 a 100 después de que el eval atrapó un bug en producción. Las relaciones con síntomas deben pasar una prueba exacta de Fisher con control de falsos descubrimientos antes de mostrarse. Más de 800 pruebas, y su autor la usa a diario.',
       ...projectRefs.kawsay,
       featured: true,
     },

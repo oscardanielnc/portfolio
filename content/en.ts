@@ -138,7 +138,7 @@ export const en: Content = {
       kind: 'offline-first nutrition app',
       summary: 'A food, activity and mood journal whose nutrition targets follow the day you actually had.',
       detail:
-        'An Expo and React Native app that works without a connection: SQLite with Drizzle on the phone, synced to a NestJS and Prisma API. The phone and the server share the same TypeScript rules, so targets are computed offline. The AI only picks foods; food-composition tables compute the nutrients, and private entries never reach the model. More than 600 tests. In daily use by its author; the repository stays private until its public release.',
+        'An Expo and React Native app that works without a connection: SQLite with Drizzle on the phone, synced to a NestJS and Prisma API. The phone and the server share the same TypeScript rules, so targets are computed offline. Meals can be logged by text through a tool-calling agent that may only pick catalog foods and portions; the composition tables compute every nutrient, and nothing is saved until the user confirms. Two sets of exact-check evals gate it in CI: the logging agent scores 87.8 on 150 synthetic phrases, and the summary prompt went from 67.5 to 100 after the eval caught a production bug. Symptom relations must pass a Fisher exact test with false-discovery control before they are shown. More than 800 tests, and in daily use by its author.',
       ...projectRefs.kawsay,
       featured: true,
     },
