@@ -447,6 +447,87 @@ const flows = [
       await page.waitForTimeout(3200);
     },
   },
+  {
+    name: 'n8n-automations',
+    viewport: DESKTOP,
+    url: 'http://localhost:5680/signin',
+    needsEnv: ['N8N_DEMO_EMAIL', 'N8N_DEMO_PASSWORD'],
+    locale: 'en-US',
+    /**
+     * Recorded against a local stack, like the orchestrator: the real instance reads real
+     * mailboxes. A throwaway n8n container holds the published workflows (n8n-automations
+     * repo, n8n/workflows/*.json) with dummy credentials, and the panel runs on its demo
+     * data (`pnpm demo`). See scripts/README-demos.md.
+     *
+     * The claim is "the model sorts, fixed rules decide, and you see the result", so the
+     * clip pans the daily-watch flow to the rules node, opens its code, and ends on the
+     * panel: the mail it sorted, then the failure report for a flow that broke.
+     */
+    async run(page, mark) {
+      mark('skip-start', 0);
+      await page.locator('input[type=email]').fill(process.env.N8N_DEMO_EMAIL);
+      await page.locator('input[type=password]').fill(process.env.N8N_DEMO_PASSWORD);
+      await page.keyboard.press('Enter');
+      await page.waitForURL(/\/home/, { timeout: 30_000 });
+      await page.goto('http://localhost:5680/workflow/f2DailyWatch0001');
+      const node = (name) => page.locator(`[data-test-id="canvas-node"][data-node-name="${name}"]`);
+      await node('Gmail personal').waitFor();
+      await page.waitForTimeout(1500);
+      mark('skip-end');
+
+      // The whole flow first, then dive in where the mail enters.
+      await page.waitForTimeout(1600);
+      await point(page, node('Gmail personal'), { steps: 18 });
+      await page.keyboard.down('Control');
+      for (let i = 0; i < 16; i++) {
+        await page.mouse.wheel(0, -60);
+        await page.waitForTimeout(70);
+      }
+      await page.keyboard.up('Control');
+      await page.waitForTimeout(1400);
+
+      // Pan along the mail's path: inboxes → "is the sender real?" → Jev → fixed rules.
+      for (let i = 0; i < 46; i++) {
+        await page.mouse.wheel(40, 0);
+        await page.waitForTimeout(45);
+      }
+      await page.waitForTimeout(1200);
+
+      const rules = node('Apply rules + build message');
+      await point(page, rules);
+      const box = await rules.boundingBox();
+      await page.mouse.dblclick(box.x + box.width / 2, box.y + box.height / 2);
+      const editor = page.locator('.cm-content').first();
+      await editor.waitFor({ timeout: 15_000 });
+      await page.waitForTimeout(1800);
+      // Down to the DKIM / DMARC checks, the part a sender cannot forge. The editor ignores
+      // the wheel inside the node panel, so the caret walks down the way a reader would.
+      await click(page, editor.locator('.cm-line').nth(3));
+      for (let i = 0; i < 52; i++) {
+        await page.keyboard.press('ArrowDown');
+        await page.waitForTimeout(65);
+      }
+      await page.waitForTimeout(3400);
+
+      mark('skip-start');
+      await page.goto('http://localhost:3110/');
+      await page.getByRole('heading', { name: 'Daily watch' }).waitFor({ timeout: 30_000 });
+      await page.getByText('Northwind Labs').first().waitFor();
+      await page.waitForTimeout(600);
+      mark('skip-end');
+      await page.waitForTimeout(2400);
+      await glide(page, 520, { chunks: 18, pause: 60 });
+      await page.waitForTimeout(2400);
+      await glide(page, -520, { chunks: 12, pause: 50 });
+      await page.waitForTimeout(500);
+
+      await click(page, page.getByRole('link', { name: /Errors/ }).first());
+      await page.getByRole('heading', { name: 'Errors' }).waitFor();
+      await page.waitForTimeout(1000);
+      await click(page, page.getByRole('button', { name: /Job radar/ }).first());
+      await page.waitForTimeout(3600);
+    },
+  },
 ];
 
 const only = process.argv.slice(2).filter((a) => !a.startsWith('-'));

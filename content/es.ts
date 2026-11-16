@@ -17,7 +17,7 @@ export const es: Content = {
   meta: {
     title: 'Oscar Daniel Navarro Cieza — Full-Stack Product Engineer · AI Engineer',
     description:
-      'Full-Stack Product Engineer, cuatro años desplegando apps web y móviles en producción. Especialista en frontend (React, Next.js, TypeScript) que construye todo el stack cuando hace falta: NestJS, PostgreSQL, pagos, React Native. Perú, UTC-5, remoto.',
+      'Full-Stack Product Engineer, cuatro años desplegando apps web y móviles en producción. Especialista en frontend (React, Next.js, TypeScript) que construye todo el stack cuando hace falta: NestJS, PostgreSQL, pagos, React Native, funciones de IA medidas y automatizaciones con n8n. Perú, UTC-5, remoto.',
   },
 
   nav: {
@@ -34,7 +34,7 @@ export const es: Content = {
     headline: 'Full-Stack Product Engineer · AI Engineer',
     location: 'Perú · Remoto (UTC-5) — solapamiento completo con US Eastern',
     intro: [
-      'Cuatro años desplegando aplicaciones web y móviles en producción. Mi especialidad es el frontend —React, Next.js y TypeScript— y construyo el resto del stack cuando el producto lo necesita: APIs en NestJS, PostgreSQL, colas, pagos y móvil.',
+      'Cuatro años desplegando aplicaciones web y móviles en producción. Mi especialidad es el frontend —React, Next.js y TypeScript— y construyo el resto del stack cuando el producto lo necesita: APIs en NestJS, PostgreSQL, colas, pagos, móvil y las automatizaciones que los conectan.',
       'Trabajo a diario con Claude Code. Escribo primero las specs y las decisiones de arquitectura, pruebo cada camino y me aseguro de entender el código lo suficiente para defenderlo y corregirlo rápido.',
       'Desde Perú, UTC-5. Solo remoto, disponible como contractor independiente.',
     ],
@@ -51,7 +51,15 @@ export const es: Content = {
       },
       {
         title: 'Probado, luego confiable',
-        line: 'Pruebo cada camino. El orquestador de pagos tiene más de 300 pruebas y se verificó en redes de prueba reales.',
+        line: 'Pruebo cada camino. El orquestador de pagos tiene más de 300 pruebas y se verificó en redes de prueba reales; Kawsay tiene 967.',
+      },
+      {
+        title: 'IA que se mide',
+        line: 'Los prompts pasan por evals en CI, cada llamada al modelo se traza con su costo y su latencia, y el modelo ordena mientras reglas fijas deciden.',
+      },
+      {
+        title: 'Opero lo que construyo',
+        line: 'Docker en una VM que administro, Cloudflare Zero-Trust delante, backups cifrados, alertas de errores y una revisión diaria de salud.',
       },
       {
         title: 'Aprendo enseñándome',
@@ -87,7 +95,7 @@ export const es: Content = {
     sections: { about: 'Sobre mí', projects: 'Proyectos', experience: 'Experiencia', stack: 'Stack' },
     nextLines: {
       about: 'Quién soy y cómo trabajo',
-      projects: 'Diez proyectos, de pagos a investigación de trading',
+      projects: 'Doce proyectos, de pagos y automatización a investigación de trading',
       experience: 'Dónde he trabajado, y cuándo',
       stack: 'Las herramientas detrás de los proyectos',
     },
@@ -119,6 +127,7 @@ export const es: Content = {
       backend: 'Backend',
       data: 'Datos',
       ai: 'IA',
+      automation: 'Automatización e integraciones',
       platforms: 'Apps y plataformas',
       infrastructure: 'Infraestructura',
       mobile: 'Móvil',
@@ -127,9 +136,19 @@ export const es: Content = {
     },
   },
 
+  projectGroups: [
+    { id: 'products', title: 'Productos', lede: 'Construidos, desplegados y en uso: pagos, móvil, IA y automatización.' },
+    {
+      id: 'research',
+      title: 'Investigación de trading',
+      lede: 'Cuatro sistemas construidos para responder una pregunta —¿hay ventaja después de costos reales?— y cerrados cuando la evidencia dijo que no.',
+    },
+  ],
+
   projects: [
     {
       name: 'Payment Orchestrator',
+      group: 'products',
       kind: 'plataforma de pagos',
       summary:
         'Una API y un checkout alojado que llevan cada pago a tarjetas, Mercado Pago, USDT en TRON o USDC en Base, y registran cada centavo en un libro contable de partida doble.',
@@ -140,15 +159,28 @@ export const es: Content = {
     },
     {
       name: 'Kawsay',
+      group: 'products',
       kind: 'app de nutrición offline-first',
       summary: 'Un diario de comida, actividad y ánimo cuyas metas de nutrición se ajustan al día que realmente tuviste.',
       detail:
-        'Una app en Expo y React Native que funciona sin conexión: SQLite con Drizzle en el celular, sincronizado con una API en NestJS y Prisma. El celular y el servidor comparten las mismas reglas en TypeScript, así que las metas se calculan sin conexión. Las comidas se pueden registrar escribiendo, con un agente con herramientas que solo elige alimentos del catálogo y porciones; las tablas de composición calculan cada nutriente y nada se guarda hasta que el usuario confirma. Dos conjuntos de evals con chequeos exactos lo vigilan en CI: el agente saca 87.8 en 150 frases sintéticas, y el prompt del resumen pasó de 67.5 a 100 después de que el eval atrapó un bug en producción. Las relaciones con síntomas deben pasar una prueba exacta de Fisher con control de falsos descubrimientos antes de mostrarse. Más de 800 pruebas, y su autor la usa a diario.',
+        'Una app en Expo y React Native que funciona sin conexión: SQLite con Drizzle en el celular, sincronizado con una API en NestJS y Prisma. El celular y el servidor comparten las mismas reglas en TypeScript, así que las metas se calculan sin conexión. Las comidas se pueden registrar escribiendo, con un agente con herramientas que solo elige alimentos del catálogo y porciones; las tablas de composición calculan cada nutriente y nada se guarda hasta que el usuario confirma. Dos conjuntos de evals con chequeos exactos lo vigilan en CI: el agente saca 87.8 en 150 frases sintéticas, y el prompt del resumen pasó de 67.5 a 100 después de que el eval atrapó un bug en producción. Cada llamada a la IA queda trazada con su costo y su latencia, y el OWASP LLM Top 10 está mapeado a guardrails con pruebas. Las etiquetas de los alimentos se leen desde una foto con un modelo de visión, se validan con la fórmula de energía de Atwater y se confirman número por número. Las relaciones con síntomas deben pasar una prueba exacta de Fisher con control de falsos descubrimientos antes de mostrarse. 967 pruebas, 29 registros de decisiones de arquitectura, y su autor la usa a diario.',
       ...projectRefs.kawsay,
       featured: true,
     },
     {
+      name: 'n8n Automations',
+      group: 'products',
+      kind: 'plataforma de automatización autoalojada',
+      summary:
+        'Seis flujos en producción que revisan cuatro buzones de correo, filtran ofertas de empleo con un LLM y vigilan su propia salud, con un panel en NestJS y React para leer los resultados.',
+      detail:
+        'Un n8n autoalojado en una VM ARM, con Postgres, backups diarios cifrados y el editor detrás de Cloudflare Zero-Trust Access. Gmail y Outlook se leen por sus APIs con OAuth 2.0 de mínimo privilegio, y los lotes JSON de Microsoft Graph mueven miles de correos sin pasar sus límites de uso. Un modelo de decisiones tipadas clasifica cada correo, pero deciden reglas fijas: un “ganaste” exige un remitente de la lista permitida y DKIM y DMARC válidos en la cabecera que escribe el proveedor que recibe, porque la del remitente se puede falsificar. El texto de correos y ofertas entra como dato no confiable, nunca como instrucción. Una corrida diaria cuesta alrededor de una décima de centavo. Los flujos se generan desde Python y se versionan sin credenciales, y cada versión nueva corre primero en seco contra casos conocidos: una falló esa regresión y nunca salió. Un flujo global de errores y una revisión diaria de salud avisan de cada fallo. El panel lee n8n por su API pública, sin base de datos propia, con contratos Zod y Storybook.',
+      ...projectRefs.n8nAutomations,
+      featured: true,
+    },
+    {
       name: 'TickerLens',
+      group: 'products',
       kind: 'research de acciones con IA',
       summary: 'Escribe un ticker y obtén una tesis alcista y bajista, con fuentes citadas.',
       detail:
@@ -158,6 +190,7 @@ export const es: Content = {
     },
     {
       name: 'Estudia',
+      group: 'products',
       kind: 'compañero de estudio con IA',
       summary:
         'Fotografía apuntes de clase escritos a mano y obtén un resumen de estudio y un examen autocalificado.',
@@ -166,7 +199,17 @@ export const es: Content = {
       ...projectRefs.estudia,
     },
     {
+      name: 'Mis notas',
+      group: 'products',
+      kind: 'app simuladora de notas',
+      summary: 'Desliza un número y ve la nota que necesitas en el examen, antes de rendirlo y no después.',
+      detail:
+        'Una app en Expo y React Native que usan estudiantes universitarias en Perú. Cada sílabo es un árbol con pesos que calcula una sola función recursiva en un núcleo de TypeScript puro, sin redondear hasta la nota del curso. Cada nota tiene dos capas: la que deslizas para preguntarte "¿y si…?" y la real, marcada con una estrella, que es la única que se guarda. El promedio general se pondera por créditos. El selector de números corre en el hilo de la interfaz con Reanimated, y el APK bajó de 112 MB a 21 MB al incluir solo arm64 y reducirse con R8. 71 pruebas, que corren en CI.',
+      ...projectRefs.misNotas,
+    },
+    {
       name: 'Exposure Dashboard',
+      group: 'products',
       kind: 'agregación OSINT',
       summary:
         'Dale un nombre de usuario, un correo o un documento de identidad y reporta la exposición pública con un puntaje de confianza y su razonamiento.',
@@ -176,6 +219,7 @@ export const es: Content = {
     },
     {
       name: 'Mi Peso',
+      group: 'products',
       kind: 'registro de peso local-first',
       summary: 'Un registro de peso sin servidor y sin cuenta.',
       detail:
@@ -183,15 +227,8 @@ export const es: Content = {
       ...projectRefs.mipeso,
     },
     {
-      name: 'Mis notas',
-      kind: 'app simuladora de notas',
-      summary: 'Desliza un número y ve la nota que necesitas en el examen, antes de rendirlo y no después.',
-      detail:
-        'Una app en Expo y React Native para una estudiante universitaria en Perú. Cada sílabo es un árbol con pesos que calcula una sola función recursiva en un núcleo de TypeScript puro, sin redondear hasta la nota del curso. Cada nota tiene dos capas: la que deslizas para preguntarte "¿y si…?" y la real, marcada con una estrella, que es la única que se guarda. El promedio general se pondera por créditos. El selector de números corre en el hilo de la interfaz con Reanimated, y el APK bajó de 112 MB a 21 MB al incluir solo arm64 y reducirse con R8. 53 pruebas.',
-      ...projectRefs.misNotas,
-    },
-    {
       name: 'tvindicators',
+      group: 'research',
       kind: 'motor de validación de estrategias',
       summary:
         'Estrategias de trading reimplementadas en Python y sometidas a 146 días de paper trading para averiguar cuáles sobreviven al mercado real. Ninguna lo hizo.',
@@ -202,6 +239,7 @@ export const es: Content = {
     },
     {
       name: 'momentum-investor',
+      group: 'research',
       kind: 'auditoría de momentum en acciones',
       summary:
         'Un robot de momentum sobre acciones de EE. UU., y la auditoría que demostró que su ventaja venía de haber elegido la lista a posteriori.',
@@ -212,6 +250,7 @@ export const es: Content = {
     },
     {
       name: 'Kepler',
+      group: 'research',
       kind: 'sistema de trading neutral al mercado',
       summary: 'Un sistema cripto neutral al mercado que operó con capital real.',
       detail:
@@ -221,6 +260,7 @@ export const es: Content = {
     },
     {
       name: 'Oscilion',
+      group: 'research',
       kind: 'experimento de estrategias cripto',
       summary:
         'Un sistema de trading cripto construido para responder una pregunta —¿hay ventaja después de costos reales?— y cerrado cuando la respuesta fue no.',

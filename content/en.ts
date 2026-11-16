@@ -12,7 +12,7 @@ export const en: Content = {
   meta: {
     title: 'Oscar Daniel Navarro Cieza — Full-Stack Product Engineer · AI Engineer',
     description:
-      'Full-stack product engineer, four years shipping production web and mobile apps. Frontend specialist (React, Next.js, TypeScript) who builds the whole stack when needed: NestJS, PostgreSQL, payments, React Native. Peru, UTC-5, remote.',
+      'Full-stack product engineer, four years shipping production web and mobile apps. Frontend specialist (React, Next.js, TypeScript) who builds the whole stack when needed: NestJS, PostgreSQL, payments, React Native, measured AI features and n8n automations. Peru, UTC-5, remote.',
   },
 
   nav: {
@@ -29,7 +29,7 @@ export const en: Content = {
     headline: 'Full-Stack Product Engineer · AI Engineer',
     location: 'Peru · Remote (UTC-5) — full overlap with US Eastern',
     intro: [
-      'Four years shipping production web and mobile applications. Frontend is my specialty — React, Next.js and TypeScript — and I build the rest of the stack whenever the product needs it: NestJS APIs, PostgreSQL, queues, payments and mobile.',
+      'Four years shipping production web and mobile applications. Frontend is my specialty — React, Next.js and TypeScript — and I build the rest of the stack whenever the product needs it: NestJS APIs, PostgreSQL, queues, payments, mobile, and the automations that connect them.',
       'I work with Claude Code every day. I write the specs and architecture decisions first, test every path, and make sure I understand the code well enough to defend it and fix it fast.',
       'Based in Peru, UTC-5. Remote only, available as an independent contractor.',
     ],
@@ -46,7 +46,15 @@ export const en: Content = {
       },
       {
         title: 'Tested, then trusted',
-        line: 'I test every path. The payment orchestrator has 300+ tests and was verified on real test networks.',
+        line: 'I test every path. The payment orchestrator has 300+ tests and was verified on real test networks; Kawsay has 967.',
+      },
+      {
+        title: 'AI that is measured',
+        line: 'Prompts are gated by evals in CI, every model call is traced for cost and latency, and the model sorts while fixed rules decide.',
+      },
+      {
+        title: 'I run what I build',
+        line: 'Docker on a VM I operate, Cloudflare Zero-Trust in front, encrypted backups, error alerts and a daily health check.',
       },
       {
         title: 'Learning by teaching myself',
@@ -82,7 +90,7 @@ export const en: Content = {
     sections: { about: 'About', projects: 'Projects', experience: 'Experience', stack: 'Stack' },
     nextLines: {
       about: 'Who I am and how I work',
-      projects: 'Ten projects, from payments to trading research',
+      projects: 'Twelve projects, from payments and automation to trading research',
       experience: 'Where I have worked, and when',
       stack: 'The tools behind the projects',
     },
@@ -114,6 +122,7 @@ export const en: Content = {
       backend: 'Backend',
       data: 'Data',
       ai: 'AI',
+      automation: 'Automation & integrations',
       platforms: 'Apps & platforms',
       infrastructure: 'Infrastructure',
       mobile: 'Mobile',
@@ -122,9 +131,19 @@ export const en: Content = {
     },
   },
 
+  projectGroups: [
+    { id: 'products', title: 'Products', lede: 'Built, deployed and in use: payments, mobile, AI and automation.' },
+    {
+      id: 'research',
+      title: 'Trading research',
+      lede: 'Four systems built to answer one question — is there an edge after real costs? — and closed when the evidence said no.',
+    },
+  ],
+
   projects: [
     {
       name: 'Payment Orchestrator',
+      group: 'products',
       kind: 'payments platform',
       summary:
         'One API and a hosted checkout that route each payment to cards, Mercado Pago, USDT on TRON or USDC on Base, and record every cent in a double-entry ledger.',
@@ -135,15 +154,28 @@ export const en: Content = {
     },
     {
       name: 'Kawsay',
+      group: 'products',
       kind: 'offline-first nutrition app',
       summary: 'A food, activity and mood journal whose nutrition targets follow the day you actually had.',
       detail:
-        'An Expo and React Native app that works without a connection: SQLite with Drizzle on the phone, synced to a NestJS and Prisma API. The phone and the server share the same TypeScript rules, so targets are computed offline. Meals can be logged by text through a tool-calling agent that may only pick catalog foods and portions; the composition tables compute every nutrient, and nothing is saved until the user confirms. Two sets of exact-check evals gate it in CI: the logging agent scores 87.8 on 150 synthetic phrases, and the summary prompt went from 67.5 to 100 after the eval caught a production bug. Symptom relations must pass a Fisher exact test with false-discovery control before they are shown. More than 800 tests, and in daily use by its author.',
+        'An Expo and React Native app that works without a connection: SQLite with Drizzle on the phone, synced to a NestJS and Prisma API. The phone and the server share the same TypeScript rules, so targets are computed offline. Meals can be logged by text through a tool-calling agent that may only pick catalog foods and portions; the composition tables compute every nutrient, and nothing is saved until the user confirms. Two sets of exact-check evals gate it in CI: the logging agent scores 87.8 on 150 synthetic phrases, and the summary prompt went from 67.5 to 100 after the eval caught a production bug. Every AI call is traced for cost and latency, and the OWASP LLM Top 10 is mapped to tested guardrails. Food labels are read from a photo by a vision model, checked against the Atwater energy formula and confirmed number by number. Symptom relations must pass a Fisher exact test with false-discovery control before they are shown. 967 tests, 29 architecture decision records, and in daily use by its author.',
       ...projectRefs.kawsay,
       featured: true,
     },
     {
+      name: 'n8n Automations',
+      group: 'products',
+      kind: 'self-hosted automation platform',
+      summary:
+        'Six production workflows that triage four mailboxes, screen job postings with an LLM and watch their own health, with a NestJS and React panel to read the results.',
+      detail:
+        'A self-hosted n8n on an ARM VM, with Postgres, encrypted daily backups and the editor behind Cloudflare Zero-Trust Access. Gmail and Outlook are read through their APIs with least-privilege OAuth 2.0, and Microsoft Graph JSON batching moves thousands of messages within its throttling limits. A typed decision model sorts each email, but fixed rules decide: a “you won” needs an allow-listed sender and DKIM and DMARC passing in the header written by the receiving provider, because the sender’s own can be forged. Email and job-posting text travels as untrusted data, never as instructions. A daily run costs about a tenth of a cent. Workflows are generated from Python and versioned without credentials, and a new version is dry-run against known cases first: one failed that regression and never shipped. A global error workflow and a daily health check report every failure. The panel reads n8n through its public API, with no database of its own, Zod contracts and Storybook.',
+      ...projectRefs.n8nAutomations,
+      featured: true,
+    },
+    {
       name: 'TickerLens',
+      group: 'products',
       kind: 'AI equity research',
       summary: 'Type a ticker, get a cited bull and bear case.',
       detail:
@@ -153,6 +185,7 @@ export const en: Content = {
     },
     {
       name: 'Estudia',
+      group: 'products',
       kind: 'AI study companion',
       summary: 'Photograph handwritten class notes, get a study summary and an auto-graded exam.',
       detail:
@@ -160,7 +193,17 @@ export const en: Content = {
       ...projectRefs.estudia,
     },
     {
+      name: 'Mis notas',
+      group: 'products',
+      kind: 'grade simulator app',
+      summary: 'Drag a number and see the final grade you need, before the exam rather than after it.',
+      detail:
+        'An Expo and React Native app used by university students in Peru. Each syllabus is a weighted tree computed by one recursive function in a pure TypeScript core, with no rounding until the course grade. Every grade has two layers: the one you drag to ask "what if?", and the real one, marked with a star, which is the only one saved. The general average is weighted by credits. The number picker runs on the UI thread with Reanimated, and the APK went from 112 MB to 21 MB by shipping only arm64 and shrinking with R8. 71 tests, run in CI.',
+      ...projectRefs.misNotas,
+    },
+    {
       name: 'Exposure Dashboard',
+      group: 'products',
       kind: 'OSINT aggregation',
       summary:
         'Give it a username, email or national ID and it reports public exposure with a confidence score and its reasoning.',
@@ -170,6 +213,7 @@ export const en: Content = {
     },
     {
       name: 'Mi Peso',
+      group: 'products',
       kind: 'local-first weight tracker',
       summary: 'A weight tracker with no server and no account.',
       detail:
@@ -177,15 +221,8 @@ export const en: Content = {
       ...projectRefs.mipeso,
     },
     {
-      name: 'Mis notas',
-      kind: 'grade simulator app',
-      summary: 'Drag a number and see the final grade you need, before the exam rather than after it.',
-      detail:
-        'An Expo and React Native app for a university student in Peru. Each syllabus is a weighted tree computed by one recursive function in a pure TypeScript core, with no rounding until the course grade. Every grade has two layers: the one you drag to ask "what if?", and the real one, marked with a star, which is the only one saved. The general average is weighted by credits. The number picker runs on the UI thread with Reanimated, and the APK went from 112 MB to 21 MB by shipping only arm64 and shrinking with R8. 53 tests.',
-      ...projectRefs.misNotas,
-    },
-    {
       name: 'tvindicators',
+      group: 'research',
       kind: 'strategy validation engine',
       summary:
         'Trading strategies reimplemented in Python and paper-traded for 146 days to find out which ones survive the live market. None did.',
@@ -196,6 +233,7 @@ export const en: Content = {
     },
     {
       name: 'momentum-investor',
+      group: 'research',
       kind: 'stock momentum audit',
       summary:
         'A US-stock momentum robot, and the audit that showed its edge came from choosing the stock list with hindsight.',
@@ -206,6 +244,7 @@ export const en: Content = {
     },
     {
       name: 'Kepler',
+      group: 'research',
       kind: 'market-neutral trading system',
       summary: 'A market-neutral crypto system that ran on real capital.',
       detail:
@@ -215,6 +254,7 @@ export const en: Content = {
     },
     {
       name: 'Oscilion',
+      group: 'research',
       kind: 'crypto strategy experiment',
       summary:
         'A crypto trading system built to answer one question — is there an edge after real costs? — and closed when the answer was no.',

@@ -28,9 +28,20 @@ export interface ProjectVideo {
   fit?: 'cover' | 'contain';
 }
 
+/** Products lead; the trading research closed by its own evidence follows under its own heading. */
+export type ProjectGroupId = 'products' | 'research';
+
+export interface ProjectGroup {
+  id: ProjectGroupId;
+  title: string;
+  lede: string;
+}
+
 export interface Project {
   /** Display name, identical in both locales. */
   name: string;
+  /** Which heading of the Projects section it sits under. */
+  group: ProjectGroupId;
   /** Short qualifier shown next to the name, e.g. "AI equity research". */
   kind: string;
   /** One-line summary. */
@@ -79,6 +90,7 @@ export type TechGroupId =
   | 'data'
   | 'payments'
   | 'ai'
+  | 'automation'
   | 'platforms'
   | 'testing'
   | 'infrastructure';
@@ -184,6 +196,8 @@ export interface Content {
   /** Copy of the avatar stage: the wheel, the section panel and its chrome. */
   ui: StageCopy;
 
+  /** Headings of the Projects section, in display order. Each project names its group. */
+  projectGroups: readonly ProjectGroup[];
   projects: readonly Project[];
   alsoBuilt: string;
   experience: readonly Role[];

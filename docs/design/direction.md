@@ -20,3 +20,4 @@ Rejected on 2026-10-22: all-light (lights barely show on white) and all-dark (Os
 |---|---|
 | 2026-10-22 | Coral accent `#ff6b4a` dropped: Oscar does not like orange |
 | 2026-10-25 | Profile v3: "How I work" as a 2×2 grid of white cards under the About intro (chosen over a numbered list and the meta column); the first three projects carry a filled `Featured` badge. The OG image, favicon and Kawsay plate moved to the stage blues; the older plates keep their coral until they are re-rendered |
+| 2026-11-16 | Projects split into two shelves, *Products* and *Trading research*, each under a small accent label and a one-line lede (same treatment as the Stack groups), so the four closed research systems stop competing with the products. A fourth `Featured` badge for n8n Automations. "How I work" grows to six cards (3 rows of the same 2-column grid) |

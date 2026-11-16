@@ -172,6 +172,12 @@
   .proj .det { font-size: 15px; line-height: 1.7; color: var(--sec-muted); margin: 0 0 22px; }
   .chips { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 0 0 4px; }
   .chips li { font-size: 12.5px; padding: 4px 10px; border: 1px solid var(--sec-hair); border-radius: 999px; background: #fff; }
+  /* Project groups: a quiet label and one line, so products and the closed research read as two shelves */
+  .pgroup-head { margin-top: clamp(96px, 14vh, 160px); padding-top: 22px; border-top: 1px solid var(--sec-hair);
+    display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 8px 52px; align-items: baseline; }
+  .pgroup-head h3 { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--sec-accent); margin: 0; font-weight: 600; }
+  .pgroup-head p { font-family: var(--font-display); font-weight: 500; font-size: clamp(17px, 1.4vw, 21px); line-height: 1.4; margin: 0; color: var(--sec-text); }
+  .pgroup-head + .proj { margin-top: clamp(40px, 6vh, 72px); }
   .also { margin-top: clamp(80px, 12vh, 140px); padding: 22px 24px; border: 1px dashed var(--sec-line); border-radius: 18px; font-size: 15px; line-height: 1.6; color: var(--sec-muted); max-width: 70ch; }
 
   /* Experience */
@@ -228,7 +234,7 @@
   }
   @container (max-width: 480px) {
     .next .go { width: 46px; height: 46px; }
-    .groups, .how ul { grid-template-columns: minmax(0, 1fr); }
+    .groups, .how ul, .pgroup-head { grid-template-columns: minmax(0, 1fr); }
     .intro { margin-top: 24px; }
   }
   /* Home footer on phones */

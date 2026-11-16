@@ -293,8 +293,18 @@ export function SitePage({ content, model, stageScript }: { content: Content; mo
                     <p>{ui.projectsNote}</p>
                   </div>
                 </div>
-                {content.projects.map((project, i) => (
-                  <ProjectBlock key={project.name} project={project} index={i} content={content} />
+                {content.projectGroups.map((group) => (
+                  <section key={group.id} className="pgroup" aria-labelledby={`group-${group.id}`}>
+                    <header className="pgroup-head">
+                      <h3 id={`group-${group.id}`}>{group.title}</h3>
+                      <p>{group.lede}</p>
+                    </header>
+                    {content.projects.map((project, i) =>
+                      project.group === group.id ? (
+                        <ProjectBlock key={project.name} project={project} index={i} content={content} />
+                      ) : null,
+                    )}
+                  </section>
                 ))}
                 <p className="also">{content.alsoBuilt}</p>
                 <NextLink index={1} content={content} />
