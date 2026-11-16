@@ -43,7 +43,7 @@ ESTUDIA_USER=...
 ESTUDIA_PASSWORD=...
 ```
 
-Payment Orchestrator is the one flow recorded against a **local** stack, because it has no
+Payment Orchestrator is recorded against a **local** stack, because it has no
 public deployment: every rail runs in Stripe test mode or on a testnet. Start the stack as its
 README says (Docker, API, worker, `stripe listen`, web app), create a dashboard user with
 `user:create`, and add it here; the flow skips itself when either variable is missing:
@@ -55,6 +55,21 @@ PO_DEMO_PASSWORD=...
 
 Its card also links a narrated two-minute walkthrough, `public/walkthroughs/payment-orchestrator.mp4`,
 rendered from the HyperFrames project that lives next to the repository, not in this site.
+
+n8n Automations is the other local recording. The real instance reads real mailboxes and sits
+behind Cloudflare Access, so the clip drives a throwaway n8n container holding the workflows
+published in the `n8n-automations` repository, with dummy credentials so no node shows a warning,
+and then that repository's panel on its invented demo data (`pnpm demo`, port 3110):
+
+```
+docker run -d --name n8n-demo -p 5680:5678 -e N8N_SECURE_COOKIE=false docker.n8n.io/n8nio/n8n:2.46.6
+# import n8n/workflows/*.json with `n8n import:workflow --separate`, create the owner, then:
+N8N_DEMO_EMAIL=...
+N8N_DEMO_PASSWORD=...
+```
+
+Inside n8n's node panel the code editor ignores the wheel, so the flow walks the caret down
+with the arrow keys to reach the DKIM and DMARC checks, the way someone reading it would.
 
 Exposure Dashboard needs no account. An earlier version of this file claimed it was behind
 a login; that was wrong, and came from grepping the page for "password" and matching its

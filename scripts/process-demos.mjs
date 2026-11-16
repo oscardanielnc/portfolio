@@ -82,6 +82,8 @@ const jobs = {
   mipeso: { posterAt: 0.55, crf: 30 },
   estudia: { posterAt: 0.5, crf: 33 },
   'payment-orchestrator': { posterAt: 0.9, crf: 33 },
+  // The poster lands on the panel: the sorted mail beside the job radar, both on invented data.
+  'n8n-automations': { posterAt: 0.64, crf: 35 },
 };
 
 async function duration(file) {
