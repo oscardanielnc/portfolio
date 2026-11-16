@@ -76,7 +76,7 @@ export const projectRefs = {
     // An Android app with no store listing, so there is no deployment to link.
     demo: null,
     repo: 'https://github.com/oscardanielnc/kawsay',
-    tech: ['Expo', 'React Native', 'TypeScript', 'SQLite + Drizzle', 'NestJS', 'Prisma', 'PostgreSQL', 'DeepSeek'],
+    tech: ['Expo', 'React Native', 'TypeScript', 'SQLite + Drizzle', 'NestJS', 'Prisma', 'PostgreSQL', 'DeepSeek', 'Gemini', 'OpenTelemetry'],
     // Recorded from the release APK on an Android emulator, on a fresh install with an
     // invented profile and meals, so none of its author's data is on screen.
     video: demos.kawsay,
